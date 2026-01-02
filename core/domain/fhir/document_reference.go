@@ -8,23 +8,37 @@ type DocumentReference struct {
 	Language          *Element
 	Status            *Element
 	Version           *Element
+	Attester          []DocumentReferenceAttester
 	Author            []Reference
 	BasedOn           []Reference
+	BodyStructure     []CodeableReference
 	Category          []CodeableConcept
+	Contained         []DocumentReferenceContainedElem
+	Content           []DocumentReferenceContent
 	Context           []Reference
 	Custodian         *Reference
 	Date_2            *DateTime
+	Description_2     *Markdown
+	DocStatus_2       *Code
+	Event             []CodeableReference
 	Extension         []Extension
 	FacilityType      *CodeableConcept
+	ID                *ID
 	Identifier        []Identifier
+	ImplicitRules_2   *Uri
+	Language_2        *Code
 	Meta              *Meta
 	Modality          []CodeableConcept
 	ModifierExtension []Extension
 	Period            *Period
 	PracticeSetting   *CodeableConcept
 	Related           []Reference
+	RelatesTo         []DocumentReferenceRelatesTo
+	ResourceType      interface{}
 	SecurityLabel     []CodeableConcept
+	Status_2          *Code
 	Subject           *Reference
+	Text              *Narrative
 	Type              *CodeableConcept
 	Version_2         *String
 }

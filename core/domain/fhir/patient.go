@@ -12,17 +12,29 @@ type Patient struct {
 	MultipleBirthInteger   *Element
 	Active_2               *Boolean
 	Address                []Address
+	BirthDate_2            *Date
+	Communication          []PatientCommunication
+	Contact                []PatientContact
+	Contained              []PatientContainedElem
 	DeceasedBoolean_2      *bool
 	DeceasedDateTime_2     *string
 	Extension              []Extension
+	Gender_2               *Code
 	GeneralPractitioner    []Reference
+	ID                     *ID
 	Identifier             []Identifier
+	ImplicitRules_2        *Uri
+	Language_2             *Code
+	Link                   []PatientLink
 	ManagingOrganization   *Reference
 	MaritalStatus          *CodeableConcept
 	Meta                   *Meta
 	ModifierExtension      []Extension
 	MultipleBirthBoolean_2 *bool
+	MultipleBirthInteger_2 *float64
 	Name                   []HumanName
 	Photo                  []Attachment
+	ResourceType           interface{}
 	Telecom                []ContactPoint
+	Text                   *Narrative
 }
