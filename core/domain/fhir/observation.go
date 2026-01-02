@@ -1,0 +1,51 @@
+package fhir
+
+type Observation struct {
+	EffectiveDateTime    *Element
+	EffectiveInstant     *Element
+	ImplicitRules        *Element
+	Issued               *Element
+	Language             *Element
+	Organizer            *Element
+	Status               *Element
+	ValueBoolean         *Element
+	ValueDateTime        *Element
+	ValueInteger         *Element
+	ValueString          *Element
+	ValueTime            *Element
+	BasedOn              []Reference
+	BodySite             *CodeableConcept
+	Category             []CodeableConcept
+	Code                 CodeableConcept
+	DataAbsentReason     *CodeableConcept
+	DerivedFrom          []Reference
+	Device               *Reference
+	EffectiveDateTime_2  *string
+	EffectiveInstant_2   *string
+	EffectivePeriod      *Period
+	Encounter            *Reference
+	Extension            []Extension
+	Focus                []Reference
+	HasMember            []Reference
+	Identifier           []Identifier
+	Interpretation       []CodeableConcept
+	Issued_2             *Instant
+	Meta                 *Meta
+	Method               *CodeableConcept
+	ModifierExtension    []Extension
+	Organizer_2          *Boolean
+	PartOf               []Reference
+	Performer            []Reference
+	Specimen             *Reference
+	Subject              *Reference
+	ValueAttachment      *Attachment
+	ValueBoolean_2       *bool
+	ValueCodeableConcept *CodeableConcept
+	ValueDateTime_2      *string
+	ValuePeriod          *Period
+	ValueQuantity        *Quantity
+	ValueRange           *Range
+	ValueRatio           *Ratio
+	ValueString_2        *string
+	ValueTime_2          *string
+}

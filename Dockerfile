@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
@@ -17,8 +17,6 @@ WORKDIR /app
 
 COPY --from=builder /app/main .
 COPY --from=builder /app/config.yaml .
-
-EXPOSE 8081
 
 CMD ["./main"]
 
