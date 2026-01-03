@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // Duration Type: A length of time.
 type Duration struct {

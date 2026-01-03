@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // VirtualServiceDetail Type: The set of values required to describe a virtual service's connection details, including some limitations of the service.
 type VirtualServiceDetail struct {

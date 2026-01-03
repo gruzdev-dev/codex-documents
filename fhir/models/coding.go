@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // Coding Type: A reference to a code defined by a terminology system.
 type Coding struct {

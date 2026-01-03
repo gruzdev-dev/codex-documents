@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // HumanName Type: A name, normally of a human, that can be used for other living entities (e.g. animals but not organizations) that have been assigned names by a human and may need the use of name parts or the need for usage information.
 type HumanName struct {

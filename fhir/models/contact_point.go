@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // ContactPoint Type: Details for all kinds of technology mediated contact points for a person or organization, including telephone, email, etc.
 type ContactPoint struct {

@@ -1,4 +1,4 @@
-package fhir
+package models
 
 import "encoding/json"
 

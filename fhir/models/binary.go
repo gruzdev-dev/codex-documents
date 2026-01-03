@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // A resource that represents the data of a single raw artifact as digital content accessible in its native format.  A Binary resource can contain any content, whether text, image, pdf, zip archive, etc.
 type Binary struct {

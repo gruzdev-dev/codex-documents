@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // Reference Type: A reference from one resource to another.
 type Reference struct {

@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // Period Type: A time period defined by a start and end date and optionally time.
 type Period struct {

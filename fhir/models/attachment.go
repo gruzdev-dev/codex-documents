@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // Attachment Type: For referring to data content defined in other formats.
 type Attachment struct {

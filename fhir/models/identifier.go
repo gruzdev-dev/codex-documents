@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // Identifier Type: An identifier - identifies some entity uniquely and unambiguously. Typically this is used for business identifiers.
 type Identifier struct {

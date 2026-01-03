@@ -29,7 +29,7 @@ func (g *Generator) WriteResource(def StructureDefinition) error {
 		}
 	}
 
-	fmt.Fprintf(&buf, "package fhir\n\n")
+	fmt.Fprintf(&buf, "package models\n\n")
 	if needsJSON {
 		fmt.Fprintf(&buf, "import \"encoding/json\"\n\n")
 	}

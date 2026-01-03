@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // Annotation Type: A  text note which also  contains information about who made the statement and when.
 type Annotation struct {

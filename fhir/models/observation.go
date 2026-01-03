@@ -1,4 +1,4 @@
-package fhir
+package models
 
 import "encoding/json"
 
@@ -40,6 +40,9 @@ type Observation struct {
 	Component             []ObservationComponent      `json:"component,omitempty"`             // Component results
 }
 
+type ObservationComponentReferenceRange struct {
+}
+
 type ObservationTriggeredBy struct {
 	Id          *string   `json:"id,omitempty"`          // Unique id for inter-element referencing
 	Observation Reference `json:"observation,omitempty"` // Triggering observation
@@ -65,7 +68,4 @@ type ObservationComponent struct {
 	DataAbsentReason *CodeableConcept                     `json:"dataAbsentReason,omitempty"` // Why the component result value is missing
 	Interpretation   []CodeableConcept                    `json:"interpretation,omitempty"`   // High, low, normal, etc
 	ReferenceRange   []ObservationComponentReferenceRange `json:"referenceRange,omitempty"`   // Provides guide for interpretation of component result value
-}
-
-type ObservationComponentReferenceRange struct {
 }

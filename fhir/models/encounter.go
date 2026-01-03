@@ -1,4 +1,4 @@
-package fhir
+package models
 
 import "encoding/json"
 
@@ -41,18 +41,6 @@ type Encounter struct {
 	Location           []EncounterLocation       `json:"location,omitempty"`           // List of locations where the patient has been
 }
 
-type EncounterReason struct {
-	Id    *string             `json:"id,omitempty"`    // Unique id for inter-element referencing
-	Use   []CodeableConcept   `json:"use,omitempty"`   // What the reason value should be used for/as
-	Value []CodeableReference `json:"value,omitempty"` // Reason the encounter takes place (core or reference)
-}
-
-type EncounterDiagnosis struct {
-	Id        *string             `json:"id,omitempty"`        // Unique id for inter-element referencing
-	Condition []CodeableReference `json:"condition,omitempty"` // The diagnosis relevant to the encounter
-	Use       []CodeableConcept   `json:"use,omitempty"`       // Role that this diagnosis has within the encounter (e.g. admission, billing, discharge …)
-}
-
 type EncounterAdmission struct {
 	Id                     *string          `json:"id,omitempty"`                     // Unique id for inter-element referencing
 	PreAdmissionIdentifier *Identifier      `json:"preAdmissionIdentifier,omitempty"` // Pre-admission identifier
@@ -83,4 +71,16 @@ type EncounterParticipant struct {
 	Type   []CodeableConcept `json:"type,omitempty"`   // Role of participant in encounter
 	Period *Period           `json:"period,omitempty"` // Period of time during the encounter that the participant participated
 	Actor  *Reference        `json:"actor,omitempty"`  // The individual, device, or service participating in the encounter
+}
+
+type EncounterReason struct {
+	Id    *string             `json:"id,omitempty"`    // Unique id for inter-element referencing
+	Use   []CodeableConcept   `json:"use,omitempty"`   // What the reason value should be used for/as
+	Value []CodeableReference `json:"value,omitempty"` // Reason the encounter takes place (core or reference)
+}
+
+type EncounterDiagnosis struct {
+	Id        *string             `json:"id,omitempty"`        // Unique id for inter-element referencing
+	Condition []CodeableReference `json:"condition,omitempty"` // The diagnosis relevant to the encounter
+	Use       []CodeableConcept   `json:"use,omitempty"`       // Role that this diagnosis has within the encounter (e.g. admission, billing, discharge …)
 }

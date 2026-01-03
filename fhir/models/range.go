@@ -1,4 +1,4 @@
-package fhir
+package models
 
 // Range Type: A set of ordered Quantities defined by a low and high limit.
 type Range struct {
