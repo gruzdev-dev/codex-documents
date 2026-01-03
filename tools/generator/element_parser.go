@@ -35,6 +35,32 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 			structName = g.deriveNestedTypeName(parentPath)
 		}
 
+		if strings.Contains(lastPart, "[x]") {
+			baseName := strings.ReplaceAll(lastPart, "[x]", "")
+			for _, fhirType := range el.Type {
+				singleTypeEl := el
+				singleTypeEl.Type = []ElementDataType{fhirType}
+
+				goType := g.mapGoType(singleTypeEl)
+
+				typeSuffix := titleCase(fhirType.Code)
+				fieldName := titleCase(baseName) + typeSuffix
+				jsonTag := fmt.Sprintf("`json:\"%s%s,omitempty\"`", baseName, typeSuffix)
+
+				if !strings.HasPrefix(goType, "*") && !strings.HasPrefix(goType, "[]") && goType != "any" {
+					goType = "*" + goType
+				}
+
+				structs[structName] = append(structs[structName], FieldInfo{
+					Name:    fieldName,
+					GoType:  goType,
+					JSONTag: jsonTag,
+					Comment: el.Short,
+				})
+			}
+			continue
+		}
+
 		goType := g.mapGoType(el)
 
 		if len(el.Type) > 0 &&

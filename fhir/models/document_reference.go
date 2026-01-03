@@ -36,13 +36,6 @@ type DocumentReference struct {
 	Content         []DocumentReferenceContent   `json:"content,omitempty"`         // Document referenced
 }
 
-type DocumentReferenceAttester struct {
-	Id    *string         `json:"id,omitempty"`    // Unique id for inter-element referencing
-	Mode  CodeableConcept `json:"mode,omitempty"`  // personal | professional | legal | official
-	Time  *string         `json:"time,omitempty"`  // When the document was attested
-	Party *Reference      `json:"party,omitempty"` // Who attested the document
-}
-
 type DocumentReferenceRelatesTo struct {
 	Id     *string         `json:"id,omitempty"`     // Unique id for inter-element referencing
 	Code   CodeableConcept `json:"code,omitempty"`   // The relationship type with another document
@@ -56,6 +49,15 @@ type DocumentReferenceContent struct {
 }
 
 type DocumentReferenceContentProfile struct {
-	Id    *string `json:"id,omitempty"`       // Unique id for inter-element referencing
-	Value any     `json:"value[x],omitempty"` // Code|uri|canonical
+	Id             *string `json:"id,omitempty"`             // Unique id for inter-element referencing
+	ValueCoding    *Coding `json:"valueCoding,omitempty"`    // Code|uri|canonical
+	ValueUri       *string `json:"valueUri,omitempty"`       // Code|uri|canonical
+	ValueCanonical *string `json:"valueCanonical,omitempty"` // Code|uri|canonical
+}
+
+type DocumentReferenceAttester struct {
+	Id    *string         `json:"id,omitempty"`    // Unique id for inter-element referencing
+	Mode  CodeableConcept `json:"mode,omitempty"`  // personal | professional | legal | official
+	Time  *string         `json:"time,omitempty"`  // When the document was attested
+	Party *Reference      `json:"party,omitempty"` // Who attested the document
 }

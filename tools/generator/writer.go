@@ -46,8 +46,7 @@ func (g *Generator) WriteResource(def StructureDefinition) error {
 
 	for usedType := range usedTypesInFile {
 		if _, exists := structMap[usedType]; !exists {
-			resourcePrefix := def.Name
-			if strings.HasPrefix(usedType, resourcePrefix) {
+			if _, defined := g.Definitions[usedType]; !defined {
 				structMap[usedType] = []FieldInfo{}
 			}
 		}

@@ -21,10 +21,24 @@ type Observation struct {
 	Focus                 []Reference                 `json:"focus,omitempty"`                 // What the observation is about, when it is not about the subject of record
 	Organizer             bool                        `json:"organizer,omitempty"`             // This observation organizes/groups a set of sub-observations
 	Encounter             *Reference                  `json:"encounter,omitempty"`             // Healthcare event during which this observation is made. If you need to place the observation within one or more episodes of care, use the workflow-episodeOfCare extension
-	Effective             any                         `json:"effective[x],omitempty"`          // Clinically relevant time/time-period for observation
+	EffectiveDateTime     *string                     `json:"effectiveDateTime,omitempty"`     // Clinically relevant time/time-period for observation
+	EffectivePeriod       *Period                     `json:"effectivePeriod,omitempty"`       // Clinically relevant time/time-period for observation
+	EffectiveTiming       *Timing                     `json:"effectiveTiming,omitempty"`       // Clinically relevant time/time-period for observation
+	EffectiveInstant      *string                     `json:"effectiveInstant,omitempty"`      // Clinically relevant time/time-period for observation
 	Issued                *string                     `json:"issued,omitempty"`                // Date/Time this version was made available
 	Performer             []Reference                 `json:"performer,omitempty"`             // Who is responsible for the observation
-	Value                 any                         `json:"value[x],omitempty"`              // Actual result
+	ValueQuantity         *Quantity                   `json:"valueQuantity,omitempty"`         // Actual result
+	ValueCodeableConcept  *CodeableConcept            `json:"valueCodeableConcept,omitempty"`  // Actual result
+	ValueString           *string                     `json:"valueString,omitempty"`           // Actual result
+	ValueBoolean          *bool                       `json:"valueBoolean,omitempty"`          // Actual result
+	ValueInteger          *int                        `json:"valueInteger,omitempty"`          // Actual result
+	ValueRange            *Range                      `json:"valueRange,omitempty"`            // Actual result
+	ValueRatio            *Ratio                      `json:"valueRatio,omitempty"`            // Actual result
+	ValueSampledData      *SampledData                `json:"valueSampledData,omitempty"`      // Actual result
+	ValueTime             *string                     `json:"valueTime,omitempty"`             // Actual result
+	ValueDateTime         *string                     `json:"valueDateTime,omitempty"`         // Actual result
+	ValuePeriod           *Period                     `json:"valuePeriod,omitempty"`           // Actual result
+	ValueAttachment       *Attachment                 `json:"valueAttachment,omitempty"`       // Actual result
 	DataAbsentReason      *CodeableConcept            `json:"dataAbsentReason,omitempty"`      // Why the result value is missing
 	Interpretation        []CodeableConcept           `json:"interpretation,omitempty"`        // High, low, normal, etc
 	InterpretationContext []CodeableReference         `json:"interpretationContext,omitempty"` // Context for understanding the observation
@@ -38,9 +52,6 @@ type Observation struct {
 	HasMember             []Reference                 `json:"hasMember,omitempty"`             // Related resource that belongs to the Observation group
 	DerivedFrom           []Reference                 `json:"derivedFrom,omitempty"`           // Related resource from which the observation is made
 	Component             []ObservationComponent      `json:"component,omitempty"`             // Component results
-}
-
-type ObservationComponentReferenceRange struct {
 }
 
 type ObservationTriggeredBy struct {
@@ -62,10 +73,24 @@ type ObservationReferenceRange struct {
 }
 
 type ObservationComponent struct {
-	Id               *string                              `json:"id,omitempty"`               // Unique id for inter-element referencing
-	Code             CodeableConcept                      `json:"code,omitempty"`             // Type of component observation (code / type)
-	Value            any                                  `json:"value[x],omitempty"`         // Actual component result
-	DataAbsentReason *CodeableConcept                     `json:"dataAbsentReason,omitempty"` // Why the component result value is missing
-	Interpretation   []CodeableConcept                    `json:"interpretation,omitempty"`   // High, low, normal, etc
-	ReferenceRange   []ObservationComponentReferenceRange `json:"referenceRange,omitempty"`   // Provides guide for interpretation of component result value
+	Id                   *string                              `json:"id,omitempty"`                   // Unique id for inter-element referencing
+	Code                 CodeableConcept                      `json:"code,omitempty"`                 // Type of component observation (code / type)
+	ValueQuantity        *Quantity                            `json:"valueQuantity,omitempty"`        // Actual component result
+	ValueCodeableConcept *CodeableConcept                     `json:"valueCodeableConcept,omitempty"` // Actual component result
+	ValueString          *string                              `json:"valueString,omitempty"`          // Actual component result
+	ValueBoolean         *bool                                `json:"valueBoolean,omitempty"`         // Actual component result
+	ValueInteger         *int                                 `json:"valueInteger,omitempty"`         // Actual component result
+	ValueRange           *Range                               `json:"valueRange,omitempty"`           // Actual component result
+	ValueRatio           *Ratio                               `json:"valueRatio,omitempty"`           // Actual component result
+	ValueSampledData     *SampledData                         `json:"valueSampledData,omitempty"`     // Actual component result
+	ValueTime            *string                              `json:"valueTime,omitempty"`            // Actual component result
+	ValueDateTime        *string                              `json:"valueDateTime,omitempty"`        // Actual component result
+	ValuePeriod          *Period                              `json:"valuePeriod,omitempty"`          // Actual component result
+	ValueAttachment      *Attachment                          `json:"valueAttachment,omitempty"`      // Actual component result
+	DataAbsentReason     *CodeableConcept                     `json:"dataAbsentReason,omitempty"`     // Why the component result value is missing
+	Interpretation       []CodeableConcept                    `json:"interpretation,omitempty"`       // High, low, normal, etc
+	ReferenceRange       []ObservationComponentReferenceRange `json:"referenceRange,omitempty"`       // Provides guide for interpretation of component result value
+}
+
+type ObservationComponentReferenceRange struct {
 }

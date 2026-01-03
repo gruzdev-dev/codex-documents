@@ -41,24 +41,6 @@ type Encounter struct {
 	Location           []EncounterLocation       `json:"location,omitempty"`           // List of locations where the patient has been
 }
 
-type EncounterAdmission struct {
-	Id                     *string          `json:"id,omitempty"`                     // Unique id for inter-element referencing
-	PreAdmissionIdentifier *Identifier      `json:"preAdmissionIdentifier,omitempty"` // Pre-admission identifier
-	Origin                 *Reference       `json:"origin,omitempty"`                 // The location/organization from which the patient came before admission
-	AdmitSource            *CodeableConcept `json:"admitSource,omitempty"`            // From where patient was admitted (physician referral, transfer)
-	ReAdmission            *CodeableConcept `json:"reAdmission,omitempty"`            // Indicates that the patient is being re-admitted
-	Destination            *Reference       `json:"destination,omitempty"`            // Location/organization to which the patient is discharged
-	DischargeDisposition   *CodeableConcept `json:"dischargeDisposition,omitempty"`   // Category or kind of location after discharge
-}
-
-type EncounterLocation struct {
-	Id       *string          `json:"id,omitempty"`       // Unique id for inter-element referencing
-	Location Reference        `json:"location,omitempty"` // Location the encounter takes place
-	Status   *string          `json:"status,omitempty"`   // planned | active | reserved | completed
-	Form     *CodeableConcept `json:"form,omitempty"`     // The physical type of the location (usually the level in the location hierarchy - bed, room, ward, virtual etc.)
-	Period   *Period          `json:"period,omitempty"`   // Time period during which the patient was present at the location
-}
-
 type EncounterBusinessStatus struct {
 	Id            *string         `json:"id,omitempty"`            // Unique id for inter-element referencing
 	Code          CodeableConcept `json:"code,omitempty"`          // The current business status
@@ -83,4 +65,22 @@ type EncounterDiagnosis struct {
 	Id        *string             `json:"id,omitempty"`        // Unique id for inter-element referencing
 	Condition []CodeableReference `json:"condition,omitempty"` // The diagnosis relevant to the encounter
 	Use       []CodeableConcept   `json:"use,omitempty"`       // Role that this diagnosis has within the encounter (e.g. admission, billing, discharge …)
+}
+
+type EncounterAdmission struct {
+	Id                     *string          `json:"id,omitempty"`                     // Unique id for inter-element referencing
+	PreAdmissionIdentifier *Identifier      `json:"preAdmissionIdentifier,omitempty"` // Pre-admission identifier
+	Origin                 *Reference       `json:"origin,omitempty"`                 // The location/organization from which the patient came before admission
+	AdmitSource            *CodeableConcept `json:"admitSource,omitempty"`            // From where patient was admitted (physician referral, transfer)
+	ReAdmission            *CodeableConcept `json:"reAdmission,omitempty"`            // Indicates that the patient is being re-admitted
+	Destination            *Reference       `json:"destination,omitempty"`            // Location/organization to which the patient is discharged
+	DischargeDisposition   *CodeableConcept `json:"dischargeDisposition,omitempty"`   // Category or kind of location after discharge
+}
+
+type EncounterLocation struct {
+	Id       *string          `json:"id,omitempty"`       // Unique id for inter-element referencing
+	Location Reference        `json:"location,omitempty"` // Location the encounter takes place
+	Status   *string          `json:"status,omitempty"`   // planned | active | reserved | completed
+	Form     *CodeableConcept `json:"form,omitempty"`     // The physical type of the location (usually the level in the location hierarchy - bed, room, ward, virtual etc.)
+	Period   *Period          `json:"period,omitempty"`   // Time period during which the patient was present at the location
 }
