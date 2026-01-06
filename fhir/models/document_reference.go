@@ -154,6 +154,32 @@ func (r *DocumentReference) Validate() error {
 	return nil
 }
 
+type DocumentReferenceRelatesTo struct {
+	Id     *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Code   *CodeableConcept `json:"code" bson:"code"`                 // The relationship type with another document
+	Target *Reference       `json:"target" bson:"target"`             // Target of the relationship
+}
+
+func (r *DocumentReferenceRelatesTo) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	if r.Target == nil {
+		return fmt.Errorf("field 'Target' is required")
+	}
+	if r.Target != nil {
+		if err := r.Target.Validate(); err != nil {
+			return fmt.Errorf("Target: %w", err)
+		}
+	}
+	return nil
+}
+
 type DocumentReferenceContent struct {
 	Id         *string                           `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
 	Attachment *Attachment                       `json:"attachment" bson:"attachment"`               // Where to access the document
@@ -221,32 +247,6 @@ func (r *DocumentReferenceAttester) Validate() error {
 	if r.Party != nil {
 		if err := r.Party.Validate(); err != nil {
 			return fmt.Errorf("Party: %w", err)
-		}
-	}
-	return nil
-}
-
-type DocumentReferenceRelatesTo struct {
-	Id     *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Code   *CodeableConcept `json:"code" bson:"code"`                 // The relationship type with another document
-	Target *Reference       `json:"target" bson:"target"`             // Target of the relationship
-}
-
-func (r *DocumentReferenceRelatesTo) Validate() error {
-	if r.Code == nil {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	if r.Target == nil {
-		return fmt.Errorf("field 'Target' is required")
-	}
-	if r.Target != nil {
-		if err := r.Target.Validate(); err != nil {
-			return fmt.Errorf("Target: %w", err)
 		}
 	}
 	return nil

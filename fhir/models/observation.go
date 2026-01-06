@@ -237,51 +237,6 @@ func (r *Observation) Validate() error {
 	return nil
 }
 
-type ObservationReferenceRange struct {
-	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Low         *Quantity         `json:"low,omitempty" bson:"low,omitempty"`                  // Low Range, if relevant
-	High        *Quantity         `json:"high,omitempty" bson:"high,omitempty"`                // High Range, if relevant
-	NormalValue *CodeableConcept  `json:"normalValue,omitempty" bson:"normal_value,omitempty"` // Normal value, if relevant
-	Type        *CodeableConcept  `json:"type,omitempty" bson:"type,omitempty"`                // Reference range qualifier
-	AppliesTo   []CodeableConcept `json:"appliesTo,omitempty" bson:"applies_to,omitempty"`     // Reference range population
-	Age         *Range            `json:"age,omitempty" bson:"age,omitempty"`                  // Applicable age range, if relevant
-	Text        *string           `json:"text,omitempty" bson:"text,omitempty"`                // Text based reference range in an observation
-}
-
-func (r *ObservationReferenceRange) Validate() error {
-	if r.Low != nil {
-		if err := r.Low.Validate(); err != nil {
-			return fmt.Errorf("Low: %w", err)
-		}
-	}
-	if r.High != nil {
-		if err := r.High.Validate(); err != nil {
-			return fmt.Errorf("High: %w", err)
-		}
-	}
-	if r.NormalValue != nil {
-		if err := r.NormalValue.Validate(); err != nil {
-			return fmt.Errorf("NormalValue: %w", err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	for i, item := range r.AppliesTo {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("AppliesTo[%d]: %w", i, err)
-		}
-	}
-	if r.Age != nil {
-		if err := r.Age.Validate(); err != nil {
-			return fmt.Errorf("Age: %w", err)
-		}
-	}
-	return nil
-}
-
 type ObservationComponent struct {
 	Id                   *string                     `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
 	Code                 *CodeableConcept            `json:"code" bson:"code"`                                                       // Type of component observation (code / type)
@@ -382,6 +337,51 @@ func (r *ObservationTriggeredBy) Validate() error {
 	}
 	if r.Type == "" {
 		return fmt.Errorf("field 'Type' is required")
+	}
+	return nil
+}
+
+type ObservationReferenceRange struct {
+	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Low         *Quantity         `json:"low,omitempty" bson:"low,omitempty"`                  // Low Range, if relevant
+	High        *Quantity         `json:"high,omitempty" bson:"high,omitempty"`                // High Range, if relevant
+	NormalValue *CodeableConcept  `json:"normalValue,omitempty" bson:"normal_value,omitempty"` // Normal value, if relevant
+	Type        *CodeableConcept  `json:"type,omitempty" bson:"type,omitempty"`                // Reference range qualifier
+	AppliesTo   []CodeableConcept `json:"appliesTo,omitempty" bson:"applies_to,omitempty"`     // Reference range population
+	Age         *Range            `json:"age,omitempty" bson:"age,omitempty"`                  // Applicable age range, if relevant
+	Text        *string           `json:"text,omitempty" bson:"text,omitempty"`                // Text based reference range in an observation
+}
+
+func (r *ObservationReferenceRange) Validate() error {
+	if r.Low != nil {
+		if err := r.Low.Validate(); err != nil {
+			return fmt.Errorf("Low: %w", err)
+		}
+	}
+	if r.High != nil {
+		if err := r.High.Validate(); err != nil {
+			return fmt.Errorf("High: %w", err)
+		}
+	}
+	if r.NormalValue != nil {
+		if err := r.NormalValue.Validate(); err != nil {
+			return fmt.Errorf("NormalValue: %w", err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.AppliesTo {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AppliesTo[%d]: %w", i, err)
+		}
+	}
+	if r.Age != nil {
+		if err := r.Age.Validate(); err != nil {
+			return fmt.Errorf("Age: %w", err)
+		}
 	}
 	return nil
 }
