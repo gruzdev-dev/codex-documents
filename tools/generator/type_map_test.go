@@ -158,9 +158,9 @@ func TestMapGoType_ReferenceTypes(t *testing.T) {
 
 func TestMapGoType_ReferenceTargetProfile(t *testing.T) {
 	tests := []struct {
-		name        string
-		element     ElementDefinition
-		wantType    string
+		name                     string
+		element                  ElementDefinition
+		wantType                 string
 		shouldNotGenerateTargets bool
 	}{
 		{
@@ -170,11 +170,28 @@ func TestMapGoType_ReferenceTargetProfile(t *testing.T) {
 				Type: []ElementDataType{
 					{
 						Code: "Reference",
+						TargetProfile: []string{
+							"http://hl7.org/fhir/StructureDefinition/Patient",
+							"http://hl7.org/fhir/StructureDefinition/Organization",
+						},
 					},
 				},
 			},
-			wantType: "Reference",
+			wantType:                 "Reference",
 			shouldNotGenerateTargets: true,
+		},
+		{
+			name: "Reference without targetProfile should still work",
+			element: ElementDefinition{
+				Path: "TestResource.field",
+				Type: []ElementDataType{
+					{
+						Code: "Reference",
+					},
+				},
+			},
+			wantType:                 "Reference",
+			shouldNotGenerateTargets: false,
 		},
 	}
 
@@ -185,6 +202,10 @@ func TestMapGoType_ReferenceTargetProfile(t *testing.T) {
 
 			if got != tt.wantType {
 				t.Errorf("mapGoType() = %v, want %v", got, tt.wantType)
+			}
+
+			if !g.usedTypes["Reference"] {
+				t.Errorf("Reference type should be added to usedTypes")
 			}
 
 			if tt.shouldNotGenerateTargets {

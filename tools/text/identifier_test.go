@@ -69,4 +69,3 @@ func TestIsValidGoIdentifier(t *testing.T) {
 		})
 	}
 }
-

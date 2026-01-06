@@ -435,7 +435,7 @@ func TestGenerator_DurationDependency(t *testing.T) {
 
 	g := generator.NewGenerator("", outputDir, []string{"TimingRepeat"})
 	g.Definitions[spec.Name] = spec
-	
+
 	g.Definitions["Duration"] = generator.StructureDefinition{
 		Name:        "Duration",
 		Description: "A length of time",

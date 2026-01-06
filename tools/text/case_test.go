@@ -112,4 +112,3 @@ func TestTitleCase(t *testing.T) {
 		})
 	}
 }
-

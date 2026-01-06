@@ -39,5 +39,6 @@ type ElementDefinition struct {
 }
 
 type ElementDataType struct {
-	Code string `json:"code"`
+	Code          string   `json:"code"`
+	TargetProfile []string `json:"targetProfile,omitempty"`
 }

@@ -22,4 +22,3 @@ func IsValidGoIdentifier(s string) bool {
 	}
 	return true
 }
-

@@ -109,19 +109,19 @@ func (g *Generator) writeStruct(buf *bytes.Buffer, name, comment string, fields 
 		if f.Comment != "" {
 			commentPart = " // " + sanitizeComment(f.Comment)
 		}
-		
+
 		jsonTagValue := strings.TrimPrefix(strings.TrimSuffix(f.JSONTag, "`"), "`json:")
 		jsonTagValue = strings.Trim(jsonTagValue, "\"")
-		
+
 		var tagParts []string
 		tagParts = append(tagParts, fmt.Sprintf("json:\"%s\"", jsonTagValue))
-		
+
 		if f.BSONTag != "" {
 			bsonTagValue := strings.TrimPrefix(strings.TrimSuffix(f.BSONTag, "`"), "`bson:")
 			bsonTagValue = strings.Trim(bsonTagValue, "\"")
 			tagParts = append(tagParts, fmt.Sprintf("bson:\"%s\"", bsonTagValue))
 		}
-		
+
 		tags := "`" + strings.Join(tagParts, " ") + "`"
 		fmt.Fprintf(buf, "\t%s %s %s%s\n", f.Name, goType, tags, commentPart)
 	}
