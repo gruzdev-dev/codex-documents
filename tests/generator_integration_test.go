@@ -195,7 +195,15 @@ func TestGenerator_BSONTags(t *testing.T) {
 	hasBSON := strings.Contains(code, "bson:")
 
 	if !hasBSON {
-		t.Logf("BSON tags are not present (this test is expected to fail until BSON support is added)")
+		t.Errorf("BSON tags are not present in generated code")
+	}
+
+	if !strings.Contains(code, "bson:\"required_field\"") {
+		t.Errorf("BSON tag for requiredField should be in snake_case format: required_field")
+	}
+
+	if !strings.Contains(code, "bson:\"optional_field,omitempty\"") {
+		t.Errorf("BSON tag for optionalField should be in snake_case with omitempty: optional_field,omitempty")
 	}
 }
 
@@ -414,7 +422,6 @@ func TestGenerator_CodeCompilation(t *testing.T) {
 }
 
 func TestGenerator_DurationDependency(t *testing.T) {
-	// Load TimingRepeat definition that uses Duration
 	spec, err := loadTestSpec("duration_dependency")
 	if err != nil {
 		t.Fatalf("loadTestSpec() error = %v", err)
@@ -426,11 +433,9 @@ func TestGenerator_DurationDependency(t *testing.T) {
 	}
 	defer cleanup()
 
-	// Duration should be in Definitions but not in whitelist
 	g := generator.NewGenerator("", outputDir, []string{"TimingRepeat"})
 	g.Definitions[spec.Name] = spec
 	
-	// Add Duration to Definitions (simulating it being loaded from profiles-types.json)
 	g.Definitions["Duration"] = generator.StructureDefinition{
 		Name:        "Duration",
 		Description: "A length of time",
@@ -446,12 +451,10 @@ func TestGenerator_DurationDependency(t *testing.T) {
 		},
 	}
 
-	// Use Generate() instead of WriteResource() to test full generation cycle
 	if err := g.Generate(); err != nil {
 		t.Fatalf("Generate() error = %v", err)
 	}
 
-	// Check that TimingRepeat was generated
 	timingFile := filepath.Join(outputDir, "timing_repeat.go")
 	timingCode, err := os.ReadFile(timingFile)
 	if err != nil {
@@ -463,13 +466,11 @@ func TestGenerator_DurationDependency(t *testing.T) {
 		t.Errorf("TimingRepeat should contain BoundsDuration field")
 	}
 
-	// Duration should be generated as a separate file through usedTypes in Generate()
 	durationFile := filepath.Join(outputDir, "duration.go")
 	if _, err := os.Stat(durationFile); err != nil {
 		t.Errorf("Duration should be generated as separate file through usedTypes, but duration.go not found: %v", err)
 	}
 
-	// Verify Duration file contains Duration type
 	durationCode, err := os.ReadFile(durationFile)
 	if err != nil {
 		t.Fatalf("ReadFile() error = %v", err)
@@ -507,7 +508,6 @@ func TestGenerator_RequiredReferencePointer(t *testing.T) {
 
 	code := string(generatedCode)
 
-	// Check that requiredRef has pointer
 	fieldLine := ""
 	for _, line := range strings.Split(code, "\n") {
 		if strings.Contains(line, "RequiredRef") && strings.Contains(line, "json:") {
@@ -520,7 +520,6 @@ func TestGenerator_RequiredReferencePointer(t *testing.T) {
 		t.Fatalf("field RequiredRef not found in generated code")
 	}
 
-	// Should be *Reference, not Reference
 	if !strings.Contains(fieldLine, "*Reference") {
 		t.Errorf("field RequiredRef should have pointer type *Reference, got: %s", fieldLine)
 	}
@@ -553,13 +552,10 @@ func TestGenerator_ContentReference(t *testing.T) {
 
 	code := string(generatedCode)
 
-	// Check that component.referenceRange uses the same type as referenceRange
-	// Should be TestResourceWithContentRefReferenceRange, not TestResourceWithContentRefComponentReferenceRange
 	if strings.Contains(code, "TestResourceWithContentRefComponentReferenceRange") {
 		t.Errorf("contentReference should reuse TestResourceWithContentRefReferenceRange type, not create new ComponentReferenceRange")
 	}
 
-	// Should use TestResourceWithContentRefReferenceRange
 	if !strings.Contains(code, "TestResourceWithContentRefReferenceRange") {
 		t.Errorf("contentReference type TestResourceWithContentRefReferenceRange should be present")
 	}

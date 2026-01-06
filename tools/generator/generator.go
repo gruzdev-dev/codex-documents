@@ -12,6 +12,7 @@ type Generator struct {
 	OutputPath  string
 	Whitelist   map[string]struct{}
 	Definitions map[string]StructureDefinition
+	usedTypes   map[string]bool
 }
 
 func NewGenerator(specPath, outputPath string, whitelist []string) *Generator {
@@ -24,6 +25,7 @@ func NewGenerator(specPath, outputPath string, whitelist []string) *Generator {
 		OutputPath:  outputPath,
 		Whitelist:   wl,
 		Definitions: make(map[string]StructureDefinition),
+		usedTypes:   make(map[string]bool),
 	}
 }
 
@@ -48,6 +50,8 @@ func (g *Generator) Load(filename string) error {
 }
 
 func (g *Generator) Generate() error {
+	g.usedTypes = make(map[string]bool)
+
 	if err := os.MkdirAll(g.OutputPath, 0755); err != nil {
 		return err
 	}
@@ -72,7 +76,7 @@ func (g *Generator) Generate() error {
 		}
 	}
 
-	for tName := range usedTypes {
+	for tName := range g.usedTypes {
 		if _, isWhite := g.Whitelist[tName]; isWhite {
 			continue
 		}

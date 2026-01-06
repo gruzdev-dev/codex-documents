@@ -2,10 +2,9 @@ package generator
 
 import (
 	"strings"
-	"unicode"
-)
 
-var usedTypes = make(map[string]bool)
+	"codex-documents/tools/text"
+)
 
 func (g *Generator) mapGoType(el ElementDefinition) string {
 	if len(el.Type) > 1 {
@@ -58,8 +57,8 @@ func (g *Generator) mapGoType(el ElementDefinition) string {
 				case "Date", "DateTime", "Time":
 					return "string"
 				default:
-					if isValidGoIdentifier(lastPart) {
-						usedTypes[lastPart] = true
+					if text.IsValidGoIdentifier(lastPart) {
+						g.usedTypes[lastPart] = true
 						return lastPart
 					}
 				}
@@ -67,11 +66,11 @@ func (g *Generator) mapGoType(el ElementDefinition) string {
 			return "any"
 		}
 
-		if !isValidGoIdentifier(fhirType) {
+		if !text.IsValidGoIdentifier(fhirType) {
 			return "any"
 		}
 
-		usedTypes[fhirType] = true
+		g.usedTypes[fhirType] = true
 		return fhirType
 	}
 }
@@ -82,41 +81,8 @@ func (g *Generator) deriveNestedTypeName(path string) string {
 	}
 	parts := strings.Split(path, ".")
 	for i := range parts {
-		// handle value[x]
 		parts[i] = strings.ReplaceAll(parts[i], "[x]", "")
-		parts[i] = titleCase(parts[i])
+		parts[i] = text.TitleCase(parts[i])
 	}
 	return strings.Join(parts, "")
-}
-
-func titleCase(s string) string {
-	if s == "" {
-		return ""
-	}
-	runes := []rune(s)
-	if len(runes) > 0 {
-		runes[0] = unicode.ToUpper(runes[0])
-	}
-	return string(runes)
-}
-
-func isValidGoIdentifier(s string) bool {
-	if s == "" {
-		return false
-	}
-	runes := []rune(s)
-	if len(runes) == 0 {
-		return false
-	}
-	first := runes[0]
-	if !unicode.IsLetter(first) && first != '_' {
-		return false
-	}
-	for i := 1; i < len(runes); i++ {
-		r := runes[i]
-		if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '_' {
-			return false
-		}
-	}
-	return true
 }

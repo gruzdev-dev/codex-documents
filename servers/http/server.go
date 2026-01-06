@@ -32,7 +32,6 @@ func (s *Server) Start() error {
 	router := mux.NewRouter()
 	router.Use(middleware.Logging())
 
-	// Health check endpoints for Kubernetes
 	router.HandleFunc("/healthz", func(w nethttp.ResponseWriter, r *nethttp.Request) {
 		w.WriteHeader(nethttp.StatusOK)
 		w.Write([]byte("OK"))

@@ -78,10 +78,9 @@ func TestWriteStruct_JSONTags(t *testing.T) {
 
 func TestWriteStruct_BSONTags(t *testing.T) {
 	tests := []struct {
-		name       string
-		fields     []FieldInfo
-		wantBSON   map[string]string
-		shouldFail bool
+		name     string
+		fields   []FieldInfo
+		wantBSON map[string]string
 	}{
 		{
 			name: "BSON tags should be present",
@@ -90,13 +89,28 @@ func TestWriteStruct_BSONTags(t *testing.T) {
 					Name:    "TestField",
 					GoType:  "string",
 					JSONTag: "`json:\"testField\"`",
+					BSONTag: "`bson:\"test_field\"`",
 					Comment: "Test field",
 				},
 			},
 			wantBSON: map[string]string{
 				"TestField": "test_field",
 			},
-			shouldFail: true,
+		},
+		{
+			name: "BSON tags with omitempty",
+			fields: []FieldInfo{
+				{
+					Name:    "OptionalField",
+					GoType:  "*string",
+					JSONTag: "`json:\"optionalField,omitempty\"`",
+					BSONTag: "`bson:\"optional_field,omitempty\"`",
+					Comment: "Optional field",
+				},
+			},
+			wantBSON: map[string]string{
+				"OptionalField": "optional_field,omitempty",
+			},
 		},
 	}
 
@@ -108,11 +122,12 @@ func TestWriteStruct_BSONTags(t *testing.T) {
 
 			output := buf.String()
 			for fieldName, wantBSON := range tt.wantBSON {
-				hasBSON := strings.Contains(output, "bson:")
-				if tt.shouldFail && !hasBSON {
-					t.Logf("Expected: BSON tags should be present but are not (this test is expected to fail until BSON support is added)")
-				} else if !tt.shouldFail && !hasBSON {
-					t.Errorf("BSON tag for field %s not found, want: %s", fieldName, wantBSON)
+				if !strings.Contains(output, fieldName) {
+					t.Errorf("field %s not found in output", fieldName)
+				}
+				bsonTagPattern := fmt.Sprintf("bson:\"%s\"", wantBSON)
+				if !strings.Contains(output, bsonTagPattern) {
+					t.Errorf("BSON tag for field %s not found, want: %s, got output: %s", fieldName, wantBSON, output)
 				}
 			}
 		})

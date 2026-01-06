@@ -8,7 +8,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"unicode"
+
+	"codex-documents/tools/text"
 )
 
 func (g *Generator) WriteResource(def StructureDefinition) error {
@@ -46,9 +47,6 @@ func (g *Generator) WriteResource(def StructureDefinition) error {
 
 	for usedType := range usedTypesInFile {
 		if _, exists := structMap[usedType]; !exists {
-			// Don't create empty structures for types from Definitions
-			// They will be generated as separate files through generator.go:75-84
-			// Only create empty structures for types that are not in Definitions (unknown types)
 			if _, defined := g.Definitions[usedType]; !defined {
 				structMap[usedType] = []FieldInfo{}
 			}
@@ -71,18 +69,15 @@ func (g *Generator) WriteResource(def StructureDefinition) error {
 		return fmt.Errorf("format error for %s at line %s: %w. Check debug_failed.go", def.Name, lineNum, err)
 	}
 
-	fileName := toSnakeCase(def.Name) + ".go"
+	fileName := text.ToSnakeCase(def.Name) + ".go"
 	return os.WriteFile(filepath.Join(g.OutputPath, fileName), formatted, 0644)
 }
 
 func (g *Generator) writeStruct(buf *bytes.Buffer, name, comment string, fields []FieldInfo) {
-	// Пропускаем пустые структуры, если они не определены в Definitions
-	// (типы из Definitions должны генерироваться даже если пустые, так как они могут быть зависимостями)
 	if len(fields) == 0 {
 		if _, defined := g.Definitions[name]; !defined {
 			return
 		}
-		// Для типов из Definitions генерируем пустую структуру с комментарием
 		if comment == "" {
 			comment = "Empty structure for " + name
 		}
@@ -96,16 +91,16 @@ func (g *Generator) writeStruct(buf *bytes.Buffer, name, comment string, fields 
 		goType := f.GoType
 		if after, ok := strings.CutPrefix(goType, "[]"); ok {
 			baseType := after
-			if !isValidGoIdentifier(baseType) && baseType != "any" && baseType != "json.RawMessage" {
+			if !text.IsValidGoIdentifier(baseType) && baseType != "any" && baseType != "json.RawMessage" {
 				goType = "[]any"
 			}
 		} else if strings.HasPrefix(goType, "*") {
 			baseType := strings.TrimPrefix(goType, "*")
-			if !isValidGoIdentifier(baseType) && baseType != "any" && baseType != "json.RawMessage" {
+			if !text.IsValidGoIdentifier(baseType) && baseType != "any" && baseType != "json.RawMessage" {
 				goType = "*any"
 			}
 		} else {
-			if !isValidGoIdentifier(goType) && goType != "any" && goType != "bool" && goType != "json.RawMessage" {
+			if !text.IsValidGoIdentifier(goType) && goType != "any" && goType != "bool" && goType != "json.RawMessage" {
 				goType = "any"
 			}
 		}
@@ -114,7 +109,21 @@ func (g *Generator) writeStruct(buf *bytes.Buffer, name, comment string, fields 
 		if f.Comment != "" {
 			commentPart = " // " + sanitizeComment(f.Comment)
 		}
-		fmt.Fprintf(buf, "\t%s %s %s%s\n", f.Name, goType, f.JSONTag, commentPart)
+		
+		jsonTagValue := strings.TrimPrefix(strings.TrimSuffix(f.JSONTag, "`"), "`json:")
+		jsonTagValue = strings.Trim(jsonTagValue, "\"")
+		
+		var tagParts []string
+		tagParts = append(tagParts, fmt.Sprintf("json:\"%s\"", jsonTagValue))
+		
+		if f.BSONTag != "" {
+			bsonTagValue := strings.TrimPrefix(strings.TrimSuffix(f.BSONTag, "`"), "`bson:")
+			bsonTagValue = strings.Trim(bsonTagValue, "\"")
+			tagParts = append(tagParts, fmt.Sprintf("bson:\"%s\"", bsonTagValue))
+		}
+		
+		tags := "`" + strings.Join(tagParts, " ") + "`"
+		fmt.Fprintf(buf, "\t%s %s %s%s\n", f.Name, goType, tags, commentPart)
 	}
 	fmt.Fprintf(buf, "}\n\n")
 }
@@ -133,17 +142,6 @@ func extractLineNumber(errMsg string) string {
 		return matches[1]
 	}
 	return "unknown"
-}
-
-func toSnakeCase(s string) string {
-	var res strings.Builder
-	for i, r := range s {
-		if unicode.IsUpper(r) && i > 0 {
-			res.WriteRune('_')
-		}
-		res.WriteRune(unicode.ToLower(r))
-	}
-	return res.String()
 }
 
 func extractBaseType(goType string) string {

@@ -3,12 +3,15 @@ package generator
 import (
 	"fmt"
 	"strings"
+
+	"codex-documents/tools/text"
 )
 
 type FieldInfo struct {
 	Name    string
 	GoType  string
 	JSONTag string
+	BSONTag string
 	Comment string
 }
 
@@ -35,11 +38,8 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 			structName = g.deriveNestedTypeName(parentPath)
 		}
 
-		// Handle contentReference before processing type
 		if el.ContentReference != "" && strings.HasPrefix(el.ContentReference, "#") {
-			// Extract path from contentReference (e.g., "#Observation.referenceRange" -> "Observation.referenceRange")
 			refPath := strings.TrimPrefix(el.ContentReference, "#")
-			// Use the referenced path to determine the type
 			goType := g.deriveNestedTypeName(refPath)
 			if goType == "" {
 				goType = "any"
@@ -47,7 +47,7 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 
 			cleanName := strings.ReplaceAll(lastPart, "[x]", "")
 			cleanName = strings.ReplaceAll(cleanName, "-", "_")
-			cleanName = titleCase(cleanName)
+			cleanName = text.TitleCase(cleanName)
 
 			if cleanName == "" {
 				continue
@@ -58,7 +58,6 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 			} else if el.Min == 0 && !strings.HasPrefix(goType, "[]") && goType != "bool" && goType != "json.RawMessage" && goType != "any" {
 				goType = "*" + goType
 			} else if el.Min > 0 && !strings.HasPrefix(goType, "[]") {
-				// For required non-primitive types (like Reference, custom types), always use pointer except for arrays and built-in types
 				isPrimitive := goType == "bool" || goType == "string" || goType == "int" || goType == "int64" || goType == "float64" || goType == "json.RawMessage" || goType == "any"
 				if !isPrimitive {
 					goType = "*" + goType
@@ -70,11 +69,13 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 			if el.Min == 0 {
 				jsonTag = fmt.Sprintf("`json:\"%s,omitempty\"`", escapedTag)
 			}
+			bsonTag := generateBSONTag(cleanName, el.Min == 0)
 
 			structs[structName] = append(structs[structName], FieldInfo{
 				Name:    cleanName,
 				GoType:  goType,
 				JSONTag: jsonTag,
+				BSONTag: bsonTag,
 				Comment: el.Short,
 			})
 			continue
@@ -88,12 +89,13 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 
 				goType := g.mapGoType(singleTypeEl)
 
-				typeSuffix := titleCase(fhirType.Code)
-				fieldName := titleCase(baseName) + typeSuffix
+				typeSuffix := text.TitleCase(fhirType.Code)
+				fieldName := text.TitleCase(baseName) + typeSuffix
 				jsonTag := fmt.Sprintf("`json:\"%s%s\"`", baseName, typeSuffix)
 				if el.Min == 0 {
 					jsonTag = fmt.Sprintf("`json:\"%s%s,omitempty\"`", baseName, typeSuffix)
 				}
+				bsonTag := generateBSONTag(fieldName, el.Min == 0)
 
 				if !strings.HasPrefix(goType, "*") && !strings.HasPrefix(goType, "[]") && goType != "any" {
 					goType = "*" + goType
@@ -103,6 +105,7 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 					Name:    fieldName,
 					GoType:  goType,
 					JSONTag: jsonTag,
+					BSONTag: bsonTag,
 					Comment: el.Short,
 				})
 			}
@@ -123,7 +126,7 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 
 		cleanName := strings.ReplaceAll(lastPart, "[x]", "")
 		cleanName = strings.ReplaceAll(cleanName, "-", "_")
-		cleanName = titleCase(cleanName)
+		cleanName = text.TitleCase(cleanName)
 
 		if cleanName == "" {
 			continue
@@ -134,7 +137,6 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 		} else if el.Min == 0 && !strings.HasPrefix(goType, "[]") && goType != "bool" && goType != "json.RawMessage" && goType != "any" {
 			goType = "*" + goType
 		} else if el.Min > 0 && !strings.HasPrefix(goType, "[]") {
-			// For required non-primitive types (like Reference, custom types), always use pointer except for arrays and built-in types
 			isPrimitive := goType == "bool" || goType == "string" || goType == "int" || goType == "int64" || goType == "float64" || goType == "json.RawMessage" || goType == "any"
 			if !isPrimitive {
 				goType = "*" + goType
@@ -146,13 +148,24 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 		if el.Min == 0 {
 			jsonTag = fmt.Sprintf("`json:\"%s,omitempty\"`", escapedTag)
 		}
+		bsonTag := generateBSONTag(cleanName, el.Min == 0)
 
 		structs[structName] = append(structs[structName], FieldInfo{
 			Name:    cleanName,
 			GoType:  goType,
 			JSONTag: jsonTag,
+			BSONTag: bsonTag,
 			Comment: el.Short,
 		})
 	}
 	return structs
+}
+
+func generateBSONTag(fieldName string, hasOmitEmpty bool) string {
+	snakeName := text.ToSnakeCase(fieldName)
+	bsonTag := fmt.Sprintf("`bson:\"%s\"`", snakeName)
+	if hasOmitEmpty {
+		bsonTag = fmt.Sprintf("`bson:\"%s,omitempty\"`", snakeName)
+	}
+	return bsonTag
 }

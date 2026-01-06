@@ -56,44 +56,6 @@ func TestNewGenerator(t *testing.T) {
 	}
 }
 
-func TestToSnakeCase(t *testing.T) {
-	tests := []struct {
-		name  string
-		input string
-		want  string
-	}{
-		{
-			name:  "simple case",
-			input: "Patient",
-			want:  "patient",
-		},
-		{
-			name:  "multiple words",
-			input: "DocumentReference",
-			want:  "document_reference",
-		},
-		{
-			name:  "single word lowercase",
-			input: "observation",
-			want:  "observation",
-		},
-		{
-			name:  "mixed case",
-			input: "CodeableConcept",
-			want:  "codeable_concept",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := toSnakeCase(tt.input)
-			if got != tt.want {
-				t.Errorf("toSnakeCase(%v) = %v, want %v", tt.input, got, tt.want)
-			}
-		})
-	}
-}
-
 func TestExtractBaseType(t *testing.T) {
 	tests := []struct {
 		name  string
@@ -195,55 +157,3 @@ func TestIsBuiltinType(t *testing.T) {
 	}
 }
 
-func TestIsValidGoIdentifier(t *testing.T) {
-	tests := []struct {
-		name  string
-		input string
-		want  bool
-	}{
-		{
-			name:  "valid identifier",
-			input: "Patient",
-			want:  true,
-		},
-		{
-			name:  "valid identifier with underscore",
-			input: "Test_Resource",
-			want:  true,
-		},
-		{
-			name:  "valid identifier starting with underscore",
-			input: "_private",
-			want:  true,
-		},
-		{
-			name:  "invalid identifier starting with number",
-			input: "123Invalid",
-			want:  false,
-		},
-		{
-			name:  "invalid identifier with dash",
-			input: "test-resource",
-			want:  false,
-		},
-		{
-			name:  "invalid identifier with space",
-			input: "test resource",
-			want:  false,
-		},
-		{
-			name:  "empty string",
-			input: "",
-			want:  false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := isValidGoIdentifier(tt.input)
-			if got != tt.want {
-				t.Errorf("isValidGoIdentifier(%v) = %v, want %v", tt.input, got, tt.want)
-			}
-		})
-	}
-}

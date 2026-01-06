@@ -87,7 +87,6 @@ func TestMapGoType_PrimitiveTypes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			usedTypes = make(map[string]bool)
 			g := NewGenerator("", "", nil)
 			got := g.mapGoType(tt.element)
 
@@ -96,11 +95,11 @@ func TestMapGoType_PrimitiveTypes(t *testing.T) {
 			}
 
 			if tt.wantUsed {
-				if !usedTypes[tt.want] {
+				if !g.usedTypes[tt.want] {
 					t.Errorf("type %s should be added to usedTypes", tt.want)
 				}
 			} else {
-				if usedTypes[tt.want] {
+				if g.usedTypes[tt.want] {
 					t.Errorf("primitive type %s should not be added to usedTypes", tt.want)
 				}
 			}
@@ -141,7 +140,6 @@ func TestMapGoType_ReferenceTypes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			usedTypes = make(map[string]bool)
 			g := NewGenerator("", "", nil)
 			got := g.mapGoType(tt.element)
 
@@ -150,7 +148,7 @@ func TestMapGoType_ReferenceTypes(t *testing.T) {
 			}
 
 			if tt.wantUsed {
-				if !usedTypes[tt.want] {
+				if !g.usedTypes[tt.want] {
 					t.Errorf("type %s should be added to usedTypes", tt.want)
 				}
 			}
@@ -182,7 +180,6 @@ func TestMapGoType_ReferenceTargetProfile(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			usedTypes = make(map[string]bool)
 			g := NewGenerator("", "", nil)
 			got := g.mapGoType(tt.element)
 
@@ -191,7 +188,7 @@ func TestMapGoType_ReferenceTargetProfile(t *testing.T) {
 			}
 
 			if tt.shouldNotGenerateTargets {
-				if usedTypes["Patient"] || usedTypes["Organization"] {
+				if g.usedTypes["Patient"] || g.usedTypes["Organization"] {
 					t.Errorf("targetProfile models should not be added to usedTypes automatically")
 				}
 			}
@@ -303,16 +300,15 @@ func TestMapGoType_UsedTypesTracking(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			usedTypes = make(map[string]bool)
 			g := NewGenerator("", "", nil)
 			_ = g.mapGoType(tt.element)
 
 			if tt.wantUsed {
-				if !usedTypes[tt.wantType] {
+				if !g.usedTypes[tt.wantType] {
 					t.Errorf("type %s should be added to usedTypes", tt.wantType)
 				}
 			} else {
-				if usedTypes[tt.wantType] {
+				if g.usedTypes[tt.wantType] {
 					t.Errorf("primitive type %s should not be added to usedTypes", tt.wantType)
 				}
 			}
@@ -322,24 +318,22 @@ func TestMapGoType_UsedTypesTracking(t *testing.T) {
 
 func TestMapGoType_UsedTypesIsolation(t *testing.T) {
 	t.Run("usedTypes should be isolated between calls", func(t *testing.T) {
-		usedTypes = make(map[string]bool)
 		g1 := NewGenerator("", "", nil)
 		_ = g1.mapGoType(ElementDefinition{
 			Path: "TestResource.field1",
 			Type: []ElementDataType{{Code: "TypeA"}},
 		})
 
-		usedTypes = make(map[string]bool)
 		g2 := NewGenerator("", "", nil)
 		_ = g2.mapGoType(ElementDefinition{
 			Path: "TestResource.field2",
 			Type: []ElementDataType{{Code: "TypeB"}},
 		})
 
-		if usedTypes["TypeA"] {
-			t.Errorf("usedTypes should be isolated - TypeA should not be present after second call")
+		if g2.usedTypes["TypeA"] {
+			t.Errorf("usedTypes should be isolated - TypeA should not be present in second generator")
 		}
-		if !usedTypes["TypeB"] {
+		if !g2.usedTypes["TypeB"] {
 			t.Errorf("usedTypes should contain TypeB after second call")
 		}
 	})
