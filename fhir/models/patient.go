@@ -45,13 +45,13 @@ type PatientContact struct {
 }
 
 type PatientCommunication struct {
-	Id        *string         `json:"id,omitempty"`        // Unique id for inter-element referencing
-	Language  CodeableConcept `json:"language,omitempty"`  // The language which can be used to communicate with the patient about his or her health
-	Preferred bool            `json:"preferred,omitempty"` // Language preference indicator
+	Id        *string          `json:"id,omitempty"`        // Unique id for inter-element referencing
+	Language  *CodeableConcept `json:"language"`            // The language which can be used to communicate with the patient about his or her health
+	Preferred bool             `json:"preferred,omitempty"` // Language preference indicator
 }
 
 type PatientLink struct {
-	Id    *string   `json:"id,omitempty"`    // Unique id for inter-element referencing
-	Other Reference `json:"other,omitempty"` // The other patient or related person resource that the link refers to
-	Type  string    `json:"type,omitempty"`  // replaced-by | replaces | refer | seealso
+	Id    *string    `json:"id,omitempty"` // Unique id for inter-element referencing
+	Other *Reference `json:"other"`        // The other patient or related person resource that the link refers to
+	Type  string     `json:"type"`         // replaced-by | replaces | refer | seealso
 }

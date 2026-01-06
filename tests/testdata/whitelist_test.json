@@ -1,0 +1,126 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/WhitelistResource1",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "WhitelistResource1",
+        "name": "WhitelistResource1",
+        "description": "Resource that should be in whitelist",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "WhitelistResource1",
+              "path": "WhitelistResource1",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "WhitelistResource1.id",
+              "path": "WhitelistResource1.id",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ]
+            },
+            {
+              "id": "WhitelistResource1.dependency",
+              "path": "WhitelistResource1.dependency",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "DependencyType"
+                }
+              ],
+              "short": "Uses DependencyType (should be generated)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/DependencyType",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "DependencyType",
+        "name": "DependencyType",
+        "description": "Type used by WhitelistResource1 (should be generated as dependency)",
+        "kind": "datatype",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "DependencyType",
+              "path": "DependencyType",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "DependencyType.id",
+              "path": "DependencyType.id",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ]
+            },
+            {
+              "id": "DependencyType.value",
+              "path": "DependencyType.value",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/NotInWhitelistResource",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "NotInWhitelistResource",
+        "name": "NotInWhitelistResource",
+        "description": "Resource not in whitelist and not a dependency (should NOT be generated)",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "NotInWhitelistResource",
+              "path": "NotInWhitelistResource",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "NotInWhitelistResource.id",
+              "path": "NotInWhitelistResource.id",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,82 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/ReferenceTestResource",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "ReferenceTestResource",
+        "name": "ReferenceTestResource",
+        "description": "Test resource for testing Reference types with and without targetProfile",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "ReferenceTestResource",
+              "path": "ReferenceTestResource",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "ReferenceTestResource.id",
+              "path": "ReferenceTestResource.id",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ]
+            },
+            {
+              "id": "ReferenceTestResource.referenceWithoutTarget",
+              "path": "ReferenceTestResource.referenceWithoutTarget",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "Reference"
+                }
+              ],
+              "short": "Reference without targetProfile"
+            },
+            {
+              "id": "ReferenceTestResource.referenceWithSingleTarget",
+              "path": "ReferenceTestResource.referenceWithSingleTarget",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "Reference",
+                  "targetProfile": [
+                    "http://hl7.org/fhir/StructureDefinition/Patient"
+                  ]
+                }
+              ],
+              "short": "Reference with single targetProfile (Patient)"
+            },
+            {
+              "id": "ReferenceTestResource.referenceWithMultipleTargets",
+              "path": "ReferenceTestResource.referenceWithMultipleTargets",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "Reference",
+                  "targetProfile": [
+                    "http://hl7.org/fhir/StructureDefinition/Patient",
+                    "http://hl7.org/fhir/StructureDefinition/Organization"
+                  ]
+                }
+              ],
+              "short": "Reference with multiple targetProfiles"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

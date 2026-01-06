@@ -1,0 +1,88 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/SimpleTestResource",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "SimpleTestResource",
+        "name": "SimpleTestResource",
+        "description": "Simple test resource for testing required and optional fields",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "SimpleTestResource",
+              "path": "SimpleTestResource",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "SimpleTestResource.id",
+              "path": "SimpleTestResource.id",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ],
+              "short": "Logical id"
+            },
+            {
+              "id": "SimpleTestResource.requiredField",
+              "path": "SimpleTestResource.requiredField",
+              "min": 1,
+              "max": "1",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ],
+              "short": "Required field (min: 1)"
+            },
+            {
+              "id": "SimpleTestResource.optionalField",
+              "path": "SimpleTestResource.optionalField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ],
+              "short": "Optional field (min: 0)"
+            },
+            {
+              "id": "SimpleTestResource.requiredArray",
+              "path": "SimpleTestResource.requiredArray",
+              "min": 2,
+              "max": "*",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ],
+              "short": "Required array (min: 2)"
+            },
+            {
+              "id": "SimpleTestResource.optionalArray",
+              "path": "SimpleTestResource.optionalArray",
+              "min": 0,
+              "max": "*",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ],
+              "short": "Optional array (min: 0)"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

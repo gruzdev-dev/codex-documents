@@ -1,0 +1,40 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/TimingRepeat",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "TimingRepeat",
+        "name": "TimingRepeat",
+        "description": "Test resource that uses Duration type",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "TimingRepeat",
+              "path": "TimingRepeat",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "TimingRepeat.boundsDuration",
+              "path": "TimingRepeat.boundsDuration",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "Duration"
+                }
+              ],
+              "short": "Length/Range of lengths"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

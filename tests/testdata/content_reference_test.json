@@ -1,0 +1,72 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/TestResourceWithContentRef",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "TestResourceWithContentRef",
+        "name": "TestResourceWithContentRef",
+        "description": "Test resource with contentReference",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "TestResourceWithContentRef",
+              "path": "TestResourceWithContentRef",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "TestResourceWithContentRef.referenceRange",
+              "path": "TestResourceWithContentRef.referenceRange",
+              "min": 0,
+              "max": "*",
+              "type": [
+                {
+                  "code": "BackboneElement"
+                }
+              ],
+              "short": "Reference range"
+            },
+            {
+              "id": "TestResourceWithContentRef.referenceRange.low",
+              "path": "TestResourceWithContentRef.referenceRange.low",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "Quantity"
+                }
+              ],
+              "short": "Low range"
+            },
+            {
+              "id": "TestResourceWithContentRef.component",
+              "path": "TestResourceWithContentRef.component",
+              "min": 0,
+              "max": "*",
+              "type": [
+                {
+                  "code": "BackboneElement"
+                }
+              ],
+              "short": "Component"
+            },
+            {
+              "id": "TestResourceWithContentRef.component.referenceRange",
+              "path": "TestResourceWithContentRef.component.referenceRange",
+              "min": 0,
+              "max": "*",
+              "contentReference": "#TestResourceWithContentRef.referenceRange",
+              "short": "Component reference range"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

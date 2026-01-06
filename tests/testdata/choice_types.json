@@ -1,0 +1,60 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/ChoiceTypesTestResource",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "ChoiceTypesTestResource",
+        "name": "ChoiceTypesTestResource",
+        "description": "Test resource for testing choice types [x]",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "ChoiceTypesTestResource",
+              "path": "ChoiceTypesTestResource",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "ChoiceTypesTestResource.id",
+              "path": "ChoiceTypesTestResource.id",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ]
+            },
+            {
+              "id": "ChoiceTypesTestResource.value[x]",
+              "path": "ChoiceTypesTestResource.value[x]",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "string"
+                },
+                {
+                  "code": "integer"
+                },
+                {
+                  "code": "boolean"
+                },
+                {
+                  "code": "date"
+                }
+              ],
+              "short": "Choice type field with multiple types"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,134 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/NestedStructuresTestResource",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "NestedStructuresTestResource",
+        "name": "NestedStructuresTestResource",
+        "description": "Test resource for testing nested BackboneElement structures",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "NestedStructuresTestResource",
+              "path": "NestedStructuresTestResource",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "NestedStructuresTestResource.id",
+              "path": "NestedStructuresTestResource.id",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ]
+            },
+            {
+              "id": "NestedStructuresTestResource.nestedWithFields",
+              "path": "NestedStructuresTestResource.nestedWithFields",
+              "min": 0,
+              "max": "*",
+              "type": [
+                {
+                  "code": "BackboneElement"
+                }
+              ],
+              "short": "Nested structure with fields"
+            },
+            {
+              "id": "NestedStructuresTestResource.nestedWithFields.id",
+              "path": "NestedStructuresTestResource.nestedWithFields.id",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ]
+            },
+            {
+              "id": "NestedStructuresTestResource.nestedWithFields.field1",
+              "path": "NestedStructuresTestResource.nestedWithFields.field1",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ],
+              "short": "First field in nested structure"
+            },
+            {
+              "id": "NestedStructuresTestResource.nestedWithFields.field2",
+              "path": "NestedStructuresTestResource.nestedWithFields.field2",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "integer"
+                }
+              ],
+              "short": "Second field in nested structure"
+            },
+            {
+              "id": "NestedStructuresTestResource.nestedEmpty",
+              "path": "NestedStructuresTestResource.nestedEmpty",
+              "min": 0,
+              "max": "*",
+              "type": [
+                {
+                  "code": "BackboneElement"
+                }
+              ],
+              "short": "Empty nested structure (no child fields)"
+            },
+            {
+              "id": "NestedStructuresTestResource.deeplyNested",
+              "path": "NestedStructuresTestResource.deeplyNested",
+              "min": 0,
+              "max": "*",
+              "type": [
+                {
+                  "code": "BackboneElement"
+                }
+              ],
+              "short": "Deeply nested structure"
+            },
+            {
+              "id": "NestedStructuresTestResource.deeplyNested.level2",
+              "path": "NestedStructuresTestResource.deeplyNested.level2",
+              "min": 0,
+              "max": "*",
+              "type": [
+                {
+                  "code": "BackboneElement"
+                }
+              ],
+              "short": "Second level nesting"
+            },
+            {
+              "id": "NestedStructuresTestResource.deeplyNested.level2.level3",
+              "path": "NestedStructuresTestResource.deeplyNested.level2.level3",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ],
+              "short": "Third level field"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

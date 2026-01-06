@@ -46,6 +46,9 @@ func (g *Generator) WriteResource(def StructureDefinition) error {
 
 	for usedType := range usedTypesInFile {
 		if _, exists := structMap[usedType]; !exists {
+			// Don't create empty structures for types from Definitions
+			// They will be generated as separate files through generator.go:75-84
+			// Only create empty structures for types that are not in Definitions (unknown types)
 			if _, defined := g.Definitions[usedType]; !defined {
 				structMap[usedType] = []FieldInfo{}
 			}
@@ -73,6 +76,18 @@ func (g *Generator) WriteResource(def StructureDefinition) error {
 }
 
 func (g *Generator) writeStruct(buf *bytes.Buffer, name, comment string, fields []FieldInfo) {
+	// Пропускаем пустые структуры, если они не определены в Definitions
+	// (типы из Definitions должны генерироваться даже если пустые, так как они могут быть зависимостями)
+	if len(fields) == 0 {
+		if _, defined := g.Definitions[name]; !defined {
+			return
+		}
+		// Для типов из Definitions генерируем пустую структуру с комментарием
+		if comment == "" {
+			comment = "Empty structure for " + name
+		}
+	}
+
 	if comment != "" {
 		fmt.Fprintf(buf, "// %s\n", sanitizeComment(comment))
 	}

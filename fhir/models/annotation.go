@@ -6,5 +6,5 @@ type Annotation struct {
 	AuthorReference *Reference `json:"authorReference,omitempty"` // Individual responsible for the annotation
 	AuthorString    *string    `json:"authorString,omitempty"`    // Individual responsible for the annotation
 	Time            *string    `json:"time,omitempty"`            // When the annotation was made
-	Text            string     `json:"text,omitempty"`            // The annotation  - text content (as markdown)
+	Text            string     `json:"text"`                      // The annotation  - text content (as markdown)
 }

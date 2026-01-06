@@ -1,0 +1,40 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/TestResourceWithRequiredReference",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "TestResourceWithRequiredReference",
+        "name": "TestResourceWithRequiredReference",
+        "description": "Test resource with required Reference field",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "TestResourceWithRequiredReference",
+              "path": "TestResourceWithRequiredReference",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "TestResourceWithRequiredReference.requiredRef",
+              "path": "TestResourceWithRequiredReference.requiredRef",
+              "min": 1,
+              "max": "1",
+              "type": [
+                {
+                  "code": "Reference"
+                }
+              ],
+              "short": "Required reference field"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

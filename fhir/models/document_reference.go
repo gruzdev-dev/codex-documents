@@ -13,7 +13,7 @@ type DocumentReference struct {
 	Identifier      []Identifier                 `json:"identifier,omitempty"`      // Business identifiers for the document
 	Version         *string                      `json:"version,omitempty"`         // An explicitly assigned identifier of a variation of the content in the DocumentReference
 	BasedOn         []Reference                  `json:"basedOn,omitempty"`         // Procedure that caused this media to be created
-	Status          string                       `json:"status,omitempty"`          // current | superseded | entered-in-error
+	Status          string                       `json:"status"`                    // current | superseded | entered-in-error
 	DocStatus       *string                      `json:"docStatus,omitempty"`       // registered | partial | preliminary | final | amended | corrected | appended | cancelled | entered-in-error | deprecated | unknown
 	Modality        []CodeableConcept            `json:"modality,omitempty"`        // Imaging modality used
 	Type            *CodeableConcept             `json:"type,omitempty"`            // Kind of document (LOINC if possible)
@@ -33,31 +33,31 @@ type DocumentReference struct {
 	RelatesTo       []DocumentReferenceRelatesTo `json:"relatesTo,omitempty"`       // Relationships to other documents
 	Description     *string                      `json:"description,omitempty"`     // Human-readable description
 	SecurityLabel   []CodeableConcept            `json:"securityLabel,omitempty"`   // Document security-tags
-	Content         []DocumentReferenceContent   `json:"content,omitempty"`         // Document referenced
-}
-
-type DocumentReferenceRelatesTo struct {
-	Id     *string         `json:"id,omitempty"`     // Unique id for inter-element referencing
-	Code   CodeableConcept `json:"code,omitempty"`   // The relationship type with another document
-	Target Reference       `json:"target,omitempty"` // Target of the relationship
-}
-
-type DocumentReferenceContent struct {
-	Id         *string                           `json:"id,omitempty"`         // Unique id for inter-element referencing
-	Attachment Attachment                        `json:"attachment,omitempty"` // Where to access the document
-	Profile    []DocumentReferenceContentProfile `json:"profile,omitempty"`    // Content profile rules for the document
-}
-
-type DocumentReferenceContentProfile struct {
-	Id             *string `json:"id,omitempty"`             // Unique id for inter-element referencing
-	ValueCoding    *Coding `json:"valueCoding,omitempty"`    // Code|uri|canonical
-	ValueUri       *string `json:"valueUri,omitempty"`       // Code|uri|canonical
-	ValueCanonical *string `json:"valueCanonical,omitempty"` // Code|uri|canonical
+	Content         []DocumentReferenceContent   `json:"content"`                   // Document referenced
 }
 
 type DocumentReferenceAttester struct {
-	Id    *string         `json:"id,omitempty"`    // Unique id for inter-element referencing
-	Mode  CodeableConcept `json:"mode,omitempty"`  // personal | professional | legal | official
-	Time  *string         `json:"time,omitempty"`  // When the document was attested
-	Party *Reference      `json:"party,omitempty"` // Who attested the document
+	Id    *string          `json:"id,omitempty"`    // Unique id for inter-element referencing
+	Mode  *CodeableConcept `json:"mode"`            // personal | professional | legal | official
+	Time  *string          `json:"time,omitempty"`  // When the document was attested
+	Party *Reference       `json:"party,omitempty"` // Who attested the document
+}
+
+type DocumentReferenceRelatesTo struct {
+	Id     *string          `json:"id,omitempty"` // Unique id for inter-element referencing
+	Code   *CodeableConcept `json:"code"`         // The relationship type with another document
+	Target *Reference       `json:"target"`       // Target of the relationship
+}
+
+type DocumentReferenceContent struct {
+	Id         *string                           `json:"id,omitempty"`      // Unique id for inter-element referencing
+	Attachment *Attachment                       `json:"attachment"`        // Where to access the document
+	Profile    []DocumentReferenceContentProfile `json:"profile,omitempty"` // Content profile rules for the document
+}
+
+type DocumentReferenceContentProfile struct {
+	Id             *string `json:"id,omitempty"`   // Unique id for inter-element referencing
+	ValueCoding    *Coding `json:"valueCoding"`    // Code|uri|canonical
+	ValueUri       *string `json:"valueUri"`       // Code|uri|canonical
+	ValueCanonical *string `json:"valueCanonical"` // Code|uri|canonical
 }

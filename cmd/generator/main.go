@@ -5,12 +5,13 @@ import (
 	"log"
 )
 
+//go:generate go run main.go
 func main() {
 	whitelist := []string{
 		"Patient", "DocumentReference", "Observation",
 	}
 
-	gen := generator.NewGenerator("fhir/spec", "fhir/models", whitelist)
+	gen := generator.NewGenerator("../../fhir/spec", "../../fhir/models", whitelist)
 
 	log.Println("Loading official FHIR StructureDefinitions...")
 

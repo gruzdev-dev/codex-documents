@@ -1,0 +1,204 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "http://hl7.org/fhir/StructureDefinition/PrimitiveTypesTestResource",
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "PrimitiveTypesTestResource",
+        "name": "PrimitiveTypesTestResource",
+        "description": "Test resource for testing all primitive FHIR types",
+        "kind": "resource",
+        "abstract": false,
+        "snapshot": {
+          "element": [
+            {
+              "id": "PrimitiveTypesTestResource",
+              "path": "PrimitiveTypesTestResource",
+              "min": 0,
+              "max": "*"
+            },
+            {
+              "id": "PrimitiveTypesTestResource.stringField",
+              "path": "PrimitiveTypesTestResource.stringField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.booleanField",
+              "path": "PrimitiveTypesTestResource.booleanField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "boolean"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.integerField",
+              "path": "PrimitiveTypesTestResource.integerField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "integer"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.integer64Field",
+              "path": "PrimitiveTypesTestResource.integer64Field",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "integer64"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.decimalField",
+              "path": "PrimitiveTypesTestResource.decimalField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "decimal"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.dateField",
+              "path": "PrimitiveTypesTestResource.dateField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "date"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.dateTimeField",
+              "path": "PrimitiveTypesTestResource.dateTimeField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "dateTime"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.timeField",
+              "path": "PrimitiveTypesTestResource.timeField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "time"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.instantField",
+              "path": "PrimitiveTypesTestResource.instantField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "instant"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.uriField",
+              "path": "PrimitiveTypesTestResource.uriField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "uri"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.urlField",
+              "path": "PrimitiveTypesTestResource.urlField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "url"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.canonicalField",
+              "path": "PrimitiveTypesTestResource.canonicalField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "canonical"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.codeField",
+              "path": "PrimitiveTypesTestResource.codeField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "code"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.idField",
+              "path": "PrimitiveTypesTestResource.idField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "id"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.markdownField",
+              "path": "PrimitiveTypesTestResource.markdownField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "markdown"
+                }
+              ]
+            },
+            {
+              "id": "PrimitiveTypesTestResource.base64BinaryField",
+              "path": "PrimitiveTypesTestResource.base64BinaryField",
+              "min": 0,
+              "max": "1",
+              "type": [
+                {
+                  "code": "base64Binary"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+
