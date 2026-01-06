@@ -1,6 +1,9 @@
 # github.com/gorilla/mux v1.8.1
 ## explicit; go 1.20
 github.com/gorilla/mux
+# github.com/gruzdev-dev/fhir v0.0.1
+## explicit; go 1.25.5
+github.com/gruzdev-dev/fhir/r5
 # go.uber.org/dig v1.17.1
 ## explicit; go 1.20
 go.uber.org/dig

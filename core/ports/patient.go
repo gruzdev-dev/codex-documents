@@ -1,7 +1,7 @@
 package ports
 
 import (
-	"codex-documents/fhir/models"
+	models "github.com/gruzdev-dev/fhir/r5"
 	"context"
 )
 
