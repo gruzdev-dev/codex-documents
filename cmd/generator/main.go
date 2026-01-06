@@ -7,8 +7,7 @@ import (
 
 func main() {
 	whitelist := []string{
-		"Patient", "DocumentReference", "Binary", "Observation",
-		"Bundle", "OperationOutcome", "Encounter", "Practitioner",
+		"Patient", "DocumentReference", "Observation",
 	}
 
 	gen := generator.NewGenerator("fhir/spec", "fhir/models", whitelist)
