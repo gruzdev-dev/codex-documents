@@ -36,6 +36,26 @@ type ElementDefinition struct {
 	ContentReference string            `json:"contentReference,omitempty"`
 	Short            string            `json:"short"`
 	Definition       string            `json:"definition,omitempty"`
+	Binding          *Binding          `json:"binding,omitempty"`
+	Constraint       []Constraint      `json:"constraint,omitempty"`
+	MaxLength        *int              `json:"maxLength,omitempty"`
+	Pattern          string            `json:"pattern,omitempty"`
+	Fixed            any               `json:"fixed,omitempty"`
+}
+
+type Binding struct {
+	Strength    string `json:"strength,omitempty"`
+	Description string `json:"description,omitempty"`
+	ValueSet    string `json:"valueSet,omitempty"`
+	Extension   []any  `json:"extension,omitempty"`
+}
+
+type Constraint struct {
+	Key        string `json:"key"`
+	Severity   string `json:"severity"`
+	Human      string `json:"human"`
+	Expression string `json:"expression"`
+	Source     string `json:"source,omitempty"`
 }
 
 type ElementDataType struct {

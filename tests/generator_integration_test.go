@@ -560,3 +560,80 @@ func TestGenerator_ContentReference(t *testing.T) {
 		t.Errorf("contentReference type TestResourceWithContentRefReferenceRange should be present")
 	}
 }
+
+func TestGenerator_ParseBindingAndConstraint(t *testing.T) {
+	spec, err := loadTestSpec("documentreference")
+	if err != nil {
+		t.Fatalf("loadTestSpec() error = %v", err)
+	}
+
+	var hasBinding bool
+	var hasConstraint bool
+
+	for _, el := range spec.Snapshot.Element {
+		if el.Binding != nil {
+			hasBinding = true
+			if el.Binding.Strength == "" && el.Binding.ValueSet == "" {
+				t.Error("Binding should have at least strength or valueSet")
+			}
+		}
+
+		if len(el.Constraint) > 0 {
+			hasConstraint = true
+			for _, c := range el.Constraint {
+				if c.Key == "" {
+					t.Error("Constraint should have key")
+				}
+				if c.Severity == "" {
+					t.Error("Constraint should have severity")
+				}
+				if c.Human == "" {
+					t.Error("Constraint should have human description")
+				}
+				if c.Expression == "" {
+					t.Error("Constraint should have expression")
+				}
+			}
+		}
+
+		if el.MaxLength != nil && *el.MaxLength <= 0 {
+			t.Error("MaxLength should be positive")
+		}
+	}
+
+	if !hasBinding {
+		t.Error("DocumentReference spec should have at least one element with binding")
+	}
+
+	if !hasConstraint {
+		t.Error("DocumentReference spec should have at least one element with constraint")
+	}
+
+	outputDir, cleanup, err := createTempOutputDir()
+	if err != nil {
+		t.Fatalf("createTempOutputDir() error = %v", err)
+	}
+	defer cleanup()
+
+	g := generator.NewGenerator("", outputDir, []string{"DocumentReference"})
+	g.Definitions[spec.Name] = spec
+
+	if err := g.WriteResource(spec); err != nil {
+		t.Fatalf("WriteResource() error = %v", err)
+	}
+
+	fileName := "document_reference.go"
+	filePath := filepath.Join(outputDir, fileName)
+	generatedCode, err := os.ReadFile(filePath)
+	if err != nil {
+		t.Fatalf("ReadFile() error = %v", err)
+	}
+
+	if _, err := parseGeneratedCode(string(generatedCode)); err != nil {
+		t.Errorf("parseGeneratedCode() error = %v, code should be valid Go", err)
+	}
+
+	if !strings.Contains(string(generatedCode), "type DocumentReference struct") {
+		t.Errorf("generated code should contain struct DocumentReference")
+	}
+}

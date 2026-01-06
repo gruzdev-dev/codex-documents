@@ -30,6 +30,18 @@ type Patient struct {
 	Link                 []PatientLink          `json:"link,omitempty" bson:"link,omitempty"`                                   // Link to a Patient or RelatedPerson resource that concerns the same actual individual
 }
 
+type PatientCommunication struct {
+	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Language  *CodeableConcept `json:"language" bson:"language"`                       // The language which can be used to communicate with the patient about his or her health
+	Preferred bool             `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
+}
+
+type PatientLink struct {
+	Id    *string    `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Other *Reference `json:"other" bson:"other"`               // The other patient or related person resource that the link refers to
+	Type  string     `json:"type" bson:"type"`                 // replaced-by | replaces | refer | seealso
+}
+
 type PatientContact struct {
 	Id                *string           `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
 	Relationship      []CodeableConcept `json:"relationship,omitempty" bson:"relationship,omitempty"`            // The kind of personal relationship
@@ -42,16 +54,4 @@ type PatientContact struct {
 	Gender            *string           `json:"gender,omitempty" bson:"gender,omitempty"`                        // male | female | other | unknown
 	Organization      *Reference        `json:"organization,omitempty" bson:"organization,omitempty"`            // Organization that is associated with the contact
 	Period            *Period           `json:"period,omitempty" bson:"period,omitempty"`                        // The period during which this contact person or organization is valid to be contacted relating to this patient
-}
-
-type PatientCommunication struct {
-	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Language  *CodeableConcept `json:"language" bson:"language"`                       // The language which can be used to communicate with the patient about his or her health
-	Preferred bool             `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
-}
-
-type PatientLink struct {
-	Id    *string    `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Other *Reference `json:"other" bson:"other"`               // The other patient or related person resource that the link refers to
-	Type  string     `json:"type" bson:"type"`                 // replaced-by | replaces | refer | seealso
 }
