@@ -9,3 +9,7 @@ type Duration struct {
 	System     *string  `json:"system,omitempty" bson:"system,omitempty"`         // System that defines coded unit form
 	Code       *string  `json:"code,omitempty" bson:"code,omitempty"`             // Coded form of the unit
 }
+
+func (r *Duration) Validate() error {
+	return nil
+}

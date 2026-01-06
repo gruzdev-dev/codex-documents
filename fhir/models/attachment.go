@@ -17,3 +17,7 @@ type Attachment struct {
 	Duration    *float64 `json:"duration,omitempty" bson:"duration,omitempty"`        // Length in seconds (audio / video)
 	Pages       *int     `json:"pages,omitempty" bson:"pages,omitempty"`              // Number of printed pages
 }
+
+func (r *Attachment) Validate() error {
+	return nil
+}

@@ -1,11 +1,29 @@
 package models
 
+import (
+	"fmt"
+)
+
 // Timing Type: Specifies an event that may occur multiple times. Timing schedules are used to record when things are planned, expected or requested to occur. The most common usage is in dosage instructions for medications. They are also used when planning care of various kinds, and may be used for reporting the schedule to which past regular activities were carried out.
 type Timing struct {
 	Id     *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
 	Event  []string         `json:"event,omitempty" bson:"event,omitempty"`   // When the event occurs
 	Repeat *TimingRepeat    `json:"repeat,omitempty" bson:"repeat,omitempty"` // When the event is to occur
 	Code   *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`     // C | BID | TID | QID | AM | PM | QD | QOD | +
+}
+
+func (r *Timing) Validate() error {
+	if r.Repeat != nil {
+		if err := r.Repeat.Validate(); err != nil {
+			return fmt.Errorf("Repeat: %w", err)
+		}
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	return nil
 }
 
 type TimingRepeat struct {
@@ -29,4 +47,33 @@ type TimingRepeat struct {
 	TimeOfDay      []string  `json:"timeOfDay,omitempty" bson:"time_of_day,omitempty"`          // Time of day for action
 	When           []string  `json:"when,omitempty" bson:"when,omitempty"`                      // Code for time period of occurrence
 	Offset         *int      `json:"offset,omitempty" bson:"offset,omitempty"`                  // Minutes from event (before or after)
+}
+
+func (r *TimingRepeat) Validate() error {
+	if r.BoundsDuration != nil {
+		if err := r.BoundsDuration.Validate(); err != nil {
+			return fmt.Errorf("BoundsDuration: %w", err)
+		}
+	}
+	if r.BoundsRange != nil {
+		if err := r.BoundsRange.Validate(); err != nil {
+			return fmt.Errorf("BoundsRange: %w", err)
+		}
+	}
+	if r.BoundsPeriod != nil {
+		if err := r.BoundsPeriod.Validate(); err != nil {
+			return fmt.Errorf("BoundsPeriod: %w", err)
+		}
+	}
+	if r.StartOffset != nil {
+		if err := r.StartOffset.Validate(); err != nil {
+			return fmt.Errorf("StartOffset: %w", err)
+		}
+	}
+	if r.EndOffset != nil {
+		if err := r.EndOffset.Validate(); err != nil {
+			return fmt.Errorf("EndOffset: %w", err)
+		}
+	}
+	return nil
 }

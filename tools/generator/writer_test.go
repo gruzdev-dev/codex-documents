@@ -310,3 +310,200 @@ func TestWriteResource_Imports(t *testing.T) {
 		})
 	}
 }
+
+func TestWriteValidateMethod_RequiredFields(t *testing.T) {
+	tests := []struct {
+		name     string
+		fields   []FieldInfo
+		wantCode []string
+	}{
+		{
+			name: "required pointer field",
+			fields: []FieldInfo{
+				{
+					Name:       "RequiredField",
+					GoType:     "*string",
+					IsRequired: true,
+					Min:        1,
+				},
+			},
+			wantCode: []string{
+				"if r.RequiredField == nil",
+				"field 'RequiredField' is required",
+			},
+		},
+		{
+			name: "required array field",
+			fields: []FieldInfo{
+				{
+					Name:       "RequiredArray",
+					GoType:     "[]string",
+					IsRequired: true,
+					Min:        2,
+				},
+			},
+			wantCode: []string{
+				"if len(r.RequiredArray) < 2",
+				"field 'RequiredArray' must have at least 2 elements",
+			},
+		},
+		{
+			name: "required string field",
+			fields: []FieldInfo{
+				{
+					Name:       "RequiredString",
+					GoType:     "string",
+					IsRequired: true,
+					Min:        1,
+				},
+			},
+			wantCode: []string{
+				"if r.RequiredString == \"\"",
+				"field 'RequiredString' is required",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			g := NewGenerator("", "", nil)
+			g.writeValidateMethod(&buf, "TestStruct", tt.fields, make(map[string][]FieldInfo))
+
+			output := buf.String()
+			for _, want := range tt.wantCode {
+				if !strings.Contains(output, want) {
+					t.Errorf("expected code to contain %q, got:\n%s", want, output)
+				}
+			}
+		})
+	}
+}
+
+func TestWriteValidateMethod_MaxLength(t *testing.T) {
+	maxLen := 100
+	fields := []FieldInfo{
+		{
+			Name:      "StringField",
+			GoType:    "*string",
+			MaxLength: &maxLen,
+		},
+	}
+
+	var buf bytes.Buffer
+	g := NewGenerator("", "", nil)
+	g.writeValidateMethod(&buf, "TestStruct", fields, make(map[string][]FieldInfo))
+
+	output := buf.String()
+	wantCode := []string{
+		"if r.StringField != nil && len(*r.StringField) > 100",
+		"field 'StringField' exceeds maxLength 100",
+	}
+
+	for _, want := range wantCode {
+		if !strings.Contains(output, want) {
+			t.Errorf("expected code to contain %q, got:\n%s", want, output)
+		}
+	}
+}
+
+func TestWriteValidateMethod_Pattern(t *testing.T) {
+	fields := []FieldInfo{
+		{
+			Name:    "StringField",
+			GoType:  "*string",
+			Pattern: "^[A-Z]+$",
+		},
+	}
+
+	var buf bytes.Buffer
+	g := NewGenerator("", "", nil)
+	g.writeValidateMethod(&buf, "TestStruct", fields, make(map[string][]FieldInfo))
+
+	output := buf.String()
+	wantCode := []string{
+		"regexp.MatchString",
+		"^[A-Z]+$",
+		"field 'StringField' does not match pattern",
+	}
+
+	for _, want := range wantCode {
+		if !strings.Contains(output, want) {
+			t.Errorf("expected code to contain %q, got:\n%s", want, output)
+		}
+	}
+}
+
+func TestWriteValidateMethod_EmptyStruct(t *testing.T) {
+	var buf bytes.Buffer
+	g := NewGenerator("", "", nil)
+	g.writeValidateMethod(&buf, "EmptyStruct", []FieldInfo{}, make(map[string][]FieldInfo))
+
+	output := buf.String()
+	if !strings.Contains(output, "return nil") {
+		t.Errorf("expected empty struct to return nil, got:\n%s", output)
+	}
+}
+
+func TestWriteValidateMethod_SkipsJsonRawMessage(t *testing.T) {
+	fields := []FieldInfo{
+		{
+			Name:   "RawField",
+			GoType: "json.RawMessage",
+		},
+		{
+			Name:   "AnyField",
+			GoType: "any",
+		},
+	}
+
+	var buf bytes.Buffer
+	g := NewGenerator("", "", nil)
+	g.writeValidateMethod(&buf, "TestStruct", fields, make(map[string][]FieldInfo))
+
+	output := buf.String()
+	if strings.Contains(output, "RawField") || strings.Contains(output, "AnyField") {
+		t.Errorf("expected json.RawMessage and any fields to be skipped, got:\n%s", output)
+	}
+}
+
+func TestWriteValidateMethod_NestedStructures(t *testing.T) {
+	nestedFields := []FieldInfo{
+		{
+			Name:   "NestedField",
+			GoType: "string",
+		},
+	}
+	structMap := map[string][]FieldInfo{
+		"NestedType": nestedFields,
+	}
+
+	fields := []FieldInfo{
+		{
+			Name:   "Nested",
+			GoType: "*NestedType",
+		},
+		{
+			Name:   "NestedArray",
+			GoType: "[]NestedType",
+		},
+	}
+
+	var buf bytes.Buffer
+	g := NewGenerator("", "", nil)
+	g.writeValidateMethod(&buf, "TestStruct", fields, structMap)
+
+	output := buf.String()
+	wantCode := []string{
+		"if r.Nested != nil",
+		"r.Nested.Validate()",
+		"for i, item := range r.NestedArray",
+		"item.Validate()",
+	}
+
+	for _, want := range wantCode {
+		if !strings.Contains(output, want) {
+			t.Errorf("expected code to contain %q, got:\n%s", want, output)
+		}
+	}
+}

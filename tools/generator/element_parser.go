@@ -8,11 +8,17 @@ import (
 )
 
 type FieldInfo struct {
-	Name    string
-	GoType  string
-	JSONTag string
-	BSONTag string
-	Comment string
+	Name       string
+	GoType     string
+	JSONTag    string
+	BSONTag    string
+	Comment    string
+	Min        int
+	MaxLength  *int
+	Pattern    string
+	Fixed      any
+	IsRequired bool
+	Path       string
 }
 
 func (g *Generator) ProcessElements(name string, elements []ElementDefinition) map[string][]FieldInfo {
@@ -72,11 +78,17 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 			bsonTag := generateBSONTag(cleanName, el.Min == 0)
 
 			structs[structName] = append(structs[structName], FieldInfo{
-				Name:    cleanName,
-				GoType:  goType,
-				JSONTag: jsonTag,
-				BSONTag: bsonTag,
-				Comment: el.Short,
+				Name:       cleanName,
+				GoType:     goType,
+				JSONTag:    jsonTag,
+				BSONTag:    bsonTag,
+				Comment:    el.Short,
+				Min:        el.Min,
+				MaxLength:  el.MaxLength,
+				Pattern:    el.Pattern,
+				Fixed:      el.Fixed,
+				IsRequired: el.Min > 0,
+				Path:       el.Path,
 			})
 			continue
 		}
@@ -102,11 +114,17 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 				}
 
 				structs[structName] = append(structs[structName], FieldInfo{
-					Name:    fieldName,
-					GoType:  goType,
-					JSONTag: jsonTag,
-					BSONTag: bsonTag,
-					Comment: el.Short,
+					Name:       fieldName,
+					GoType:     goType,
+					JSONTag:    jsonTag,
+					BSONTag:    bsonTag,
+					Comment:    el.Short,
+					Min:        el.Min,
+					MaxLength:  el.MaxLength,
+					Pattern:    el.Pattern,
+					Fixed:      el.Fixed,
+					IsRequired: el.Min > 0,
+					Path:       el.Path,
 				})
 			}
 			continue
@@ -151,11 +169,17 @@ func (g *Generator) ProcessElements(name string, elements []ElementDefinition) m
 		bsonTag := generateBSONTag(cleanName, el.Min == 0)
 
 		structs[structName] = append(structs[structName], FieldInfo{
-			Name:    cleanName,
-			GoType:  goType,
-			JSONTag: jsonTag,
-			BSONTag: bsonTag,
-			Comment: el.Short,
+			Name:       cleanName,
+			GoType:     goType,
+			JSONTag:    jsonTag,
+			BSONTag:    bsonTag,
+			Comment:    el.Short,
+			Min:        el.Min,
+			MaxLength:  el.MaxLength,
+			Pattern:    el.Pattern,
+			Fixed:      el.Fixed,
+			IsRequired: el.Min > 0,
+			Path:       el.Path,
 		})
 	}
 	return structs

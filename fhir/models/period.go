@@ -6,3 +6,7 @@ type Period struct {
 	Start *string `json:"start,omitempty" bson:"start,omitempty"` // Starting time with inclusive boundary
 	End   *string `json:"end,omitempty" bson:"end,omitempty"`     // End time with inclusive boundary, if not ongoing
 }
+
+func (r *Period) Validate() error {
+	return nil
+}

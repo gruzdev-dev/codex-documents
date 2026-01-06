@@ -1,6 +1,9 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // Measurements and simple assertions made about a patient, device or other subject.
 type Observation struct {
@@ -54,11 +57,184 @@ type Observation struct {
 	Component             []ObservationComponent      `json:"component,omitempty" bson:"component,omitempty"`                          // Component results
 }
 
-type ObservationTriggeredBy struct {
-	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Observation *Reference `json:"observation" bson:"observation"`           // Triggering observation
-	Type        string     `json:"type" bson:"type"`                         // reflex | repeat | re-run
-	Reason      *string    `json:"reason,omitempty" bson:"reason,omitempty"` // Reason that the observation was triggered
+func (r *Observation) Validate() error {
+	if r.Meta != nil {
+		if err := r.Meta.Validate(); err != nil {
+			return fmt.Errorf("Meta: %w", err)
+		}
+	}
+	if r.Text != nil {
+		if err := r.Text.Validate(); err != nil {
+			return fmt.Errorf("Text: %w", err)
+		}
+	}
+	for i, item := range r.Identifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Identifier[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.BasedOn {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("BasedOn[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.TriggeredBy {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TriggeredBy[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.PartOf {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("PartOf[%d]: %w", i, err)
+		}
+	}
+	if r.Status == "" {
+		return fmt.Errorf("field 'Status' is required")
+	}
+	for i, item := range r.Category {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Category[%d]: %w", i, err)
+		}
+	}
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	if r.Subject != nil {
+		if err := r.Subject.Validate(); err != nil {
+			return fmt.Errorf("Subject: %w", err)
+		}
+	}
+	for i, item := range r.Focus {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Focus[%d]: %w", i, err)
+		}
+	}
+	if r.Encounter != nil {
+		if err := r.Encounter.Validate(); err != nil {
+			return fmt.Errorf("Encounter: %w", err)
+		}
+	}
+	if r.EffectivePeriod != nil {
+		if err := r.EffectivePeriod.Validate(); err != nil {
+			return fmt.Errorf("EffectivePeriod: %w", err)
+		}
+	}
+	if r.EffectiveTiming != nil {
+		if err := r.EffectiveTiming.Validate(); err != nil {
+			return fmt.Errorf("EffectiveTiming: %w", err)
+		}
+	}
+	for i, item := range r.Performer {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Performer[%d]: %w", i, err)
+		}
+	}
+	if r.ValueQuantity != nil {
+		if err := r.ValueQuantity.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity: %w", err)
+		}
+	}
+	if r.ValueCodeableConcept != nil {
+		if err := r.ValueCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("ValueCodeableConcept: %w", err)
+		}
+	}
+	if r.ValueRange != nil {
+		if err := r.ValueRange.Validate(); err != nil {
+			return fmt.Errorf("ValueRange: %w", err)
+		}
+	}
+	if r.ValueRatio != nil {
+		if err := r.ValueRatio.Validate(); err != nil {
+			return fmt.Errorf("ValueRatio: %w", err)
+		}
+	}
+	if r.ValueSampledData != nil {
+		if err := r.ValueSampledData.Validate(); err != nil {
+			return fmt.Errorf("ValueSampledData: %w", err)
+		}
+	}
+	if r.ValuePeriod != nil {
+		if err := r.ValuePeriod.Validate(); err != nil {
+			return fmt.Errorf("ValuePeriod: %w", err)
+		}
+	}
+	if r.ValueAttachment != nil {
+		if err := r.ValueAttachment.Validate(); err != nil {
+			return fmt.Errorf("ValueAttachment: %w", err)
+		}
+	}
+	if r.DataAbsentReason != nil {
+		if err := r.DataAbsentReason.Validate(); err != nil {
+			return fmt.Errorf("DataAbsentReason: %w", err)
+		}
+	}
+	for i, item := range r.Interpretation {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Interpretation[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.InterpretationContext {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("InterpretationContext[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Note {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Note[%d]: %w", i, err)
+		}
+	}
+	if r.BodySite != nil {
+		if err := r.BodySite.Validate(); err != nil {
+			return fmt.Errorf("BodySite: %w", err)
+		}
+	}
+	if r.BodyStructure != nil {
+		if err := r.BodyStructure.Validate(); err != nil {
+			return fmt.Errorf("BodyStructure: %w", err)
+		}
+	}
+	if r.Method != nil {
+		if err := r.Method.Validate(); err != nil {
+			return fmt.Errorf("Method: %w", err)
+		}
+	}
+	if r.Specimen != nil {
+		if err := r.Specimen.Validate(); err != nil {
+			return fmt.Errorf("Specimen: %w", err)
+		}
+	}
+	if r.Device != nil {
+		if err := r.Device.Validate(); err != nil {
+			return fmt.Errorf("Device: %w", err)
+		}
+	}
+	for i, item := range r.ReferenceRange {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ReferenceRange[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.HasMember {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("HasMember[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.DerivedFrom {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("DerivedFrom[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Component {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Component[%d]: %w", i, err)
+		}
+	}
+	return nil
 }
 
 type ObservationReferenceRange struct {
@@ -70,6 +246,40 @@ type ObservationReferenceRange struct {
 	AppliesTo   []CodeableConcept `json:"appliesTo,omitempty" bson:"applies_to,omitempty"`     // Reference range population
 	Age         *Range            `json:"age,omitempty" bson:"age,omitempty"`                  // Applicable age range, if relevant
 	Text        *string           `json:"text,omitempty" bson:"text,omitempty"`                // Text based reference range in an observation
+}
+
+func (r *ObservationReferenceRange) Validate() error {
+	if r.Low != nil {
+		if err := r.Low.Validate(); err != nil {
+			return fmt.Errorf("Low: %w", err)
+		}
+	}
+	if r.High != nil {
+		if err := r.High.Validate(); err != nil {
+			return fmt.Errorf("High: %w", err)
+		}
+	}
+	if r.NormalValue != nil {
+		if err := r.NormalValue.Validate(); err != nil {
+			return fmt.Errorf("NormalValue: %w", err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.AppliesTo {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AppliesTo[%d]: %w", i, err)
+		}
+	}
+	if r.Age != nil {
+		if err := r.Age.Validate(); err != nil {
+			return fmt.Errorf("Age: %w", err)
+		}
+	}
+	return nil
 }
 
 type ObservationComponent struct {
@@ -90,4 +300,88 @@ type ObservationComponent struct {
 	DataAbsentReason     *CodeableConcept            `json:"dataAbsentReason,omitempty" bson:"data_absent_reason,omitempty"`         // Why the component result value is missing
 	Interpretation       []CodeableConcept           `json:"interpretation,omitempty" bson:"interpretation,omitempty"`               // High, low, normal, etc
 	ReferenceRange       []ObservationReferenceRange `json:"referenceRange,omitempty" bson:"reference_range,omitempty"`              // Provides guide for interpretation of component result value
+}
+
+func (r *ObservationComponent) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	if r.ValueQuantity != nil {
+		if err := r.ValueQuantity.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity: %w", err)
+		}
+	}
+	if r.ValueCodeableConcept != nil {
+		if err := r.ValueCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("ValueCodeableConcept: %w", err)
+		}
+	}
+	if r.ValueRange != nil {
+		if err := r.ValueRange.Validate(); err != nil {
+			return fmt.Errorf("ValueRange: %w", err)
+		}
+	}
+	if r.ValueRatio != nil {
+		if err := r.ValueRatio.Validate(); err != nil {
+			return fmt.Errorf("ValueRatio: %w", err)
+		}
+	}
+	if r.ValueSampledData != nil {
+		if err := r.ValueSampledData.Validate(); err != nil {
+			return fmt.Errorf("ValueSampledData: %w", err)
+		}
+	}
+	if r.ValuePeriod != nil {
+		if err := r.ValuePeriod.Validate(); err != nil {
+			return fmt.Errorf("ValuePeriod: %w", err)
+		}
+	}
+	if r.ValueAttachment != nil {
+		if err := r.ValueAttachment.Validate(); err != nil {
+			return fmt.Errorf("ValueAttachment: %w", err)
+		}
+	}
+	if r.DataAbsentReason != nil {
+		if err := r.DataAbsentReason.Validate(); err != nil {
+			return fmt.Errorf("DataAbsentReason: %w", err)
+		}
+	}
+	for i, item := range r.Interpretation {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Interpretation[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.ReferenceRange {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ReferenceRange[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ObservationTriggeredBy struct {
+	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Observation *Reference `json:"observation" bson:"observation"`           // Triggering observation
+	Type        string     `json:"type" bson:"type"`                         // reflex | repeat | re-run
+	Reason      *string    `json:"reason,omitempty" bson:"reason,omitempty"` // Reason that the observation was triggered
+}
+
+func (r *ObservationTriggeredBy) Validate() error {
+	if r.Observation == nil {
+		return fmt.Errorf("field 'Observation' is required")
+	}
+	if r.Observation != nil {
+		if err := r.Observation.Validate(); err != nil {
+			return fmt.Errorf("Observation: %w", err)
+		}
+	}
+	if r.Type == "" {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	return nil
 }

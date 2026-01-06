@@ -637,3 +637,79 @@ func TestGenerator_ParseBindingAndConstraint(t *testing.T) {
 		t.Errorf("generated code should contain struct DocumentReference")
 	}
 }
+
+func TestGenerator_ValidateMethodGeneration(t *testing.T) {
+	spec, err := loadTestSpec("simple_resource")
+	if err != nil {
+		t.Fatalf("loadTestSpec() error = %v", err)
+	}
+
+	outputDir, cleanup, err := createTempOutputDir()
+	if err != nil {
+		t.Fatalf("createTempOutputDir() error = %v", err)
+	}
+	defer cleanup()
+
+	g := generator.NewGenerator("", outputDir, []string{"SimpleTestResource"})
+	g.Definitions[spec.Name] = spec
+
+	if err := g.WriteResource(spec); err != nil {
+		t.Fatalf("WriteResource() error = %v", err)
+	}
+
+	fileName := "simple_test_resource.go"
+	filePath := filepath.Join(outputDir, fileName)
+	generatedCode, err := os.ReadFile(filePath)
+	if err != nil {
+		t.Fatalf("ReadFile() error = %v", err)
+	}
+
+	code := string(generatedCode)
+	if !strings.Contains(code, "func (r *SimpleTestResource) Validate() error") {
+		t.Error("generated code should contain Validate() method")
+	}
+
+	if _, err := parseGeneratedCode(code); err != nil {
+		t.Errorf("parseGeneratedCode() error = %v, code should be valid Go", err)
+	}
+
+	if _, err := format.Source(generatedCode); err != nil {
+		t.Errorf("format.Source() error = %v, code should be formattable", err)
+	}
+}
+
+func TestGenerator_ValidateMethodWorks(t *testing.T) {
+	spec, err := loadTestSpec("simple_resource")
+	if err != nil {
+		t.Fatalf("loadTestSpec() error = %v", err)
+	}
+
+	outputDir, cleanup, err := createTempOutputDir()
+	if err != nil {
+		t.Fatalf("createTempOutputDir() error = %v", err)
+	}
+	defer cleanup()
+
+	g := generator.NewGenerator("", outputDir, []string{"SimpleTestResource"})
+	g.Definitions[spec.Name] = spec
+
+	if err := g.WriteResource(spec); err != nil {
+		t.Fatalf("WriteResource() error = %v", err)
+	}
+
+	fileName := "simple_test_resource.go"
+	filePath := filepath.Join(outputDir, fileName)
+	generatedCode, err := os.ReadFile(filePath)
+	if err != nil {
+		t.Fatalf("ReadFile() error = %v", err)
+	}
+
+	code := string(generatedCode)
+	if !strings.Contains(code, "func (r *SimpleTestResource) Validate() error") {
+		t.Error("generated code should contain Validate() method")
+	}
+
+	if _, err := parseGeneratedCode(code); err != nil {
+		t.Errorf("parseGeneratedCode() error = %v, code should be valid Go", err)
+	}
+}

@@ -1,6 +1,9 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // A reference to a document of any kind for any purpose. While the term “document” implies a more narrow focus, for this resource this “document” encompasses *any* serialized object with a mime-type, it includes formal patient-centric documents (CDA), clinical notes, scanned paper, non-patient specific documents like policy text, as well as a photo, video, or audio recording acquired or used in healthcare.  The DocumentReference resource provides metadata about the document so that the document can be discovered and managed.  The actual content may be inline base64 encoded data or provided by direct reference.
 type DocumentReference struct {
@@ -36,17 +39,119 @@ type DocumentReference struct {
 	Content         []DocumentReferenceContent   `json:"content" bson:"content"`                                      // Document referenced
 }
 
-type DocumentReferenceAttester struct {
-	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Mode  *CodeableConcept `json:"mode" bson:"mode"`                       // personal | professional | legal | official
-	Time  *string          `json:"time,omitempty" bson:"time,omitempty"`   // When the document was attested
-	Party *Reference       `json:"party,omitempty" bson:"party,omitempty"` // Who attested the document
-}
-
-type DocumentReferenceRelatesTo struct {
-	Id     *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Code   *CodeableConcept `json:"code" bson:"code"`                 // The relationship type with another document
-	Target *Reference       `json:"target" bson:"target"`             // Target of the relationship
+func (r *DocumentReference) Validate() error {
+	if r.Meta != nil {
+		if err := r.Meta.Validate(); err != nil {
+			return fmt.Errorf("Meta: %w", err)
+		}
+	}
+	if r.Text != nil {
+		if err := r.Text.Validate(); err != nil {
+			return fmt.Errorf("Text: %w", err)
+		}
+	}
+	for i, item := range r.Identifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Identifier[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.BasedOn {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("BasedOn[%d]: %w", i, err)
+		}
+	}
+	if r.Status == "" {
+		return fmt.Errorf("field 'Status' is required")
+	}
+	for i, item := range r.Modality {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Modality[%d]: %w", i, err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.Category {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Category[%d]: %w", i, err)
+		}
+	}
+	if r.Subject != nil {
+		if err := r.Subject.Validate(); err != nil {
+			return fmt.Errorf("Subject: %w", err)
+		}
+	}
+	for i, item := range r.Context {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Context[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Event {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Event[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Related {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Related[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.BodyStructure {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("BodyStructure[%d]: %w", i, err)
+		}
+	}
+	if r.FacilityType != nil {
+		if err := r.FacilityType.Validate(); err != nil {
+			return fmt.Errorf("FacilityType: %w", err)
+		}
+	}
+	if r.PracticeSetting != nil {
+		if err := r.PracticeSetting.Validate(); err != nil {
+			return fmt.Errorf("PracticeSetting: %w", err)
+		}
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
+		}
+	}
+	for i, item := range r.Author {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Author[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Attester {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Attester[%d]: %w", i, err)
+		}
+	}
+	if r.Custodian != nil {
+		if err := r.Custodian.Validate(); err != nil {
+			return fmt.Errorf("Custodian: %w", err)
+		}
+	}
+	for i, item := range r.RelatesTo {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("RelatesTo[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SecurityLabel {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SecurityLabel[%d]: %w", i, err)
+		}
+	}
+	if len(r.Content) < 1 {
+		return fmt.Errorf("field 'Content' must have at least 1 elements")
+	}
+	for i, item := range r.Content {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Content[%d]: %w", i, err)
+		}
+	}
+	return nil
 }
 
 type DocumentReferenceContent struct {
@@ -55,9 +160,94 @@ type DocumentReferenceContent struct {
 	Profile    []DocumentReferenceContentProfile `json:"profile,omitempty" bson:"profile,omitempty"` // Content profile rules for the document
 }
 
+func (r *DocumentReferenceContent) Validate() error {
+	if r.Attachment == nil {
+		return fmt.Errorf("field 'Attachment' is required")
+	}
+	if r.Attachment != nil {
+		if err := r.Attachment.Validate(); err != nil {
+			return fmt.Errorf("Attachment: %w", err)
+		}
+	}
+	for i, item := range r.Profile {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Profile[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type DocumentReferenceContentProfile struct {
 	Id             *string `json:"id,omitempty" bson:"id,omitempty"`      // Unique id for inter-element referencing
 	ValueCoding    *Coding `json:"valueCoding" bson:"value_coding"`       // Code|uri|canonical
 	ValueUri       *string `json:"valueUri" bson:"value_uri"`             // Code|uri|canonical
 	ValueCanonical *string `json:"valueCanonical" bson:"value_canonical"` // Code|uri|canonical
+}
+
+func (r *DocumentReferenceContentProfile) Validate() error {
+	if r.ValueCoding == nil {
+		return fmt.Errorf("field 'ValueCoding' is required")
+	}
+	if r.ValueCoding != nil {
+		if err := r.ValueCoding.Validate(); err != nil {
+			return fmt.Errorf("ValueCoding: %w", err)
+		}
+	}
+	if r.ValueUri == nil {
+		return fmt.Errorf("field 'ValueUri' is required")
+	}
+	if r.ValueCanonical == nil {
+		return fmt.Errorf("field 'ValueCanonical' is required")
+	}
+	return nil
+}
+
+type DocumentReferenceAttester struct {
+	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Mode  *CodeableConcept `json:"mode" bson:"mode"`                       // personal | professional | legal | official
+	Time  *string          `json:"time,omitempty" bson:"time,omitempty"`   // When the document was attested
+	Party *Reference       `json:"party,omitempty" bson:"party,omitempty"` // Who attested the document
+}
+
+func (r *DocumentReferenceAttester) Validate() error {
+	if r.Mode == nil {
+		return fmt.Errorf("field 'Mode' is required")
+	}
+	if r.Mode != nil {
+		if err := r.Mode.Validate(); err != nil {
+			return fmt.Errorf("Mode: %w", err)
+		}
+	}
+	if r.Party != nil {
+		if err := r.Party.Validate(); err != nil {
+			return fmt.Errorf("Party: %w", err)
+		}
+	}
+	return nil
+}
+
+type DocumentReferenceRelatesTo struct {
+	Id     *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Code   *CodeableConcept `json:"code" bson:"code"`                 // The relationship type with another document
+	Target *Reference       `json:"target" bson:"target"`             // Target of the relationship
+}
+
+func (r *DocumentReferenceRelatesTo) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	if r.Target == nil {
+		return fmt.Errorf("field 'Target' is required")
+	}
+	if r.Target != nil {
+		if err := r.Target.Validate(); err != nil {
+			return fmt.Errorf("Target: %w", err)
+		}
+	}
+	return nil
 }

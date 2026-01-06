@@ -1,6 +1,9 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // Demographics and other administrative information about an individual or animal that is the subject of potential, past, current, or future health-related care, services, or processes.
 type Patient struct {
@@ -30,16 +33,73 @@ type Patient struct {
 	Link                 []PatientLink          `json:"link,omitempty" bson:"link,omitempty"`                                   // Link to a Patient or RelatedPerson resource that concerns the same actual individual
 }
 
-type PatientCommunication struct {
-	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Language  *CodeableConcept `json:"language" bson:"language"`                       // The language which can be used to communicate with the patient about his or her health
-	Preferred bool             `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
-}
-
-type PatientLink struct {
-	Id    *string    `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Other *Reference `json:"other" bson:"other"`               // The other patient or related person resource that the link refers to
-	Type  string     `json:"type" bson:"type"`                 // replaced-by | replaces | refer | seealso
+func (r *Patient) Validate() error {
+	if r.Meta != nil {
+		if err := r.Meta.Validate(); err != nil {
+			return fmt.Errorf("Meta: %w", err)
+		}
+	}
+	if r.Text != nil {
+		if err := r.Text.Validate(); err != nil {
+			return fmt.Errorf("Text: %w", err)
+		}
+	}
+	for i, item := range r.Identifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Identifier[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Name {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Name[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Telecom {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Telecom[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Address {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Address[%d]: %w", i, err)
+		}
+	}
+	if r.MaritalStatus != nil {
+		if err := r.MaritalStatus.Validate(); err != nil {
+			return fmt.Errorf("MaritalStatus: %w", err)
+		}
+	}
+	for i, item := range r.Photo {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Photo[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Contact {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Contact[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Communication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Communication[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.GeneralPractitioner {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("GeneralPractitioner[%d]: %w", i, err)
+		}
+	}
+	if r.ManagingOrganization != nil {
+		if err := r.ManagingOrganization.Validate(); err != nil {
+			return fmt.Errorf("ManagingOrganization: %w", err)
+		}
+	}
+	for i, item := range r.Link {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Link[%d]: %w", i, err)
+		}
+	}
+	return nil
 }
 
 type PatientContact struct {
@@ -54,4 +114,92 @@ type PatientContact struct {
 	Gender            *string           `json:"gender,omitempty" bson:"gender,omitempty"`                        // male | female | other | unknown
 	Organization      *Reference        `json:"organization,omitempty" bson:"organization,omitempty"`            // Organization that is associated with the contact
 	Period            *Period           `json:"period,omitempty" bson:"period,omitempty"`                        // The period during which this contact person or organization is valid to be contacted relating to this patient
+}
+
+func (r *PatientContact) Validate() error {
+	for i, item := range r.Relationship {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Relationship[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Role {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Role[%d]: %w", i, err)
+		}
+	}
+	if r.Name != nil {
+		if err := r.Name.Validate(); err != nil {
+			return fmt.Errorf("Name: %w", err)
+		}
+	}
+	for i, item := range r.AdditionalName {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AdditionalName[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Telecom {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Telecom[%d]: %w", i, err)
+		}
+	}
+	if r.Address != nil {
+		if err := r.Address.Validate(); err != nil {
+			return fmt.Errorf("Address: %w", err)
+		}
+	}
+	for i, item := range r.AdditionalAddress {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AdditionalAddress[%d]: %w", i, err)
+		}
+	}
+	if r.Organization != nil {
+		if err := r.Organization.Validate(); err != nil {
+			return fmt.Errorf("Organization: %w", err)
+		}
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
+		}
+	}
+	return nil
+}
+
+type PatientCommunication struct {
+	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Language  *CodeableConcept `json:"language" bson:"language"`                       // The language which can be used to communicate with the patient about his or her health
+	Preferred bool             `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
+}
+
+func (r *PatientCommunication) Validate() error {
+	if r.Language == nil {
+		return fmt.Errorf("field 'Language' is required")
+	}
+	if r.Language != nil {
+		if err := r.Language.Validate(); err != nil {
+			return fmt.Errorf("Language: %w", err)
+		}
+	}
+	return nil
+}
+
+type PatientLink struct {
+	Id    *string    `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Other *Reference `json:"other" bson:"other"`               // The other patient or related person resource that the link refers to
+	Type  string     `json:"type" bson:"type"`                 // replaced-by | replaces | refer | seealso
+}
+
+func (r *PatientLink) Validate() error {
+	if r.Other == nil {
+		return fmt.Errorf("field 'Other' is required")
+	}
+	if r.Other != nil {
+		if err := r.Other.Validate(); err != nil {
+			return fmt.Errorf("Other: %w", err)
+		}
+	}
+	if r.Type == "" {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	return nil
 }
