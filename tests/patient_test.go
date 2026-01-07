@@ -15,10 +15,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createTestJWTToken(secret string) (string, error) {
+func createTestJWTToken(secret string, patientID string) (string, error) {
 	claims := jwt.MapClaims{
 		"sub":        "test-user",
-		"patient_id": "",
+		"patient_id": patientID,
 		"scope":      "patient/*.read patient/*.write",
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -32,12 +32,10 @@ func TestPatientIntegration(t *testing.T) {
 	ts := httptest.NewServer(env.Handler)
 	defer ts.Close()
 
-	token, err := createTestJWTToken("secret-key")
-	require.NoError(t, err)
-
 	client := &nethttp.Client{}
 
 	var patientID string
+	var token string
 
 	t.Run("Create Patient", func(t *testing.T) {
 		createJSON := `{
@@ -62,7 +60,6 @@ func TestPatientIntegration(t *testing.T) {
 		req, err := nethttp.NewRequest("POST", ts.URL+"/api/v1/Patient", bytes.NewBufferString(createJSON))
 		require.NoError(t, err)
 		req.Header.Set("Content-Type", "application/fhir+json")
-		req.Header.Set("Authorization", "Bearer "+token)
 
 		resp, err := client.Do(req)
 		require.NoError(t, err)
@@ -80,6 +77,9 @@ func TestPatientIntegration(t *testing.T) {
 		require.NotNil(t, createdPatient.Id, "Patient ID should be present")
 		require.NotEmpty(t, *createdPatient.Id, "Patient ID should not be empty")
 		patientID = *createdPatient.Id
+
+		token, err = createTestJWTToken("secret-key", patientID)
+		require.NoError(t, err)
 	})
 
 	t.Run("Update Patient", func(t *testing.T) {
@@ -110,7 +110,7 @@ func TestPatientIntegration(t *testing.T) {
 
 		req, err := nethttp.NewRequest("PUT", ts.URL+"/api/v1/Patient/"+patientID, bytes.NewBufferString(updateJSON))
 		require.NoError(t, err)
-		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Content-Type", "application/fhir+json")
 		req.Header.Set("Authorization", "Bearer "+token)
 
 		resp, err := client.Do(req)

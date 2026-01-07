@@ -56,10 +56,11 @@ func (h *Handler) UpdatePatient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.patientService.Update(r.Context(), &patient); err != nil {
+	updatedPatient, err := h.patientService.Update(r.Context(), &patient)
+	if err != nil {
 		h.respondWithError(w, err)
 		return
 	}
 
-	h.respondWithResource(w, http.StatusOK, &patient)
+	h.respondWithResource(w, http.StatusOK, updatedPatient)
 }

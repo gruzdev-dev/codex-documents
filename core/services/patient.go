@@ -30,6 +30,10 @@ func (s *PatientService) Create(ctx context.Context, patient *models.Patient) er
 		return fmt.Errorf("%w: %v", domain.ErrInvalidInput, err)
 	}
 
+	if patient.Id != nil && *patient.Id != "" {
+		return fmt.Errorf("%w: patient ID must not be provided during creation", domain.ErrInvalidInput)
+	}
+
 	if patient.Id == nil {
 		id := uuid.New().String()
 		patient.Id = &id
@@ -64,36 +68,41 @@ func (s *PatientService) Get(ctx context.Context, id string) (*models.Patient, e
 	return patient, nil
 }
 
-func (s *PatientService) Update(ctx context.Context, patient *models.Patient) error {
+func (s *PatientService) Update(ctx context.Context, patient *models.Patient) (*models.Patient, error) {
 	user, ok := identity.FromCtx(ctx)
 	if !ok {
-		return domain.ErrAccessDenied
+		return nil, domain.ErrAccessDenied
 	}
 
 	if patient.Id == nil {
-		return domain.ErrPatientIDRequired
+		return nil, domain.ErrPatientIDRequired
 	}
 
 	if !user.IsPatient(*patient.Id) && !user.HasScope("patient/*.write") {
-		return domain.ErrAccessDenied
+		return nil, domain.ErrAccessDenied
 	}
 
 	if err := s.validator.Validate(patient); err != nil {
-		return fmt.Errorf("%w: %v", domain.ErrInvalidInput, err)
+		return nil, fmt.Errorf("%w: %v", domain.ErrInvalidInput, err)
 	}
 
 	existing, err := s.repo.GetByID(ctx, *patient.Id)
 	if err != nil {
-		return fmt.Errorf("%w: %v", domain.ErrInternal, err)
+		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}
 
 	if existing == nil {
-		return domain.ErrPatientNotFound
+		return nil, domain.ErrPatientNotFound
 	}
 
 	if err := s.repo.Update(ctx, patient); err != nil {
-		return fmt.Errorf("%w: %v", domain.ErrInternal, err)
+		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}
 
-	return nil
+	updated, err := s.repo.GetByID(ctx, *patient.Id)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
+	}
+
+	return updated, nil
 }
