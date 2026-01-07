@@ -149,78 +149,6 @@ func (r *CodeSystem) Validate() error {
 	return nil
 }
 
-type CodeSystemConceptDesignation struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	Language      *string  `json:"language,omitempty" bson:"language,omitempty"`            // Human language of the designation
-	Use           *Coding  `json:"use,omitempty" bson:"use,omitempty"`                      // Details how this designation would be used
-	AdditionalUse []Coding `json:"additionalUse,omitempty" bson:"additional_use,omitempty"` // Additional ways how this designation would be used
-	Value         string   `json:"value" bson:"value"`                                      // The text value for this designation
-}
-
-func (r *CodeSystemConceptDesignation) Validate() error {
-	if r.Use != nil {
-		if err := r.Use.Validate(); err != nil {
-			return fmt.Errorf("Use: %w", err)
-		}
-	}
-	for i, item := range r.AdditionalUse {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("AdditionalUse[%d]: %w", i, err)
-		}
-	}
-	var emptyString string
-	if r.Value == emptyString {
-		return fmt.Errorf("field 'Value' is required")
-	}
-	return nil
-}
-
-type CodeSystemConceptProperty struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Code          string   `json:"code" bson:"code"`                     // Reference to CodeSystem.property.code or a FHIR defined concept-property
-	ValueCode     *string  `json:"valueCode" bson:"value_code"`          // Value of the property for this concept
-	ValueCoding   *Coding  `json:"valueCoding" bson:"value_coding"`      // Value of the property for this concept
-	ValueString   *string  `json:"valueString" bson:"value_string"`      // Value of the property for this concept
-	ValueInteger  *int     `json:"valueInteger" bson:"value_integer"`    // Value of the property for this concept
-	ValueBoolean  *bool    `json:"valueBoolean" bson:"value_boolean"`    // Value of the property for this concept
-	ValueDateTime *string  `json:"valueDateTime" bson:"value_date_time"` // Value of the property for this concept
-	ValueDecimal  *float64 `json:"valueDecimal" bson:"value_decimal"`    // Value of the property for this concept
-}
-
-func (r *CodeSystemConceptProperty) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.ValueCode == nil {
-		return fmt.Errorf("field 'ValueCode' is required")
-	}
-	if r.ValueCoding == nil {
-		return fmt.Errorf("field 'ValueCoding' is required")
-	}
-	if r.ValueCoding != nil {
-		if err := r.ValueCoding.Validate(); err != nil {
-			return fmt.Errorf("ValueCoding: %w", err)
-		}
-	}
-	if r.ValueString == nil {
-		return fmt.Errorf("field 'ValueString' is required")
-	}
-	if r.ValueInteger == nil {
-		return fmt.Errorf("field 'ValueInteger' is required")
-	}
-	if r.ValueBoolean == nil {
-		return fmt.Errorf("field 'ValueBoolean' is required")
-	}
-	if r.ValueDateTime == nil {
-		return fmt.Errorf("field 'ValueDateTime' is required")
-	}
-	if r.ValueDecimal == nil {
-		return fmt.Errorf("field 'ValueDecimal' is required")
-	}
-	return nil
-}
-
 type CodeSystemFilter struct {
 	Id          *string  `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Code        string   `json:"code" bson:"code"`                                   // Code that identifies the filter
@@ -291,6 +219,78 @@ func (r *CodeSystemConcept) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Concept[%d]: %w", i, err)
 		}
+	}
+	return nil
+}
+
+type CodeSystemConceptDesignation struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	Language      *string  `json:"language,omitempty" bson:"language,omitempty"`            // Human language of the designation
+	Use           *Coding  `json:"use,omitempty" bson:"use,omitempty"`                      // Details how this designation would be used
+	AdditionalUse []Coding `json:"additionalUse,omitempty" bson:"additional_use,omitempty"` // Additional ways how this designation would be used
+	Value         string   `json:"value" bson:"value"`                                      // The text value for this designation
+}
+
+func (r *CodeSystemConceptDesignation) Validate() error {
+	if r.Use != nil {
+		if err := r.Use.Validate(); err != nil {
+			return fmt.Errorf("Use: %w", err)
+		}
+	}
+	for i, item := range r.AdditionalUse {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AdditionalUse[%d]: %w", i, err)
+		}
+	}
+	var emptyString string
+	if r.Value == emptyString {
+		return fmt.Errorf("field 'Value' is required")
+	}
+	return nil
+}
+
+type CodeSystemConceptProperty struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Code          string   `json:"code" bson:"code"`                     // Reference to CodeSystem.property.code or a FHIR defined concept-property
+	ValueCode     *string  `json:"valueCode" bson:"value_code"`          // Value of the property for this concept
+	ValueCoding   *Coding  `json:"valueCoding" bson:"value_coding"`      // Value of the property for this concept
+	ValueString   *string  `json:"valueString" bson:"value_string"`      // Value of the property for this concept
+	ValueInteger  *int     `json:"valueInteger" bson:"value_integer"`    // Value of the property for this concept
+	ValueBoolean  *bool    `json:"valueBoolean" bson:"value_boolean"`    // Value of the property for this concept
+	ValueDateTime *string  `json:"valueDateTime" bson:"value_date_time"` // Value of the property for this concept
+	ValueDecimal  *float64 `json:"valueDecimal" bson:"value_decimal"`    // Value of the property for this concept
+}
+
+func (r *CodeSystemConceptProperty) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.ValueCode == nil {
+		return fmt.Errorf("field 'ValueCode' is required")
+	}
+	if r.ValueCoding == nil {
+		return fmt.Errorf("field 'ValueCoding' is required")
+	}
+	if r.ValueCoding != nil {
+		if err := r.ValueCoding.Validate(); err != nil {
+			return fmt.Errorf("ValueCoding: %w", err)
+		}
+	}
+	if r.ValueString == nil {
+		return fmt.Errorf("field 'ValueString' is required")
+	}
+	if r.ValueInteger == nil {
+		return fmt.Errorf("field 'ValueInteger' is required")
+	}
+	if r.ValueBoolean == nil {
+		return fmt.Errorf("field 'ValueBoolean' is required")
+	}
+	if r.ValueDateTime == nil {
+		return fmt.Errorf("field 'ValueDateTime' is required")
+	}
+	if r.ValueDecimal == nil {
+		return fmt.Errorf("field 'ValueDecimal' is required")
 	}
 	return nil
 }

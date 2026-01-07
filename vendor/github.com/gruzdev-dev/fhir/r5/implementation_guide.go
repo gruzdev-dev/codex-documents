@@ -115,71 +115,6 @@ func (r *ImplementationGuide) Validate() error {
 	return nil
 }
 
-type ImplementationGuideDependsOn struct {
-	Id        *string `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
-	Uri       string  `json:"uri" bson:"uri"`                                  // Identity of the IG that this depends on
-	PackageId *string `json:"packageId,omitempty" bson:"package_id,omitempty"` // NPM Package name for IG this depends on
-	Version   *string `json:"version,omitempty" bson:"version,omitempty"`      // Version of the IG
-	Reason    *string `json:"reason,omitempty" bson:"reason,omitempty"`        // Why dependency exists
-}
-
-func (r *ImplementationGuideDependsOn) Validate() error {
-	var emptyString string
-	if r.Uri == emptyString {
-		return fmt.Errorf("field 'Uri' is required")
-	}
-	return nil
-}
-
-type ImplementationGuideDefinitionGrouping struct {
-	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Name        string  `json:"name" bson:"name"`                                   // Descriptive name for the package
-	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Human readable text describing the package
-}
-
-func (r *ImplementationGuideDefinitionGrouping) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	return nil
-}
-
-type ImplementationGuideManifestResource struct {
-	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Reference    *Reference `json:"reference" bson:"reference"`                            // Location of the resource
-	IsExample    bool       `json:"isExample,omitempty" bson:"is_example,omitempty"`       // Is this an example
-	Profile      []string   `json:"profile,omitempty" bson:"profile,omitempty"`            // Profile(s) this is an example of
-	RelativePath *string    `json:"relativePath,omitempty" bson:"relative_path,omitempty"` // Relative path for page in IG
-}
-
-func (r *ImplementationGuideManifestResource) Validate() error {
-	if r.Reference == nil {
-		return fmt.Errorf("field 'Reference' is required")
-	}
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ImplementationGuideManifestPage struct {
-	Id     *string  `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Name   string   `json:"name" bson:"name"`                         // HTML page name
-	Title  *string  `json:"title,omitempty" bson:"title,omitempty"`   // Title of the page, for references
-	Anchor []string `json:"anchor,omitempty" bson:"anchor,omitempty"` // Anchor available on the page
-}
-
-func (r *ImplementationGuideManifestPage) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	return nil
-}
-
 type ImplementationGuideGlobal struct {
 	Id      *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
 	Type    string  `json:"type" bson:"type"`                 // Type this profile applies to
@@ -254,6 +189,56 @@ func (r *ImplementationGuideDefinitionResource) Validate() error {
 		if err := r.Reference.Validate(); err != nil {
 			return fmt.Errorf("Reference: %w", err)
 		}
+	}
+	return nil
+}
+
+type ImplementationGuideManifestResource struct {
+	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Reference    *Reference `json:"reference" bson:"reference"`                            // Location of the resource
+	IsExample    bool       `json:"isExample,omitempty" bson:"is_example,omitempty"`       // Is this an example
+	Profile      []string   `json:"profile,omitempty" bson:"profile,omitempty"`            // Profile(s) this is an example of
+	RelativePath *string    `json:"relativePath,omitempty" bson:"relative_path,omitempty"` // Relative path for page in IG
+}
+
+func (r *ImplementationGuideManifestResource) Validate() error {
+	if r.Reference == nil {
+		return fmt.Errorf("field 'Reference' is required")
+	}
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
+		}
+	}
+	return nil
+}
+
+type ImplementationGuideDependsOn struct {
+	Id        *string `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
+	Uri       string  `json:"uri" bson:"uri"`                                  // Identity of the IG that this depends on
+	PackageId *string `json:"packageId,omitempty" bson:"package_id,omitempty"` // NPM Package name for IG this depends on
+	Version   *string `json:"version,omitempty" bson:"version,omitempty"`      // Version of the IG
+	Reason    *string `json:"reason,omitempty" bson:"reason,omitempty"`        // Why dependency exists
+}
+
+func (r *ImplementationGuideDependsOn) Validate() error {
+	var emptyString string
+	if r.Uri == emptyString {
+		return fmt.Errorf("field 'Uri' is required")
+	}
+	return nil
+}
+
+type ImplementationGuideDefinitionGrouping struct {
+	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Name        string  `json:"name" bson:"name"`                                   // Descriptive name for the package
+	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Human readable text describing the package
+}
+
+func (r *ImplementationGuideDefinitionGrouping) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
 	}
 	return nil
 }
@@ -350,6 +335,21 @@ func (r *ImplementationGuideManifest) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Page[%d]: %w", i, err)
 		}
+	}
+	return nil
+}
+
+type ImplementationGuideManifestPage struct {
+	Id     *string  `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Name   string   `json:"name" bson:"name"`                         // HTML page name
+	Title  *string  `json:"title,omitempty" bson:"title,omitempty"`   // Title of the page, for references
+	Anchor []string `json:"anchor,omitempty" bson:"anchor,omitempty"` // Anchor available on the page
+}
+
+func (r *ImplementationGuideManifestPage) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
 	}
 	return nil
 }

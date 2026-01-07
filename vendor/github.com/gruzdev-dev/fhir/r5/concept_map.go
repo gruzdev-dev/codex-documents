@@ -142,6 +142,25 @@ func (r *ConceptMap) Validate() error {
 	return nil
 }
 
+type ConceptMapGroupElement struct {
+	Id       *string                        `json:"id,omitempty" bson:"id,omitempty"`              // Unique id for inter-element referencing
+	Code     *string                        `json:"code,omitempty" bson:"code,omitempty"`          // Identifies element being mapped
+	Display  *string                        `json:"display,omitempty" bson:"display,omitempty"`    // Display for the code
+	ValueSet *string                        `json:"valueSet,omitempty" bson:"value_set,omitempty"` // Identifies the set of concepts being mapped
+	NoMap    bool                           `json:"noMap,omitempty" bson:"no_map,omitempty"`       // No mapping to a target concept for this source concept
+	Comment  *string                        `json:"comment,omitempty" bson:"comment,omitempty"`    // Comments related to the mapping of the source element
+	Target   []ConceptMapGroupElementTarget `json:"target,omitempty" bson:"target,omitempty"`      // Concept in target system for element
+}
+
+func (r *ConceptMapGroupElement) Validate() error {
+	for i, item := range r.Target {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Target[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type ConceptMapProperty struct {
 	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Code        string  `json:"code" bson:"code"`                                   // Identifies the property on the mappings, and when referred to in the $translate operation
@@ -152,60 +171,6 @@ type ConceptMapProperty struct {
 }
 
 func (r *ConceptMapProperty) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	return nil
-}
-
-type ConceptMapGroupElementTarget struct {
-	Id           *string                                 `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
-	Code         *string                                 `json:"code,omitempty" bson:"code,omitempty"`            // Code that identifies the target element
-	Display      *string                                 `json:"display,omitempty" bson:"display,omitempty"`      // Display for the code
-	ValueSet     *string                                 `json:"valueSet,omitempty" bson:"value_set,omitempty"`   // Identifies the set of target concepts
-	Relationship string                                  `json:"relationship" bson:"relationship"`                // related-to | equivalent | source-is-narrower-than-target | source-is-broader-than-target | not-related-to
-	Comment      *string                                 `json:"comment,omitempty" bson:"comment,omitempty"`      // Comments related to the mapping to the target element
-	Property     []ConceptMapGroupElementTargetProperty  `json:"property,omitempty" bson:"property,omitempty"`    // Property value for the source -> target mapping
-	DependsOn    []ConceptMapGroupElementTargetDependsOn `json:"dependsOn,omitempty" bson:"depends_on,omitempty"` // Other properties required for this mapping
-	Product      []ConceptMapGroupElementTargetDependsOn `json:"product,omitempty" bson:"product,omitempty"`      // Other data elements that this mapping also produces
-}
-
-func (r *ConceptMapGroupElementTarget) Validate() error {
-	var emptyString string
-	if r.Relationship == emptyString {
-		return fmt.Errorf("field 'Relationship' is required")
-	}
-	for i, item := range r.Property {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Property[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.DependsOn {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("DependsOn[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Product {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Product[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ConceptMapAdditionalAttribute struct {
-	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Code        string  `json:"code" bson:"code"`                                   // Identifies this additional attribute through this resource
-	Uri         *string `json:"uri,omitempty" bson:"uri,omitempty"`                 // Formal identifier for the data element referred to in this attribute
-	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Why the additional attribute is defined, and/or what the data element it refers to is
-	Type        string  `json:"type" bson:"type"`                                   // code | Coding | string | boolean | Quantity
-}
-
-func (r *ConceptMapAdditionalAttribute) Validate() error {
 	var emptyString string
 	if r.Code == emptyString {
 		return fmt.Errorf("field 'Code' is required")
@@ -241,20 +206,36 @@ func (r *ConceptMapGroup) Validate() error {
 	return nil
 }
 
-type ConceptMapGroupElement struct {
-	Id       *string                        `json:"id,omitempty" bson:"id,omitempty"`              // Unique id for inter-element referencing
-	Code     *string                        `json:"code,omitempty" bson:"code,omitempty"`          // Identifies element being mapped
-	Display  *string                        `json:"display,omitempty" bson:"display,omitempty"`    // Display for the code
-	ValueSet *string                        `json:"valueSet,omitempty" bson:"value_set,omitempty"` // Identifies the set of concepts being mapped
-	NoMap    bool                           `json:"noMap,omitempty" bson:"no_map,omitempty"`       // No mapping to a target concept for this source concept
-	Comment  *string                        `json:"comment,omitempty" bson:"comment,omitempty"`    // Comments related to the mapping of the source element
-	Target   []ConceptMapGroupElementTarget `json:"target,omitempty" bson:"target,omitempty"`      // Concept in target system for element
+type ConceptMapGroupElementTarget struct {
+	Id           *string                                 `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
+	Code         *string                                 `json:"code,omitempty" bson:"code,omitempty"`            // Code that identifies the target element
+	Display      *string                                 `json:"display,omitempty" bson:"display,omitempty"`      // Display for the code
+	ValueSet     *string                                 `json:"valueSet,omitempty" bson:"value_set,omitempty"`   // Identifies the set of target concepts
+	Relationship string                                  `json:"relationship" bson:"relationship"`                // related-to | equivalent | source-is-narrower-than-target | source-is-broader-than-target | not-related-to
+	Comment      *string                                 `json:"comment,omitempty" bson:"comment,omitempty"`      // Comments related to the mapping to the target element
+	Property     []ConceptMapGroupElementTargetProperty  `json:"property,omitempty" bson:"property,omitempty"`    // Property value for the source -> target mapping
+	DependsOn    []ConceptMapGroupElementTargetDependsOn `json:"dependsOn,omitempty" bson:"depends_on,omitempty"` // Other properties required for this mapping
+	Product      []ConceptMapGroupElementTargetDependsOn `json:"product,omitempty" bson:"product,omitempty"`      // Other data elements that this mapping also produces
 }
 
-func (r *ConceptMapGroupElement) Validate() error {
-	for i, item := range r.Target {
+func (r *ConceptMapGroupElementTarget) Validate() error {
+	var emptyString string
+	if r.Relationship == emptyString {
+		return fmt.Errorf("field 'Relationship' is required")
+	}
+	for i, item := range r.Property {
 		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Target[%d]: %w", i, err)
+			return fmt.Errorf("Property[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.DependsOn {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("DependsOn[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Product {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Product[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -350,6 +331,25 @@ func (r *ConceptMapGroupUnmapped) Validate() error {
 	var emptyString string
 	if r.Mode == emptyString {
 		return fmt.Errorf("field 'Mode' is required")
+	}
+	return nil
+}
+
+type ConceptMapAdditionalAttribute struct {
+	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Code        string  `json:"code" bson:"code"`                                   // Identifies this additional attribute through this resource
+	Uri         *string `json:"uri,omitempty" bson:"uri,omitempty"`                 // Formal identifier for the data element referred to in this attribute
+	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Why the additional attribute is defined, and/or what the data element it refers to is
+	Type        string  `json:"type" bson:"type"`                                   // code | Coding | string | boolean | Quantity
+}
+
+func (r *ConceptMapAdditionalAttribute) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
 	}
 	return nil
 }

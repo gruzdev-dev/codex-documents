@@ -201,6 +201,32 @@ func (r *DeviceDefinition) Validate() error {
 	return nil
 }
 
+type DeviceDefinitionRegulatoryIdentifier struct {
+	Id               *string `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
+	Type             string  `json:"type" bson:"type"`                                              // basic | master | license
+	Identifier       string  `json:"identifier" bson:"identifier"`                                  // The identifier itself
+	Issuer           string  `json:"issuer" bson:"issuer"`                                          // The organization that issued this identifier
+	Jurisdiction     string  `json:"jurisdiction" bson:"jurisdiction"`                              // Relevant jurisdiction governing the identifier
+	IdentifierSystem *string `json:"identifierSystem,omitempty" bson:"identifier_system,omitempty"` // The namespace for the device identifier value
+}
+
+func (r *DeviceDefinitionRegulatoryIdentifier) Validate() error {
+	var emptyString string
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Identifier == emptyString {
+		return fmt.Errorf("field 'Identifier' is required")
+	}
+	if r.Issuer == emptyString {
+		return fmt.Errorf("field 'Issuer' is required")
+	}
+	if r.Jurisdiction == emptyString {
+		return fmt.Errorf("field 'Jurisdiction' is required")
+	}
+	return nil
+}
+
 type DeviceDefinitionDeviceName struct {
 	Id   *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
 	Name string           `json:"name" bson:"name"`                 // A name that is used to refer to the device
@@ -218,6 +244,68 @@ func (r *DeviceDefinitionDeviceName) Validate() error {
 	if r.Type != nil {
 		if err := r.Type.Validate(); err != nil {
 			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	return nil
+}
+
+type DeviceDefinitionPackaging struct {
+	Id                  *string                                `json:"id,omitempty" bson:"id,omitempty"`                                     // Unique id for inter-element referencing
+	Identifier          *Identifier                            `json:"identifier,omitempty" bson:"identifier,omitempty"`                     // Business identifier of the packaged medication
+	Type                *CodeableConcept                       `json:"type,omitempty" bson:"type,omitempty"`                                 // A code that defines the specific type of packaging
+	Count               *int                                   `json:"count,omitempty" bson:"count,omitempty"`                               // The number of items contained in the package (devices or sub-packages)
+	Distributor         []DeviceDefinitionPackagingDistributor `json:"distributor,omitempty" bson:"distributor,omitempty"`                   // An organization that distributes the packaged device
+	UdiDeviceIdentifier []DeviceDefinitionUdiDeviceIdentifier  `json:"udiDeviceIdentifier,omitempty" bson:"udi_device_identifier,omitempty"` // Unique Device Identifier (UDI) Barcode string on the packaging
+	Packaging           []DeviceDefinitionPackaging            `json:"packaging,omitempty" bson:"packaging,omitempty"`                       // Allows packages within packages
+}
+
+func (r *DeviceDefinitionPackaging) Validate() error {
+	if r.Identifier != nil {
+		if err := r.Identifier.Validate(); err != nil {
+			return fmt.Errorf("Identifier: %w", err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.Distributor {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Distributor[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.UdiDeviceIdentifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("UdiDeviceIdentifier[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Packaging {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Packaging[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type DeviceDefinitionClassification struct {
+	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Type          *CodeableConcept  `json:"type" bson:"type"`                                       // A classification or risk class of the device model
+	Justification []RelatedArtifact `json:"justification,omitempty" bson:"justification,omitempty"` // Further information qualifying this classification of the device model
+}
+
+func (r *DeviceDefinitionClassification) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.Justification {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Justification[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -245,6 +333,21 @@ func (r *DeviceDefinitionHasPart) Validate() error {
 	return nil
 }
 
+type DeviceDefinitionPackagingDistributor struct {
+	Id                    *string     `json:"id,omitempty" bson:"id,omitempty"`                                        // Unique id for inter-element referencing
+	Name                  *string     `json:"name,omitempty" bson:"name,omitempty"`                                    // Distributor's human-readable name
+	OrganizationReference []Reference `json:"organizationReference,omitempty" bson:"organization_reference,omitempty"` // Distributor as an Organization resource
+}
+
+func (r *DeviceDefinitionPackagingDistributor) Validate() error {
+	for i, item := range r.OrganizationReference {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("OrganizationReference[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type DeviceDefinitionDeviceVersion struct {
 	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	Type      *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`           // The type of the device version, e.g. manufacturer, approved, internal
@@ -266,6 +369,91 @@ func (r *DeviceDefinitionDeviceVersion) Validate() error {
 	var emptyString string
 	if r.Value == emptyString {
 		return fmt.Errorf("field 'Value' is required")
+	}
+	return nil
+}
+
+type DeviceDefinitionCorrectiveAction struct {
+	Id     *string `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Recall bool    `json:"recall" bson:"recall"`                   // Whether the corrective action was a recall
+	Scope  *string `json:"scope,omitempty" bson:"scope,omitempty"` // model | lot-numbers | serial-numbers
+	Period *Period `json:"period" bson:"period"`                   // Start and end dates of the  corrective action
+}
+
+func (r *DeviceDefinitionCorrectiveAction) Validate() error {
+	if r.Period == nil {
+		return fmt.Errorf("field 'Period' is required")
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
+		}
+	}
+	return nil
+}
+
+type DeviceDefinitionChargeItem struct {
+	Id              *string            `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
+	ChargeItemCode  *CodeableReference `json:"chargeItemCode" bson:"charge_item_code"`                      // The code or reference for the charge item
+	Count           *Quantity          `json:"count" bson:"count"`                                          // Coefficient applicable to the billing code
+	EffectivePeriod *Period            `json:"effectivePeriod,omitempty" bson:"effective_period,omitempty"` // A specific time period in which this charge item applies
+	UseContext      []UsageContext     `json:"useContext,omitempty" bson:"use_context,omitempty"`           // The context to which this charge item applies
+}
+
+func (r *DeviceDefinitionChargeItem) Validate() error {
+	if r.ChargeItemCode == nil {
+		return fmt.Errorf("field 'ChargeItemCode' is required")
+	}
+	if r.ChargeItemCode != nil {
+		if err := r.ChargeItemCode.Validate(); err != nil {
+			return fmt.Errorf("ChargeItemCode: %w", err)
+		}
+	}
+	if r.Count == nil {
+		return fmt.Errorf("field 'Count' is required")
+	}
+	if r.Count != nil {
+		if err := r.Count.Validate(); err != nil {
+			return fmt.Errorf("Count: %w", err)
+		}
+	}
+	if r.EffectivePeriod != nil {
+		if err := r.EffectivePeriod.Validate(); err != nil {
+			return fmt.Errorf("EffectivePeriod: %w", err)
+		}
+	}
+	for i, item := range r.UseContext {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("UseContext[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type DeviceDefinitionUdiDeviceIdentifier struct {
+	Id                     *string                                                 `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
+	DeviceIdentifier       string                                                  `json:"deviceIdentifier" bson:"device_identifier"`                                  // The identifier that is to be associated with every Device that references this DeviceDefintiion for the issuer and jurisdiction provided in the DeviceDefinition.udiDeviceIdentifier
+	Issuer                 string                                                  `json:"issuer" bson:"issuer"`                                                       // The organization that assigns the identifier algorithm
+	Jurisdiction           string                                                  `json:"jurisdiction" bson:"jurisdiction"`                                           // The jurisdiction to which the deviceIdentifier applies
+	MarketDistribution     []DeviceDefinitionUdiDeviceIdentifierMarketDistribution `json:"marketDistribution,omitempty" bson:"market_distribution,omitempty"`          // Indicates whether and when the device is available on the market
+	DeviceIdentifierSystem *string                                                 `json:"deviceIdentifierSystem,omitempty" bson:"device_identifier_system,omitempty"` // The namespace for the device identifier value
+}
+
+func (r *DeviceDefinitionUdiDeviceIdentifier) Validate() error {
+	var emptyString string
+	if r.DeviceIdentifier == emptyString {
+		return fmt.Errorf("field 'DeviceIdentifier' is required")
+	}
+	if r.Issuer == emptyString {
+		return fmt.Errorf("field 'Issuer' is required")
+	}
+	if r.Jurisdiction == emptyString {
+		return fmt.Errorf("field 'Jurisdiction' is required")
+	}
+	for i, item := range r.MarketDistribution {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("MarketDistribution[%d]: %w", i, err)
+		}
 	}
 	return nil
 }
@@ -375,127 +563,6 @@ func (r *DeviceDefinitionGuideline) Validate() error {
 	return nil
 }
 
-type DeviceDefinitionCorrectiveAction struct {
-	Id     *string `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Recall bool    `json:"recall" bson:"recall"`                   // Whether the corrective action was a recall
-	Scope  *string `json:"scope,omitempty" bson:"scope,omitempty"` // model | lot-numbers | serial-numbers
-	Period *Period `json:"period" bson:"period"`                   // Start and end dates of the  corrective action
-}
-
-func (r *DeviceDefinitionCorrectiveAction) Validate() error {
-	if r.Period == nil {
-		return fmt.Errorf("field 'Period' is required")
-	}
-	if r.Period != nil {
-		if err := r.Period.Validate(); err != nil {
-			return fmt.Errorf("Period: %w", err)
-		}
-	}
-	return nil
-}
-
-type DeviceDefinitionChargeItem struct {
-	Id              *string            `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
-	ChargeItemCode  *CodeableReference `json:"chargeItemCode" bson:"charge_item_code"`                      // The code or reference for the charge item
-	Count           *Quantity          `json:"count" bson:"count"`                                          // Coefficient applicable to the billing code
-	EffectivePeriod *Period            `json:"effectivePeriod,omitempty" bson:"effective_period,omitempty"` // A specific time period in which this charge item applies
-	UseContext      []UsageContext     `json:"useContext,omitempty" bson:"use_context,omitempty"`           // The context to which this charge item applies
-}
-
-func (r *DeviceDefinitionChargeItem) Validate() error {
-	if r.ChargeItemCode == nil {
-		return fmt.Errorf("field 'ChargeItemCode' is required")
-	}
-	if r.ChargeItemCode != nil {
-		if err := r.ChargeItemCode.Validate(); err != nil {
-			return fmt.Errorf("ChargeItemCode: %w", err)
-		}
-	}
-	if r.Count == nil {
-		return fmt.Errorf("field 'Count' is required")
-	}
-	if r.Count != nil {
-		if err := r.Count.Validate(); err != nil {
-			return fmt.Errorf("Count: %w", err)
-		}
-	}
-	if r.EffectivePeriod != nil {
-		if err := r.EffectivePeriod.Validate(); err != nil {
-			return fmt.Errorf("EffectivePeriod: %w", err)
-		}
-	}
-	for i, item := range r.UseContext {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("UseContext[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type DeviceDefinitionRegulatoryIdentifier struct {
-	Id               *string `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
-	Type             string  `json:"type" bson:"type"`                                              // basic | master | license
-	Identifier       string  `json:"identifier" bson:"identifier"`                                  // The identifier itself
-	Issuer           string  `json:"issuer" bson:"issuer"`                                          // The organization that issued this identifier
-	Jurisdiction     string  `json:"jurisdiction" bson:"jurisdiction"`                              // Relevant jurisdiction governing the identifier
-	IdentifierSystem *string `json:"identifierSystem,omitempty" bson:"identifier_system,omitempty"` // The namespace for the device identifier value
-}
-
-func (r *DeviceDefinitionRegulatoryIdentifier) Validate() error {
-	var emptyString string
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Identifier == emptyString {
-		return fmt.Errorf("field 'Identifier' is required")
-	}
-	if r.Issuer == emptyString {
-		return fmt.Errorf("field 'Issuer' is required")
-	}
-	if r.Jurisdiction == emptyString {
-		return fmt.Errorf("field 'Jurisdiction' is required")
-	}
-	return nil
-}
-
-type DeviceDefinitionClassification struct {
-	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Type          *CodeableConcept  `json:"type" bson:"type"`                                       // A classification or risk class of the device model
-	Justification []RelatedArtifact `json:"justification,omitempty" bson:"justification,omitempty"` // Further information qualifying this classification of the device model
-}
-
-func (r *DeviceDefinitionClassification) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	for i, item := range r.Justification {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Justification[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type DeviceDefinitionPackagingDistributor struct {
-	Id                    *string     `json:"id,omitempty" bson:"id,omitempty"`                                        // Unique id for inter-element referencing
-	Name                  *string     `json:"name,omitempty" bson:"name,omitempty"`                                    // Distributor's human-readable name
-	OrganizationReference []Reference `json:"organizationReference,omitempty" bson:"organization_reference,omitempty"` // Distributor as an Organization resource
-}
-
-func (r *DeviceDefinitionPackagingDistributor) Validate() error {
-	for i, item := range r.OrganizationReference {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("OrganizationReference[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type DeviceDefinitionUdiDeviceIdentifierMarketDistribution struct {
 	Id              *string `json:"id,omitempty" bson:"id,omitempty"`        // Unique id for inter-element referencing
 	MarketPeriod    *Period `json:"marketPeriod" bson:"market_period"`       // Begin and end dates for the commercial distribution of the device
@@ -518,40 +585,31 @@ func (r *DeviceDefinitionUdiDeviceIdentifierMarketDistribution) Validate() error
 	return nil
 }
 
-type DeviceDefinitionPackaging struct {
-	Id                  *string                                `json:"id,omitempty" bson:"id,omitempty"`                                     // Unique id for inter-element referencing
-	Identifier          *Identifier                            `json:"identifier,omitempty" bson:"identifier,omitempty"`                     // Business identifier of the packaged medication
-	Type                *CodeableConcept                       `json:"type,omitempty" bson:"type,omitempty"`                                 // A code that defines the specific type of packaging
-	Count               *int                                   `json:"count,omitempty" bson:"count,omitempty"`                               // The number of items contained in the package (devices or sub-packages)
-	Distributor         []DeviceDefinitionPackagingDistributor `json:"distributor,omitempty" bson:"distributor,omitempty"`                   // An organization that distributes the packaged device
-	UdiDeviceIdentifier []DeviceDefinitionUdiDeviceIdentifier  `json:"udiDeviceIdentifier,omitempty" bson:"udi_device_identifier,omitempty"` // Unique Device Identifier (UDI) Barcode string on the packaging
-	Packaging           []DeviceDefinitionPackaging            `json:"packaging,omitempty" bson:"packaging,omitempty"`                       // Allows packages within packages
+type DeviceDefinitionConformsTo struct {
+	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Category      *CodeableConcept  `json:"category,omitempty" bson:"category,omitempty"` // Describes the common type of the standard, specification, or formal guidance
+	Specification *CodeableConcept  `json:"specification" bson:"specification"`           // Identifies the standard, specification, or formal guidance that the device adheres to the Device Specification type
+	Version       []string          `json:"version,omitempty" bson:"version,omitempty"`   // The specific form or variant of the standard, specification or formal guidance
+	Source        []RelatedArtifact `json:"source,omitempty" bson:"source,omitempty"`     // Standard, regulation, certification, or guidance website, document, or other publication, or similar, supporting the conformance
 }
 
-func (r *DeviceDefinitionPackaging) Validate() error {
-	if r.Identifier != nil {
-		if err := r.Identifier.Validate(); err != nil {
-			return fmt.Errorf("Identifier: %w", err)
+func (r *DeviceDefinitionConformsTo) Validate() error {
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
 		}
 	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
+	if r.Specification == nil {
+		return fmt.Errorf("field 'Specification' is required")
+	}
+	if r.Specification != nil {
+		if err := r.Specification.Validate(); err != nil {
+			return fmt.Errorf("Specification: %w", err)
 		}
 	}
-	for i, item := range r.Distributor {
+	for i, item := range r.Source {
 		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Distributor[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.UdiDeviceIdentifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("UdiDeviceIdentifier[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Packaging {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Packaging[%d]: %w", i, err)
+			return fmt.Errorf("Source[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -601,64 +659,6 @@ func (r *DeviceDefinitionMaterial) Validate() error {
 	if r.Substance != nil {
 		if err := r.Substance.Validate(); err != nil {
 			return fmt.Errorf("Substance: %w", err)
-		}
-	}
-	return nil
-}
-
-type DeviceDefinitionUdiDeviceIdentifier struct {
-	Id                     *string                                                 `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
-	DeviceIdentifier       string                                                  `json:"deviceIdentifier" bson:"device_identifier"`                                  // The identifier that is to be associated with every Device that references this DeviceDefintiion for the issuer and jurisdiction provided in the DeviceDefinition.udiDeviceIdentifier
-	Issuer                 string                                                  `json:"issuer" bson:"issuer"`                                                       // The organization that assigns the identifier algorithm
-	Jurisdiction           string                                                  `json:"jurisdiction" bson:"jurisdiction"`                                           // The jurisdiction to which the deviceIdentifier applies
-	MarketDistribution     []DeviceDefinitionUdiDeviceIdentifierMarketDistribution `json:"marketDistribution,omitempty" bson:"market_distribution,omitempty"`          // Indicates whether and when the device is available on the market
-	DeviceIdentifierSystem *string                                                 `json:"deviceIdentifierSystem,omitempty" bson:"device_identifier_system,omitempty"` // The namespace for the device identifier value
-}
-
-func (r *DeviceDefinitionUdiDeviceIdentifier) Validate() error {
-	var emptyString string
-	if r.DeviceIdentifier == emptyString {
-		return fmt.Errorf("field 'DeviceIdentifier' is required")
-	}
-	if r.Issuer == emptyString {
-		return fmt.Errorf("field 'Issuer' is required")
-	}
-	if r.Jurisdiction == emptyString {
-		return fmt.Errorf("field 'Jurisdiction' is required")
-	}
-	for i, item := range r.MarketDistribution {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("MarketDistribution[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type DeviceDefinitionConformsTo struct {
-	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Category      *CodeableConcept  `json:"category,omitempty" bson:"category,omitempty"` // Describes the common type of the standard, specification, or formal guidance
-	Specification *CodeableConcept  `json:"specification" bson:"specification"`           // Identifies the standard, specification, or formal guidance that the device adheres to the Device Specification type
-	Version       []string          `json:"version,omitempty" bson:"version,omitempty"`   // The specific form or variant of the standard, specification or formal guidance
-	Source        []RelatedArtifact `json:"source,omitempty" bson:"source,omitempty"`     // Standard, regulation, certification, or guidance website, document, or other publication, or similar, supporting the conformance
-}
-
-func (r *DeviceDefinitionConformsTo) Validate() error {
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
-		}
-	}
-	if r.Specification == nil {
-		return fmt.Errorf("field 'Specification' is required")
-	}
-	if r.Specification != nil {
-		if err := r.Specification.Validate(); err != nil {
-			return fmt.Errorf("Specification: %w", err)
-		}
-	}
-	for i, item := range r.Source {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Source[%d]: %w", i, err)
 		}
 	}
 	return nil

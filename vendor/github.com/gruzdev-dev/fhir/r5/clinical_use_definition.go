@@ -98,129 +98,6 @@ func (r *ClinicalUseDefinition) Validate() error {
 	return nil
 }
 
-type ClinicalUseDefinitionInteraction struct {
-	Id          *string                                       `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Interactant []ClinicalUseDefinitionInteractionInteractant `json:"interactant,omitempty" bson:"interactant,omitempty"` // The specific medication, product, food etc. or laboratory test that interacts
-	Type        *CodeableConcept                              `json:"type,omitempty" bson:"type,omitempty"`               // The type of the interaction e.g. drug-drug interaction, drug-lab test interaction
-	Effect      *CodeableReference                            `json:"effect,omitempty" bson:"effect,omitempty"`           // The effect of the interaction, for example "reduced gastric absorption of primary medication"
-	Incidence   *CodeableConcept                              `json:"incidence,omitempty" bson:"incidence,omitempty"`     // The incidence of the interaction, e.g. theoretical, observed
-	Management  []CodeableConcept                             `json:"management,omitempty" bson:"management,omitempty"`   // Actions for managing the interaction
-	Severity    *CodeableConcept                              `json:"severity,omitempty" bson:"severity,omitempty"`       // The severity of the interaction
-}
-
-func (r *ClinicalUseDefinitionInteraction) Validate() error {
-	for i, item := range r.Interactant {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Interactant[%d]: %w", i, err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Effect != nil {
-		if err := r.Effect.Validate(); err != nil {
-			return fmt.Errorf("Effect: %w", err)
-		}
-	}
-	if r.Incidence != nil {
-		if err := r.Incidence.Validate(); err != nil {
-			return fmt.Errorf("Incidence: %w", err)
-		}
-	}
-	for i, item := range r.Management {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Management[%d]: %w", i, err)
-		}
-	}
-	if r.Severity != nil {
-		if err := r.Severity.Validate(); err != nil {
-			return fmt.Errorf("Severity: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClinicalUseDefinitionInteractionInteractant struct {
-	Id                  *string          `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	ItemReference       *Reference       `json:"itemReference" bson:"item_reference"`              // The specific medication, product, food etc. or laboratory test that interacts
-	ItemCodeableConcept *CodeableConcept `json:"itemCodeableConcept" bson:"item_codeable_concept"` // The specific medication, product, food etc. or laboratory test that interacts
-	Route               *CodeableConcept `json:"route,omitempty" bson:"route,omitempty"`           // The route by which the item is administered to cause the interaction
-}
-
-func (r *ClinicalUseDefinitionInteractionInteractant) Validate() error {
-	if r.ItemReference == nil {
-		return fmt.Errorf("field 'ItemReference' is required")
-	}
-	if r.ItemReference != nil {
-		if err := r.ItemReference.Validate(); err != nil {
-			return fmt.Errorf("ItemReference: %w", err)
-		}
-	}
-	if r.ItemCodeableConcept == nil {
-		return fmt.Errorf("field 'ItemCodeableConcept' is required")
-	}
-	if r.ItemCodeableConcept != nil {
-		if err := r.ItemCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("ItemCodeableConcept: %w", err)
-		}
-	}
-	if r.Route != nil {
-		if err := r.Route.Validate(); err != nil {
-			return fmt.Errorf("Route: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClinicalUseDefinitionWarning struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Description *string          `json:"description,omitempty" bson:"description,omitempty"` // A textual definition of this warning, with formatting
-	Code        *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`               // A coded or unformatted textual definition of this warning
-}
-
-func (r *ClinicalUseDefinitionWarning) Validate() error {
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClinicalUseDefinitionUndesirableEffect struct {
-	Id                     *string            `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
-	SymptomConditionEffect *CodeableReference `json:"symptomConditionEffect,omitempty" bson:"symptom_condition_effect,omitempty"` // The situation in which the undesirable effect may manifest
-	Classification         *CodeableConcept   `json:"classification,omitempty" bson:"classification,omitempty"`                   // High level classification of the effect
-	FrequencyOfOccurrence  *CodeableConcept   `json:"frequencyOfOccurrence,omitempty" bson:"frequency_of_occurrence,omitempty"`   // How often the effect is seen
-	Management             []CodeableConcept  `json:"management,omitempty" bson:"management,omitempty"`                           // Actions for managing the undesirable effect
-}
-
-func (r *ClinicalUseDefinitionUndesirableEffect) Validate() error {
-	if r.SymptomConditionEffect != nil {
-		if err := r.SymptomConditionEffect.Validate(); err != nil {
-			return fmt.Errorf("SymptomConditionEffect: %w", err)
-		}
-	}
-	if r.Classification != nil {
-		if err := r.Classification.Validate(); err != nil {
-			return fmt.Errorf("Classification: %w", err)
-		}
-	}
-	if r.FrequencyOfOccurrence != nil {
-		if err := r.FrequencyOfOccurrence.Validate(); err != nil {
-			return fmt.Errorf("FrequencyOfOccurrence: %w", err)
-		}
-	}
-	for i, item := range r.Management {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Management[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type ClinicalUseDefinitionIndication struct {
 	Id                      *string                                       `json:"id,omitempty" bson:"id,omitempty"`                                             // Unique id for inter-element referencing
 	DiseaseSymptomProcedure *CodeableReference                            `json:"diseaseSymptomProcedure,omitempty" bson:"disease_symptom_procedure,omitempty"` // The situation that is being documented as an indication for this item
@@ -278,32 +155,6 @@ func (r *ClinicalUseDefinitionIndication) Validate() error {
 	return nil
 }
 
-type ClinicalUseDefinitionIndicationOtherTherapy struct {
-	Id               *string            `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
-	RelationshipType *CodeableConcept   `json:"relationshipType" bson:"relationship_type"` // The type of relationship between the product indication/contraindication and another therapy
-	Treatment        *CodeableReference `json:"treatment" bson:"treatment"`                // Reference to a specific medication, substance etc. as part of an indication or contraindication
-}
-
-func (r *ClinicalUseDefinitionIndicationOtherTherapy) Validate() error {
-	if r.RelationshipType == nil {
-		return fmt.Errorf("field 'RelationshipType' is required")
-	}
-	if r.RelationshipType != nil {
-		if err := r.RelationshipType.Validate(); err != nil {
-			return fmt.Errorf("RelationshipType: %w", err)
-		}
-	}
-	if r.Treatment == nil {
-		return fmt.Errorf("field 'Treatment' is required")
-	}
-	if r.Treatment != nil {
-		if err := r.Treatment.Validate(); err != nil {
-			return fmt.Errorf("Treatment: %w", err)
-		}
-	}
-	return nil
-}
-
 type ClinicalUseDefinitionContraindication struct {
 	Id                      *string                                       `json:"id,omitempty" bson:"id,omitempty"`                                             // Unique id for inter-element referencing
 	DiseaseSymptomProcedure *CodeableReference                            `json:"diseaseSymptomProcedure,omitempty" bson:"disease_symptom_procedure,omitempty"` // The situation that is being documented as contraindicating against this item
@@ -349,6 +200,155 @@ func (r *ClinicalUseDefinitionContraindication) Validate() error {
 	for i, item := range r.OtherTherapy {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("OtherTherapy[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ClinicalUseDefinitionInteraction struct {
+	Id          *string                                       `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Interactant []ClinicalUseDefinitionInteractionInteractant `json:"interactant,omitempty" bson:"interactant,omitempty"` // The specific medication, product, food etc. or laboratory test that interacts
+	Type        *CodeableConcept                              `json:"type,omitempty" bson:"type,omitempty"`               // The type of the interaction e.g. drug-drug interaction, drug-lab test interaction
+	Effect      *CodeableReference                            `json:"effect,omitempty" bson:"effect,omitempty"`           // The effect of the interaction, for example "reduced gastric absorption of primary medication"
+	Incidence   *CodeableConcept                              `json:"incidence,omitempty" bson:"incidence,omitempty"`     // The incidence of the interaction, e.g. theoretical, observed
+	Management  []CodeableConcept                             `json:"management,omitempty" bson:"management,omitempty"`   // Actions for managing the interaction
+	Severity    *CodeableConcept                              `json:"severity,omitempty" bson:"severity,omitempty"`       // The severity of the interaction
+}
+
+func (r *ClinicalUseDefinitionInteraction) Validate() error {
+	for i, item := range r.Interactant {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Interactant[%d]: %w", i, err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Effect != nil {
+		if err := r.Effect.Validate(); err != nil {
+			return fmt.Errorf("Effect: %w", err)
+		}
+	}
+	if r.Incidence != nil {
+		if err := r.Incidence.Validate(); err != nil {
+			return fmt.Errorf("Incidence: %w", err)
+		}
+	}
+	for i, item := range r.Management {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Management[%d]: %w", i, err)
+		}
+	}
+	if r.Severity != nil {
+		if err := r.Severity.Validate(); err != nil {
+			return fmt.Errorf("Severity: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClinicalUseDefinitionUndesirableEffect struct {
+	Id                     *string            `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
+	SymptomConditionEffect *CodeableReference `json:"symptomConditionEffect,omitempty" bson:"symptom_condition_effect,omitempty"` // The situation in which the undesirable effect may manifest
+	Classification         *CodeableConcept   `json:"classification,omitempty" bson:"classification,omitempty"`                   // High level classification of the effect
+	FrequencyOfOccurrence  *CodeableConcept   `json:"frequencyOfOccurrence,omitempty" bson:"frequency_of_occurrence,omitempty"`   // How often the effect is seen
+	Management             []CodeableConcept  `json:"management,omitempty" bson:"management,omitempty"`                           // Actions for managing the undesirable effect
+}
+
+func (r *ClinicalUseDefinitionUndesirableEffect) Validate() error {
+	if r.SymptomConditionEffect != nil {
+		if err := r.SymptomConditionEffect.Validate(); err != nil {
+			return fmt.Errorf("SymptomConditionEffect: %w", err)
+		}
+	}
+	if r.Classification != nil {
+		if err := r.Classification.Validate(); err != nil {
+			return fmt.Errorf("Classification: %w", err)
+		}
+	}
+	if r.FrequencyOfOccurrence != nil {
+		if err := r.FrequencyOfOccurrence.Validate(); err != nil {
+			return fmt.Errorf("FrequencyOfOccurrence: %w", err)
+		}
+	}
+	for i, item := range r.Management {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Management[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ClinicalUseDefinitionIndicationOtherTherapy struct {
+	Id               *string            `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
+	RelationshipType *CodeableConcept   `json:"relationshipType" bson:"relationship_type"` // The type of relationship between the product indication/contraindication and another therapy
+	Treatment        *CodeableReference `json:"treatment" bson:"treatment"`                // Reference to a specific medication, substance etc. as part of an indication or contraindication
+}
+
+func (r *ClinicalUseDefinitionIndicationOtherTherapy) Validate() error {
+	if r.RelationshipType == nil {
+		return fmt.Errorf("field 'RelationshipType' is required")
+	}
+	if r.RelationshipType != nil {
+		if err := r.RelationshipType.Validate(); err != nil {
+			return fmt.Errorf("RelationshipType: %w", err)
+		}
+	}
+	if r.Treatment == nil {
+		return fmt.Errorf("field 'Treatment' is required")
+	}
+	if r.Treatment != nil {
+		if err := r.Treatment.Validate(); err != nil {
+			return fmt.Errorf("Treatment: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClinicalUseDefinitionInteractionInteractant struct {
+	Id                  *string          `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	ItemReference       *Reference       `json:"itemReference" bson:"item_reference"`              // The specific medication, product, food etc. or laboratory test that interacts
+	ItemCodeableConcept *CodeableConcept `json:"itemCodeableConcept" bson:"item_codeable_concept"` // The specific medication, product, food etc. or laboratory test that interacts
+	Route               *CodeableConcept `json:"route,omitempty" bson:"route,omitempty"`           // The route by which the item is administered to cause the interaction
+}
+
+func (r *ClinicalUseDefinitionInteractionInteractant) Validate() error {
+	if r.ItemReference == nil {
+		return fmt.Errorf("field 'ItemReference' is required")
+	}
+	if r.ItemReference != nil {
+		if err := r.ItemReference.Validate(); err != nil {
+			return fmt.Errorf("ItemReference: %w", err)
+		}
+	}
+	if r.ItemCodeableConcept == nil {
+		return fmt.Errorf("field 'ItemCodeableConcept' is required")
+	}
+	if r.ItemCodeableConcept != nil {
+		if err := r.ItemCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("ItemCodeableConcept: %w", err)
+		}
+	}
+	if r.Route != nil {
+		if err := r.Route.Validate(); err != nil {
+			return fmt.Errorf("Route: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClinicalUseDefinitionWarning struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Description *string          `json:"description,omitempty" bson:"description,omitempty"` // A textual definition of this warning, with formatting
+	Code        *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`               // A coded or unformatted textual definition of this warning
+}
+
+func (r *ClinicalUseDefinitionWarning) Validate() error {
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
 		}
 	}
 	return nil

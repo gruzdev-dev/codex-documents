@@ -109,23 +109,6 @@ func (r *OperationDefinition) Validate() error {
 	return nil
 }
 
-type OperationDefinitionParameterBinding struct {
-	Id       *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Strength string  `json:"strength" bson:"strength"`         // required | extensible | preferred | example | descriptive
-	ValueSet string  `json:"valueSet" bson:"value_set"`        // Source of value set
-}
-
-func (r *OperationDefinitionParameterBinding) Validate() error {
-	var emptyString string
-	if r.Strength == emptyString {
-		return fmt.Errorf("field 'Strength' is required")
-	}
-	if r.ValueSet == emptyString {
-		return fmt.Errorf("field 'ValueSet' is required")
-	}
-	return nil
-}
-
 type OperationDefinitionParameterReferencedFrom struct {
 	Id       *string `json:"id,omitempty" bson:"id,omitempty"`              // Unique id for inter-element referencing
 	Source   string  `json:"source" bson:"source"`                          // Referencing parameter
@@ -195,6 +178,23 @@ func (r *OperationDefinitionParameter) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Part[%d]: %w", i, err)
 		}
+	}
+	return nil
+}
+
+type OperationDefinitionParameterBinding struct {
+	Id       *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Strength string  `json:"strength" bson:"strength"`         // required | extensible | preferred | example | descriptive
+	ValueSet string  `json:"valueSet" bson:"value_set"`        // Source of value set
+}
+
+func (r *OperationDefinitionParameterBinding) Validate() error {
+	var emptyString string
+	if r.Strength == emptyString {
+		return fmt.Errorf("field 'Strength' is required")
+	}
+	if r.ValueSet == emptyString {
+		return fmt.Errorf("field 'ValueSet' is required")
 	}
 	return nil
 }

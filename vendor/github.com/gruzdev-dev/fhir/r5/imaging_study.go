@@ -113,6 +113,48 @@ func (r *ImagingStudy) Validate() error {
 	return nil
 }
 
+type ImagingStudySeriesPerformer struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
+	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who performed imaging study
+}
+
+func (r *ImagingStudySeriesPerformer) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
+		}
+	}
+	return nil
+}
+
+type ImagingStudySeriesInstance struct {
+	Id       *string `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Uid      string  `json:"uid" bson:"uid"`                           // DICOM SOP Instance UID
+	SopClass string  `json:"sopClass" bson:"sop_class"`                // DICOM class type
+	Number   *int    `json:"number,omitempty" bson:"number,omitempty"` // The number of this instance in the series
+	Title    *string `json:"title,omitempty" bson:"title,omitempty"`   // Name or title of the instance
+}
+
+func (r *ImagingStudySeriesInstance) Validate() error {
+	var emptyString string
+	if r.Uid == emptyString {
+		return fmt.Errorf("field 'Uid' is required")
+	}
+	if r.SopClass == emptyString {
+		return fmt.Errorf("field 'SopClass' is required")
+	}
+	return nil
+}
+
 type ImagingStudySeries struct {
 	Id                *string                       `json:"id,omitempty" bson:"id,omitempty"`                                 // Unique id for inter-element referencing
 	Uid               string                        `json:"uid" bson:"uid"`                                                   // DICOM Series Instance UID
@@ -165,48 +207,6 @@ func (r *ImagingStudySeries) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Instance[%d]: %w", i, err)
 		}
-	}
-	return nil
-}
-
-type ImagingStudySeriesPerformer struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
-	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who performed imaging study
-}
-
-func (r *ImagingStudySeriesPerformer) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
-		}
-	}
-	return nil
-}
-
-type ImagingStudySeriesInstance struct {
-	Id       *string `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Uid      string  `json:"uid" bson:"uid"`                           // DICOM SOP Instance UID
-	SopClass string  `json:"sopClass" bson:"sop_class"`                // DICOM class type
-	Number   *int    `json:"number,omitempty" bson:"number,omitempty"` // The number of this instance in the series
-	Title    *string `json:"title,omitempty" bson:"title,omitempty"`   // Name or title of the instance
-}
-
-func (r *ImagingStudySeriesInstance) Validate() error {
-	var emptyString string
-	if r.Uid == emptyString {
-		return fmt.Errorf("field 'Uid' is required")
-	}
-	if r.SopClass == emptyString {
-		return fmt.Errorf("field 'SopClass' is required")
 	}
 	return nil
 }

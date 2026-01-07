@@ -98,38 +98,6 @@ func (r *InsuranceProduct) Validate() error {
 	return nil
 }
 
-type InsuranceProductCoverage struct {
-	Id      *string                           `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
-	Type    *CodeableConcept                  `json:"type" bson:"type"`                           // Classification of Coverage
-	Network []Reference                       `json:"network,omitempty" bson:"network,omitempty"` // What networks provide coverage
-	Benefit []InsuranceProductCoverageBenefit `json:"benefit" bson:"benefit"`                     // List of benefits
-}
-
-func (r *InsuranceProductCoverage) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	for i, item := range r.Network {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Network[%d]: %w", i, err)
-		}
-	}
-	if len(r.Benefit) < 1 {
-		return fmt.Errorf("field 'Benefit' must have at least 1 elements")
-	}
-	for i, item := range r.Benefit {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Benefit[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type InsuranceProductCoverageBenefit struct {
 	Id          *string                                `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Type        *CodeableConcept                       `json:"type" bson:"type"`                                   // Classification of benefit provided
@@ -195,6 +163,38 @@ func (r *InsuranceProductRelated) Validate() error {
 	if r.Period != nil {
 		if err := r.Period.Validate(); err != nil {
 			return fmt.Errorf("Period: %w", err)
+		}
+	}
+	return nil
+}
+
+type InsuranceProductCoverage struct {
+	Id      *string                           `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
+	Type    *CodeableConcept                  `json:"type" bson:"type"`                           // Classification of Coverage
+	Network []Reference                       `json:"network,omitempty" bson:"network,omitempty"` // What networks provide coverage
+	Benefit []InsuranceProductCoverageBenefit `json:"benefit" bson:"benefit"`                     // List of benefits
+}
+
+func (r *InsuranceProductCoverage) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.Network {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Network[%d]: %w", i, err)
+		}
+	}
+	if len(r.Benefit) < 1 {
+		return fmt.Errorf("field 'Benefit' must have at least 1 elements")
+	}
+	for i, item := range r.Benefit {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Benefit[%d]: %w", i, err)
 		}
 	}
 	return nil

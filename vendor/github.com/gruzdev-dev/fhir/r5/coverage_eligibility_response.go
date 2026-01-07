@@ -116,24 +116,6 @@ func (r *CoverageEligibilityResponse) Validate() error {
 	return nil
 }
 
-type CoverageEligibilityResponseError struct {
-	Id         *string          `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Code       *CodeableConcept `json:"code" bson:"code"`                                 // Error code detailing processing issues
-	Expression []string         `json:"expression,omitempty" bson:"expression,omitempty"` // FHIRPath of element(s) related to issue
-}
-
-func (r *CoverageEligibilityResponseError) Validate() error {
-	if r.Code == nil {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	return nil
-}
-
 type CoverageEligibilityResponseEvent struct {
 	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
 	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
@@ -289,6 +271,24 @@ func (r *CoverageEligibilityResponseInsuranceItemBenefit) Validate() error {
 	if r.UsedMoney != nil {
 		if err := r.UsedMoney.Validate(); err != nil {
 			return fmt.Errorf("UsedMoney: %w", err)
+		}
+	}
+	return nil
+}
+
+type CoverageEligibilityResponseError struct {
+	Id         *string          `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Code       *CodeableConcept `json:"code" bson:"code"`                                 // Error code detailing processing issues
+	Expression []string         `json:"expression,omitempty" bson:"expression,omitempty"` // FHIRPath of element(s) related to issue
+}
+
+func (r *CoverageEligibilityResponseError) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
 		}
 	}
 	return nil

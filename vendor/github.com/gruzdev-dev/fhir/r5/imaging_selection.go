@@ -120,6 +120,23 @@ func (r *ImagingSelection) Validate() error {
 	return nil
 }
 
+type ImagingSelectionImageRegion3D struct {
+	Id         *string   `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	RegionType string    `json:"regionType" bson:"region_type"`    // point | multipoint | polyline | polygon | ellipse | ellipsoid
+	Coordinate []float64 `json:"coordinate" bson:"coordinate"`     // Specifies the coordinates that define the image region
+}
+
+func (r *ImagingSelectionImageRegion3D) Validate() error {
+	var emptyString string
+	if r.RegionType == emptyString {
+		return fmt.Errorf("field 'RegionType' is required")
+	}
+	if len(r.Coordinate) < 1 {
+		return fmt.Errorf("field 'Coordinate' must have at least 1 elements")
+	}
+	return nil
+}
+
 type ImagingSelectionPerformer struct {
 	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
 	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
@@ -176,23 +193,6 @@ type ImagingSelectionInstanceImageRegion2D struct {
 }
 
 func (r *ImagingSelectionInstanceImageRegion2D) Validate() error {
-	var emptyString string
-	if r.RegionType == emptyString {
-		return fmt.Errorf("field 'RegionType' is required")
-	}
-	if len(r.Coordinate) < 1 {
-		return fmt.Errorf("field 'Coordinate' must have at least 1 elements")
-	}
-	return nil
-}
-
-type ImagingSelectionImageRegion3D struct {
-	Id         *string   `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	RegionType string    `json:"regionType" bson:"region_type"`    // point | multipoint | polyline | polygon | ellipse | ellipsoid
-	Coordinate []float64 `json:"coordinate" bson:"coordinate"`     // Specifies the coordinates that define the image region
-}
-
-func (r *ImagingSelectionImageRegion3D) Validate() error {
 	var emptyString string
 	if r.RegionType == emptyString {
 		return fmt.Errorf("field 'RegionType' is required")

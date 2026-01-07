@@ -84,6 +84,47 @@ func (r *Ingredient) Validate() error {
 	return nil
 }
 
+type IngredientManufacturer struct {
+	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Role         *string    `json:"role,omitempty" bson:"role,omitempty"` // allowed | possible | actual
+	Manufacturer *Reference `json:"manufacturer" bson:"manufacturer"`     // An organization that manufactures this ingredient
+}
+
+func (r *IngredientManufacturer) Validate() error {
+	if r.Manufacturer == nil {
+		return fmt.Errorf("field 'Manufacturer' is required")
+	}
+	if r.Manufacturer != nil {
+		if err := r.Manufacturer.Validate(); err != nil {
+			return fmt.Errorf("Manufacturer: %w", err)
+		}
+	}
+	return nil
+}
+
+type IngredientSubstance struct {
+	Id       *string                       `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Code     *CodeableReference            `json:"code" bson:"code"`                             // A code or full resource that represents the ingredient substance
+	Strength []IngredientSubstanceStrength `json:"strength,omitempty" bson:"strength,omitempty"` // The quantity of substance, per presentation, or per volume or mass, and type of quantity
+}
+
+func (r *IngredientSubstance) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	for i, item := range r.Strength {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Strength[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type IngredientSubstanceStrength struct {
 	Id                           *string                                        `json:"id,omitempty" bson:"id,omitempty"`                                                       // Unique id for inter-element referencing
 	PresentationRatio            *Ratio                                         `json:"presentationRatio,omitempty" bson:"presentation_ratio,omitempty"`                        // The quantity of substance in the unit of presentation
@@ -207,47 +248,6 @@ func (r *IngredientSubstanceStrengthReferenceStrength) Validate() error {
 	for i, item := range r.Country {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Country[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type IngredientManufacturer struct {
-	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Role         *string    `json:"role,omitempty" bson:"role,omitempty"` // allowed | possible | actual
-	Manufacturer *Reference `json:"manufacturer" bson:"manufacturer"`     // An organization that manufactures this ingredient
-}
-
-func (r *IngredientManufacturer) Validate() error {
-	if r.Manufacturer == nil {
-		return fmt.Errorf("field 'Manufacturer' is required")
-	}
-	if r.Manufacturer != nil {
-		if err := r.Manufacturer.Validate(); err != nil {
-			return fmt.Errorf("Manufacturer: %w", err)
-		}
-	}
-	return nil
-}
-
-type IngredientSubstance struct {
-	Id       *string                       `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Code     *CodeableReference            `json:"code" bson:"code"`                             // A code or full resource that represents the ingredient substance
-	Strength []IngredientSubstanceStrength `json:"strength,omitempty" bson:"strength,omitempty"` // The quantity of substance, per presentation, or per volume or mass, and type of quantity
-}
-
-func (r *IngredientSubstance) Validate() error {
-	if r.Code == nil {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	for i, item := range r.Strength {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Strength[%d]: %w", i, err)
 		}
 	}
 	return nil

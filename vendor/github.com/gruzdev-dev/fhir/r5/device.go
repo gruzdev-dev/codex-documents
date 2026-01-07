@@ -134,6 +134,56 @@ func (r *Device) Validate() error {
 	return nil
 }
 
+type DeviceDeviceVersion struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Type        *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                // The type of the device version, e.g. manufacturer, approved, internal
+	Component   *Identifier      `json:"component,omitempty" bson:"component,omitempty"`      // The hardware or software module of the device to which the version applies
+	InstallDate *string          `json:"installDate,omitempty" bson:"install_date,omitempty"` // The date the version was installed on the device
+	Value       string           `json:"value" bson:"value"`                                  // The version text
+}
+
+func (r *DeviceDeviceVersion) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Component != nil {
+		if err := r.Component.Validate(); err != nil {
+			return fmt.Errorf("Component: %w", err)
+		}
+	}
+	var emptyString string
+	if r.Value == emptyString {
+		return fmt.Errorf("field 'Value' is required")
+	}
+	return nil
+}
+
+type DeviceConformsTo struct {
+	Id            *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Category      *CodeableConcept `json:"category,omitempty" bson:"category,omitempty"` // Describes the common type of the standard, specification, or formal guidance.  communication | performance | measurement
+	Specification *CodeableConcept `json:"specification" bson:"specification"`           // Identifies the standard, specification, or formal guidance that the device adheres to
+	Version       *string          `json:"version,omitempty" bson:"version,omitempty"`   // Specific form or variant of the standard
+}
+
+func (r *DeviceConformsTo) Validate() error {
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
+		}
+	}
+	if r.Specification == nil {
+		return fmt.Errorf("field 'Specification' is required")
+	}
+	if r.Specification != nil {
+		if err := r.Specification.Validate(); err != nil {
+			return fmt.Errorf("Specification: %w", err)
+		}
+	}
+	return nil
+}
+
 type DeviceProperty struct {
 	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Type                 *CodeableConcept `json:"type" bson:"type"`                                   // Code that specifies the property being represented
@@ -262,56 +312,6 @@ func (r *DeviceName) Validate() error {
 	if r.Type != nil {
 		if err := r.Type.Validate(); err != nil {
 			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	return nil
-}
-
-type DeviceDeviceVersion struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Type        *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                // The type of the device version, e.g. manufacturer, approved, internal
-	Component   *Identifier      `json:"component,omitempty" bson:"component,omitempty"`      // The hardware or software module of the device to which the version applies
-	InstallDate *string          `json:"installDate,omitempty" bson:"install_date,omitempty"` // The date the version was installed on the device
-	Value       string           `json:"value" bson:"value"`                                  // The version text
-}
-
-func (r *DeviceDeviceVersion) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Component != nil {
-		if err := r.Component.Validate(); err != nil {
-			return fmt.Errorf("Component: %w", err)
-		}
-	}
-	var emptyString string
-	if r.Value == emptyString {
-		return fmt.Errorf("field 'Value' is required")
-	}
-	return nil
-}
-
-type DeviceConformsTo struct {
-	Id            *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Category      *CodeableConcept `json:"category,omitempty" bson:"category,omitempty"` // Describes the common type of the standard, specification, or formal guidance.  communication | performance | measurement
-	Specification *CodeableConcept `json:"specification" bson:"specification"`           // Identifies the standard, specification, or formal guidance that the device adheres to
-	Version       *string          `json:"version,omitempty" bson:"version,omitempty"`   // Specific form or variant of the standard
-}
-
-func (r *DeviceConformsTo) Validate() error {
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
-		}
-	}
-	if r.Specification == nil {
-		return fmt.Errorf("field 'Specification' is required")
-	}
-	if r.Specification != nil {
-		if err := r.Specification.Validate(); err != nil {
-			return fmt.Errorf("Specification: %w", err)
 		}
 	}
 	return nil

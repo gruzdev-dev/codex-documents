@@ -98,140 +98,6 @@ func (r *Questionnaire) Validate() error {
 	return nil
 }
 
-type QuestionnaireItemInitial struct {
-	Id              *string     `json:"id,omitempty" bson:"id,omitempty"`        // Unique id for inter-element referencing
-	ValueBoolean    *bool       `json:"valueBoolean" bson:"value_boolean"`       // Actual value for initializing the question
-	ValueDecimal    *float64    `json:"valueDecimal" bson:"value_decimal"`       // Actual value for initializing the question
-	ValueInteger    *int        `json:"valueInteger" bson:"value_integer"`       // Actual value for initializing the question
-	ValueDate       *string     `json:"valueDate" bson:"value_date"`             // Actual value for initializing the question
-	ValueDateTime   *string     `json:"valueDateTime" bson:"value_date_time"`    // Actual value for initializing the question
-	ValueTime       *string     `json:"valueTime" bson:"value_time"`             // Actual value for initializing the question
-	ValueString     *string     `json:"valueString" bson:"value_string"`         // Actual value for initializing the question
-	ValueUri        *string     `json:"valueUri" bson:"value_uri"`               // Actual value for initializing the question
-	ValueAttachment *Attachment `json:"valueAttachment" bson:"value_attachment"` // Actual value for initializing the question
-	ValueCoding     *Coding     `json:"valueCoding" bson:"value_coding"`         // Actual value for initializing the question
-	ValueQuantity   *Quantity   `json:"valueQuantity" bson:"value_quantity"`     // Actual value for initializing the question
-	ValueReference  *Reference  `json:"valueReference" bson:"value_reference"`   // Actual value for initializing the question
-}
-
-func (r *QuestionnaireItemInitial) Validate() error {
-	if r.ValueBoolean == nil {
-		return fmt.Errorf("field 'ValueBoolean' is required")
-	}
-	if r.ValueDecimal == nil {
-		return fmt.Errorf("field 'ValueDecimal' is required")
-	}
-	if r.ValueInteger == nil {
-		return fmt.Errorf("field 'ValueInteger' is required")
-	}
-	if r.ValueDate == nil {
-		return fmt.Errorf("field 'ValueDate' is required")
-	}
-	if r.ValueDateTime == nil {
-		return fmt.Errorf("field 'ValueDateTime' is required")
-	}
-	if r.ValueTime == nil {
-		return fmt.Errorf("field 'ValueTime' is required")
-	}
-	if r.ValueString == nil {
-		return fmt.Errorf("field 'ValueString' is required")
-	}
-	if r.ValueUri == nil {
-		return fmt.Errorf("field 'ValueUri' is required")
-	}
-	if r.ValueAttachment == nil {
-		return fmt.Errorf("field 'ValueAttachment' is required")
-	}
-	if r.ValueAttachment != nil {
-		if err := r.ValueAttachment.Validate(); err != nil {
-			return fmt.Errorf("ValueAttachment: %w", err)
-		}
-	}
-	if r.ValueCoding == nil {
-		return fmt.Errorf("field 'ValueCoding' is required")
-	}
-	if r.ValueCoding != nil {
-		if err := r.ValueCoding.Validate(); err != nil {
-			return fmt.Errorf("ValueCoding: %w", err)
-		}
-	}
-	if r.ValueQuantity == nil {
-		return fmt.Errorf("field 'ValueQuantity' is required")
-	}
-	if r.ValueQuantity != nil {
-		if err := r.ValueQuantity.Validate(); err != nil {
-			return fmt.Errorf("ValueQuantity: %w", err)
-		}
-	}
-	if r.ValueReference == nil {
-		return fmt.Errorf("field 'ValueReference' is required")
-	}
-	if r.ValueReference != nil {
-		if err := r.ValueReference.Validate(); err != nil {
-			return fmt.Errorf("ValueReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type QuestionnaireItem struct {
-	Id               *string                         `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
-	LinkId           string                          `json:"linkId" bson:"link_id"`                                         // Unique id for item in questionnaire
-	Definition       []string                        `json:"definition,omitempty" bson:"definition,omitempty"`              // ElementDefinition - details for the item
-	Code             []Coding                        `json:"code,omitempty" bson:"code,omitempty"`                          // Corresponding concept for this item in a terminology
-	Prefix           *string                         `json:"prefix,omitempty" bson:"prefix,omitempty"`                      // E.g. "1(a)", "2.5.3"
-	Text             *string                         `json:"text,omitempty" bson:"text,omitempty"`                          // Primary text for the item
-	Type             string                          `json:"type" bson:"type"`                                              // group | display | boolean | decimal | integer | date | dateTime +
-	EnableWhen       []QuestionnaireItemEnableWhen   `json:"enableWhen,omitempty" bson:"enable_when,omitempty"`             // Only allow data when
-	EnableBehavior   *string                         `json:"enableBehavior,omitempty" bson:"enable_behavior,omitempty"`     // all | any
-	DisabledDisplay  *string                         `json:"disabledDisplay,omitempty" bson:"disabled_display,omitempty"`   // hidden | protected
-	Required         bool                            `json:"required,omitempty" bson:"required,omitempty"`                  // Whether the item must be included in data results
-	Repeats          bool                            `json:"repeats,omitempty" bson:"repeats,omitempty"`                    // Whether the item may repeat
-	ReadOnly         bool                            `json:"readOnly,omitempty" bson:"read_only,omitempty"`                 // Don't allow human editing
-	MaxLength        *int                            `json:"maxLength,omitempty" bson:"max_length,omitempty"`               // No more than these many characters
-	AnswerConstraint *string                         `json:"answerConstraint,omitempty" bson:"answer_constraint,omitempty"` // optionsOnly | optionsOrType | optionsOrString
-	AnswerValueSet   *string                         `json:"answerValueSet,omitempty" bson:"answer_value_set,omitempty"`    // ValueSet containing permitted answers
-	AnswerOption     []QuestionnaireItemAnswerOption `json:"answerOption,omitempty" bson:"answer_option,omitempty"`         // Permitted answer
-	Initial          []QuestionnaireItemInitial      `json:"initial,omitempty" bson:"initial,omitempty"`                    // Initial value(s) when item is first rendered
-	Item             []QuestionnaireItem             `json:"item,omitempty" bson:"item,omitempty"`                          // Nested questionnaire items
-}
-
-func (r *QuestionnaireItem) Validate() error {
-	var emptyString string
-	if r.LinkId == emptyString {
-		return fmt.Errorf("field 'LinkId' is required")
-	}
-	for i, item := range r.Code {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Code[%d]: %w", i, err)
-		}
-	}
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	for i, item := range r.EnableWhen {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("EnableWhen[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.AnswerOption {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("AnswerOption[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Initial {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Initial[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Item {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Item[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type QuestionnaireItemEnableWhen struct {
 	Id               *string     `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
 	Question         string      `json:"question" bson:"question"`                  // The linkId of question that determines whether item is enabled/disabled
@@ -376,6 +242,140 @@ func (r *QuestionnaireItemAnswerOption) Validate() error {
 	if r.ValueReference != nil {
 		if err := r.ValueReference.Validate(); err != nil {
 			return fmt.Errorf("ValueReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type QuestionnaireItemInitial struct {
+	Id              *string     `json:"id,omitempty" bson:"id,omitempty"`        // Unique id for inter-element referencing
+	ValueBoolean    *bool       `json:"valueBoolean" bson:"value_boolean"`       // Actual value for initializing the question
+	ValueDecimal    *float64    `json:"valueDecimal" bson:"value_decimal"`       // Actual value for initializing the question
+	ValueInteger    *int        `json:"valueInteger" bson:"value_integer"`       // Actual value for initializing the question
+	ValueDate       *string     `json:"valueDate" bson:"value_date"`             // Actual value for initializing the question
+	ValueDateTime   *string     `json:"valueDateTime" bson:"value_date_time"`    // Actual value for initializing the question
+	ValueTime       *string     `json:"valueTime" bson:"value_time"`             // Actual value for initializing the question
+	ValueString     *string     `json:"valueString" bson:"value_string"`         // Actual value for initializing the question
+	ValueUri        *string     `json:"valueUri" bson:"value_uri"`               // Actual value for initializing the question
+	ValueAttachment *Attachment `json:"valueAttachment" bson:"value_attachment"` // Actual value for initializing the question
+	ValueCoding     *Coding     `json:"valueCoding" bson:"value_coding"`         // Actual value for initializing the question
+	ValueQuantity   *Quantity   `json:"valueQuantity" bson:"value_quantity"`     // Actual value for initializing the question
+	ValueReference  *Reference  `json:"valueReference" bson:"value_reference"`   // Actual value for initializing the question
+}
+
+func (r *QuestionnaireItemInitial) Validate() error {
+	if r.ValueBoolean == nil {
+		return fmt.Errorf("field 'ValueBoolean' is required")
+	}
+	if r.ValueDecimal == nil {
+		return fmt.Errorf("field 'ValueDecimal' is required")
+	}
+	if r.ValueInteger == nil {
+		return fmt.Errorf("field 'ValueInteger' is required")
+	}
+	if r.ValueDate == nil {
+		return fmt.Errorf("field 'ValueDate' is required")
+	}
+	if r.ValueDateTime == nil {
+		return fmt.Errorf("field 'ValueDateTime' is required")
+	}
+	if r.ValueTime == nil {
+		return fmt.Errorf("field 'ValueTime' is required")
+	}
+	if r.ValueString == nil {
+		return fmt.Errorf("field 'ValueString' is required")
+	}
+	if r.ValueUri == nil {
+		return fmt.Errorf("field 'ValueUri' is required")
+	}
+	if r.ValueAttachment == nil {
+		return fmt.Errorf("field 'ValueAttachment' is required")
+	}
+	if r.ValueAttachment != nil {
+		if err := r.ValueAttachment.Validate(); err != nil {
+			return fmt.Errorf("ValueAttachment: %w", err)
+		}
+	}
+	if r.ValueCoding == nil {
+		return fmt.Errorf("field 'ValueCoding' is required")
+	}
+	if r.ValueCoding != nil {
+		if err := r.ValueCoding.Validate(); err != nil {
+			return fmt.Errorf("ValueCoding: %w", err)
+		}
+	}
+	if r.ValueQuantity == nil {
+		return fmt.Errorf("field 'ValueQuantity' is required")
+	}
+	if r.ValueQuantity != nil {
+		if err := r.ValueQuantity.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity: %w", err)
+		}
+	}
+	if r.ValueReference == nil {
+		return fmt.Errorf("field 'ValueReference' is required")
+	}
+	if r.ValueReference != nil {
+		if err := r.ValueReference.Validate(); err != nil {
+			return fmt.Errorf("ValueReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type QuestionnaireItem struct {
+	Id               *string                         `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
+	LinkId           string                          `json:"linkId" bson:"link_id"`                                         // Unique id for item in questionnaire
+	Definition       []string                        `json:"definition,omitempty" bson:"definition,omitempty"`              // ElementDefinition - details for the item
+	Code             []Coding                        `json:"code,omitempty" bson:"code,omitempty"`                          // Corresponding concept for this item in a terminology
+	Prefix           *string                         `json:"prefix,omitempty" bson:"prefix,omitempty"`                      // E.g. "1(a)", "2.5.3"
+	Text             *string                         `json:"text,omitempty" bson:"text,omitempty"`                          // Primary text for the item
+	Type             string                          `json:"type" bson:"type"`                                              // group | display | boolean | decimal | integer | date | dateTime +
+	EnableWhen       []QuestionnaireItemEnableWhen   `json:"enableWhen,omitempty" bson:"enable_when,omitempty"`             // Only allow data when
+	EnableBehavior   *string                         `json:"enableBehavior,omitempty" bson:"enable_behavior,omitempty"`     // all | any
+	DisabledDisplay  *string                         `json:"disabledDisplay,omitempty" bson:"disabled_display,omitempty"`   // hidden | protected
+	Required         bool                            `json:"required,omitempty" bson:"required,omitempty"`                  // Whether the item must be included in data results
+	Repeats          bool                            `json:"repeats,omitempty" bson:"repeats,omitempty"`                    // Whether the item may repeat
+	ReadOnly         bool                            `json:"readOnly,omitempty" bson:"read_only,omitempty"`                 // Don't allow human editing
+	MaxLength        *int                            `json:"maxLength,omitempty" bson:"max_length,omitempty"`               // No more than these many characters
+	AnswerConstraint *string                         `json:"answerConstraint,omitempty" bson:"answer_constraint,omitempty"` // optionsOnly | optionsOrType | optionsOrString
+	AnswerValueSet   *string                         `json:"answerValueSet,omitempty" bson:"answer_value_set,omitempty"`    // ValueSet containing permitted answers
+	AnswerOption     []QuestionnaireItemAnswerOption `json:"answerOption,omitempty" bson:"answer_option,omitempty"`         // Permitted answer
+	Initial          []QuestionnaireItemInitial      `json:"initial,omitempty" bson:"initial,omitempty"`                    // Initial value(s) when item is first rendered
+	Item             []QuestionnaireItem             `json:"item,omitempty" bson:"item,omitempty"`                          // Nested questionnaire items
+}
+
+func (r *QuestionnaireItem) Validate() error {
+	var emptyString string
+	if r.LinkId == emptyString {
+		return fmt.Errorf("field 'LinkId' is required")
+	}
+	for i, item := range r.Code {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Code[%d]: %w", i, err)
+		}
+	}
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	for i, item := range r.EnableWhen {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("EnableWhen[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.AnswerOption {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AnswerOption[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Initial {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Initial[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Item {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Item[%d]: %w", i, err)
 		}
 	}
 	return nil

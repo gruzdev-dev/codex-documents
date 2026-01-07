@@ -71,6 +71,28 @@ func (r *InsurancePlan) Validate() error {
 	return nil
 }
 
+type InsurancePlanGeneralCost struct {
+	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
+	Type      *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`            // Classification of specific cost
+	GroupSize *int             `json:"groupSize,omitempty" bson:"group_size,omitempty"` // Number of enrollees
+	Cost      *Money           `json:"cost,omitempty" bson:"cost,omitempty"`            // Cost value
+	Comment   *string          `json:"comment,omitempty" bson:"comment,omitempty"`      // Additional cost information
+}
+
+func (r *InsurancePlanGeneralCost) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Cost != nil {
+		if err := r.Cost.Validate(); err != nil {
+			return fmt.Errorf("Cost: %w", err)
+		}
+	}
+	return nil
+}
+
 type InsurancePlanSpecificCost struct {
 	Id       *string                            `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
 	Category *CodeableConcept                   `json:"category" bson:"category"`                   // General category of benefit
@@ -147,28 +169,6 @@ func (r *InsurancePlanSpecificCostBenefitCost) Validate() error {
 	if r.Value != nil {
 		if err := r.Value.Validate(); err != nil {
 			return fmt.Errorf("Value: %w", err)
-		}
-	}
-	return nil
-}
-
-type InsurancePlanGeneralCost struct {
-	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
-	Type      *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`            // Classification of specific cost
-	GroupSize *int             `json:"groupSize,omitempty" bson:"group_size,omitempty"` // Number of enrollees
-	Cost      *Money           `json:"cost,omitempty" bson:"cost,omitempty"`            // Cost value
-	Comment   *string          `json:"comment,omitempty" bson:"comment,omitempty"`      // Additional cost information
-}
-
-func (r *InsurancePlanGeneralCost) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Cost != nil {
-		if err := r.Cost.Validate(); err != nil {
-			return fmt.Errorf("Cost: %w", err)
 		}
 	}
 	return nil

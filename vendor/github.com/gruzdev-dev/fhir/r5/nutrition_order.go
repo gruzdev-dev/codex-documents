@@ -143,6 +143,38 @@ func (r *NutritionOrder) Validate() error {
 	return nil
 }
 
+type NutritionOrderEnteralFormulaAdministration struct {
+	Id           *string                                             `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Schedule     *NutritionOrderEnteralFormulaAdministrationSchedule `json:"schedule,omitempty" bson:"schedule,omitempty"`          // Scheduling information for enteral feeding products
+	Quantity     *Quantity                                           `json:"quantity,omitempty" bson:"quantity,omitempty"`          // The volume of formula feeding to provide
+	RateQuantity *Quantity                                           `json:"rateQuantity,omitempty" bson:"rate_quantity,omitempty"` // Speed with which the formula feeding is provided per period of time
+	RateRatio    *Ratio                                              `json:"rateRatio,omitempty" bson:"rate_ratio,omitempty"`       // Speed with which the formula feeding is provided per period of time
+}
+
+func (r *NutritionOrderEnteralFormulaAdministration) Validate() error {
+	if r.Schedule != nil {
+		if err := r.Schedule.Validate(); err != nil {
+			return fmt.Errorf("Schedule: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.RateQuantity != nil {
+		if err := r.RateQuantity.Validate(); err != nil {
+			return fmt.Errorf("RateQuantity: %w", err)
+		}
+	}
+	if r.RateRatio != nil {
+		if err := r.RateRatio.Validate(); err != nil {
+			return fmt.Errorf("RateRatio: %w", err)
+		}
+	}
+	return nil
+}
+
 type NutritionOrderEnteralFormulaAdministrationSchedule struct {
 	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
 	Timing      []Timing         `json:"timing,omitempty" bson:"timing,omitempty"`             // Scheduled frequency of enteral feeding
@@ -159,6 +191,33 @@ func (r *NutritionOrderEnteralFormulaAdministrationSchedule) Validate() error {
 	if r.AsNeededFor != nil {
 		if err := r.AsNeededFor.Validate(); err != nil {
 			return fmt.Errorf("AsNeededFor: %w", err)
+		}
+	}
+	return nil
+}
+
+type NutritionOrderAdditive struct {
+	Id                    *string            `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
+	ModularType           *CodeableReference `json:"modularType,omitempty" bson:"modular_type,omitempty"`                      // Type of modular component to add to the oral diet, supplement, and/or enteral feeding
+	ProductName           *string            `json:"productName,omitempty" bson:"product_name,omitempty"`                      // Product or brand name of the modular additive
+	Quantity              *Quantity          `json:"quantity,omitempty" bson:"quantity,omitempty"`                             // Amount of additive to be given or mixed in with the oral diet, supplement, and/or enteral feeding
+	RouteOfAdministration []CodeableConcept  `json:"routeOfAdministration,omitempty" bson:"route_of_administration,omitempty"` // How the additive should enter the patient's gastrointestinal tract
+}
+
+func (r *NutritionOrderAdditive) Validate() error {
+	if r.ModularType != nil {
+		if err := r.ModularType.Validate(); err != nil {
+			return fmt.Errorf("ModularType: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	for i, item := range r.RouteOfAdministration {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("RouteOfAdministration[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -224,26 +283,6 @@ func (r *NutritionOrderOralDietSchedule) Validate() error {
 	return nil
 }
 
-type NutritionOrderOralDietNutrient struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Modifier *CodeableConcept `json:"modifier,omitempty" bson:"modifier,omitempty"` // Nutrient modified in the oral diet type
-	Amount   *Quantity        `json:"amount,omitempty" bson:"amount,omitempty"`     // Quantity of the specified nutrient
-}
-
-func (r *NutritionOrderOralDietNutrient) Validate() error {
-	if r.Modifier != nil {
-		if err := r.Modifier.Validate(); err != nil {
-			return fmt.Errorf("Modifier: %w", err)
-		}
-	}
-	if r.Amount != nil {
-		if err := r.Amount.Validate(); err != nil {
-			return fmt.Errorf("Amount: %w", err)
-		}
-	}
-	return nil
-}
-
 type NutritionOrderOralDietTexture struct {
 	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
 	Modifier *CodeableConcept `json:"modifier,omitempty" bson:"modifier,omitempty"` // Food (i.e. solid and/or liquid) texture modifications in addition to those in the oral diet type
@@ -259,6 +298,60 @@ func (r *NutritionOrderOralDietTexture) Validate() error {
 	if r.Type != nil {
 		if err := r.Type.Validate(); err != nil {
 			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	return nil
+}
+
+type NutritionOrderSupplement struct {
+	Id             *string                           `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
+	Type           *CodeableReference                `json:"type,omitempty" bson:"type,omitempty"`                      // Type of supplement product requested
+	ProductName    *string                           `json:"productName,omitempty" bson:"product_name,omitempty"`       // Product or brand name of the nutritional supplement
+	Schedule       *NutritionOrderSupplementSchedule `json:"schedule,omitempty" bson:"schedule,omitempty"`              // Scheduling information for supplements
+	Quantity       *Quantity                         `json:"quantity,omitempty" bson:"quantity,omitempty"`              // Amount of the nutritional supplement
+	Instruction    *string                           `json:"instruction,omitempty" bson:"instruction,omitempty"`        // Instructions or additional information about the oral supplement
+	CaloricDensity *Quantity                         `json:"caloricDensity,omitempty" bson:"caloric_density,omitempty"` // Amount of energy per specified volume of supplement that is required
+}
+
+func (r *NutritionOrderSupplement) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Schedule != nil {
+		if err := r.Schedule.Validate(); err != nil {
+			return fmt.Errorf("Schedule: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.CaloricDensity != nil {
+		if err := r.CaloricDensity.Validate(); err != nil {
+			return fmt.Errorf("CaloricDensity: %w", err)
+		}
+	}
+	return nil
+}
+
+type NutritionOrderOralDietNutrient struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Modifier *CodeableConcept `json:"modifier,omitempty" bson:"modifier,omitempty"` // Nutrient modified in the oral diet type
+	Amount   *Quantity        `json:"amount,omitempty" bson:"amount,omitempty"`     // Quantity of the specified nutrient
+}
+
+func (r *NutritionOrderOralDietNutrient) Validate() error {
+	if r.Modifier != nil {
+		if err := r.Modifier.Validate(); err != nil {
+			return fmt.Errorf("Modifier: %w", err)
+		}
+	}
+	if r.Amount != nil {
+		if err := r.Amount.Validate(); err != nil {
+			return fmt.Errorf("Amount: %w", err)
 		}
 	}
 	return nil
@@ -327,99 +420,6 @@ func (r *NutritionOrderEnteralFormula) Validate() error {
 	if r.MaxVolumeToAdminister != nil {
 		if err := r.MaxVolumeToAdminister.Validate(); err != nil {
 			return fmt.Errorf("MaxVolumeToAdminister: %w", err)
-		}
-	}
-	return nil
-}
-
-type NutritionOrderAdditive struct {
-	Id                    *string            `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
-	ModularType           *CodeableReference `json:"modularType,omitempty" bson:"modular_type,omitempty"`                      // Type of modular component to add to the oral diet, supplement, and/or enteral feeding
-	ProductName           *string            `json:"productName,omitempty" bson:"product_name,omitempty"`                      // Product or brand name of the modular additive
-	Quantity              *Quantity          `json:"quantity,omitempty" bson:"quantity,omitempty"`                             // Amount of additive to be given or mixed in with the oral diet, supplement, and/or enteral feeding
-	RouteOfAdministration []CodeableConcept  `json:"routeOfAdministration,omitempty" bson:"route_of_administration,omitempty"` // How the additive should enter the patient's gastrointestinal tract
-}
-
-func (r *NutritionOrderAdditive) Validate() error {
-	if r.ModularType != nil {
-		if err := r.ModularType.Validate(); err != nil {
-			return fmt.Errorf("ModularType: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	for i, item := range r.RouteOfAdministration {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("RouteOfAdministration[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type NutritionOrderSupplement struct {
-	Id             *string                           `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
-	Type           *CodeableReference                `json:"type,omitempty" bson:"type,omitempty"`                      // Type of supplement product requested
-	ProductName    *string                           `json:"productName,omitempty" bson:"product_name,omitempty"`       // Product or brand name of the nutritional supplement
-	Schedule       *NutritionOrderSupplementSchedule `json:"schedule,omitempty" bson:"schedule,omitempty"`              // Scheduling information for supplements
-	Quantity       *Quantity                         `json:"quantity,omitempty" bson:"quantity,omitempty"`              // Amount of the nutritional supplement
-	Instruction    *string                           `json:"instruction,omitempty" bson:"instruction,omitempty"`        // Instructions or additional information about the oral supplement
-	CaloricDensity *Quantity                         `json:"caloricDensity,omitempty" bson:"caloric_density,omitempty"` // Amount of energy per specified volume of supplement that is required
-}
-
-func (r *NutritionOrderSupplement) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Schedule != nil {
-		if err := r.Schedule.Validate(); err != nil {
-			return fmt.Errorf("Schedule: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.CaloricDensity != nil {
-		if err := r.CaloricDensity.Validate(); err != nil {
-			return fmt.Errorf("CaloricDensity: %w", err)
-		}
-	}
-	return nil
-}
-
-type NutritionOrderEnteralFormulaAdministration struct {
-	Id           *string                                             `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Schedule     *NutritionOrderEnteralFormulaAdministrationSchedule `json:"schedule,omitempty" bson:"schedule,omitempty"`          // Scheduling information for enteral feeding products
-	Quantity     *Quantity                                           `json:"quantity,omitempty" bson:"quantity,omitempty"`          // The volume of formula feeding to provide
-	RateQuantity *Quantity                                           `json:"rateQuantity,omitempty" bson:"rate_quantity,omitempty"` // Speed with which the formula feeding is provided per period of time
-	RateRatio    *Ratio                                              `json:"rateRatio,omitempty" bson:"rate_ratio,omitempty"`       // Speed with which the formula feeding is provided per period of time
-}
-
-func (r *NutritionOrderEnteralFormulaAdministration) Validate() error {
-	if r.Schedule != nil {
-		if err := r.Schedule.Validate(); err != nil {
-			return fmt.Errorf("Schedule: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.RateQuantity != nil {
-		if err := r.RateQuantity.Validate(); err != nil {
-			return fmt.Errorf("RateQuantity: %w", err)
-		}
-	}
-	if r.RateRatio != nil {
-		if err := r.RateRatio.Validate(); err != nil {
-			return fmt.Errorf("RateRatio: %w", err)
 		}
 	}
 	return nil

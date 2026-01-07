@@ -54,6 +54,16 @@ func (r *Bundle) Validate() error {
 	return nil
 }
 
+type BundleEntrySearch struct {
+	Id    *string  `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Mode  *string  `json:"mode,omitempty" bson:"mode,omitempty"`   // match | include - why this is in the result set
+	Score *float64 `json:"score,omitempty" bson:"score,omitempty"` // Search ranking (between 0 and 1)
+}
+
+func (r *BundleEntrySearch) Validate() error {
+	return nil
+}
+
 type BundleEntryRequest struct {
 	Id              *string `json:"id,omitempty" bson:"id,omitempty"`                             // Unique id for inter-element referencing
 	Method          string  `json:"method" bson:"method"`                                         // GET | HEAD | POST | PUT | DELETE | PATCH
@@ -140,15 +150,5 @@ func (r *BundleEntry) Validate() error {
 			return fmt.Errorf("Response: %w", err)
 		}
 	}
-	return nil
-}
-
-type BundleEntrySearch struct {
-	Id    *string  `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Mode  *string  `json:"mode,omitempty" bson:"mode,omitempty"`   // match | include - why this is in the result set
-	Score *float64 `json:"score,omitempty" bson:"score,omitempty"` // Search ranking (between 0 and 1)
-}
-
-func (r *BundleEntrySearch) Validate() error {
 	return nil
 }

@@ -183,43 +183,6 @@ func (r *Appointment) Validate() error {
 	return nil
 }
 
-type AppointmentRecurrenceTemplateMonthlyTemplate struct {
-	Id             *string `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
-	DayOfMonth     *int    `json:"dayOfMonth,omitempty" bson:"day_of_month,omitempty"`          // Recurs on a specific day of the month
-	NthWeekOfMonth *Coding `json:"nthWeekOfMonth,omitempty" bson:"nth_week_of_month,omitempty"` // Indicates which week of the month the appointment should occur
-	DayOfWeek      *Coding `json:"dayOfWeek,omitempty" bson:"day_of_week,omitempty"`            // Indicates which day of the week the appointment should occur
-	MonthInterval  int     `json:"monthInterval" bson:"month_interval"`                         // Recurs every nth month
-}
-
-func (r *AppointmentRecurrenceTemplateMonthlyTemplate) Validate() error {
-	if r.NthWeekOfMonth != nil {
-		if err := r.NthWeekOfMonth.Validate(); err != nil {
-			return fmt.Errorf("NthWeekOfMonth: %w", err)
-		}
-	}
-	if r.DayOfWeek != nil {
-		if err := r.DayOfWeek.Validate(); err != nil {
-			return fmt.Errorf("DayOfWeek: %w", err)
-		}
-	}
-	if r.MonthInterval == 0 {
-		return fmt.Errorf("field 'MonthInterval' is required")
-	}
-	return nil
-}
-
-type AppointmentRecurrenceTemplateYearlyTemplate struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"`  // Unique id for inter-element referencing
-	YearInterval int     `json:"yearInterval" bson:"year_interval"` // Recurs every nth year
-}
-
-func (r *AppointmentRecurrenceTemplateYearlyTemplate) Validate() error {
-	if r.YearInterval == 0 {
-		return fmt.Errorf("field 'YearInterval' is required")
-	}
-	return nil
-}
-
 type AppointmentParticipant struct {
 	Id       *string           `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
 	Type     []CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // Role of participant in the appointment
@@ -311,5 +274,42 @@ type AppointmentRecurrenceTemplateWeeklyTemplate struct {
 }
 
 func (r *AppointmentRecurrenceTemplateWeeklyTemplate) Validate() error {
+	return nil
+}
+
+type AppointmentRecurrenceTemplateMonthlyTemplate struct {
+	Id             *string `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
+	DayOfMonth     *int    `json:"dayOfMonth,omitempty" bson:"day_of_month,omitempty"`          // Recurs on a specific day of the month
+	NthWeekOfMonth *Coding `json:"nthWeekOfMonth,omitempty" bson:"nth_week_of_month,omitempty"` // Indicates which week of the month the appointment should occur
+	DayOfWeek      *Coding `json:"dayOfWeek,omitempty" bson:"day_of_week,omitempty"`            // Indicates which day of the week the appointment should occur
+	MonthInterval  int     `json:"monthInterval" bson:"month_interval"`                         // Recurs every nth month
+}
+
+func (r *AppointmentRecurrenceTemplateMonthlyTemplate) Validate() error {
+	if r.NthWeekOfMonth != nil {
+		if err := r.NthWeekOfMonth.Validate(); err != nil {
+			return fmt.Errorf("NthWeekOfMonth: %w", err)
+		}
+	}
+	if r.DayOfWeek != nil {
+		if err := r.DayOfWeek.Validate(); err != nil {
+			return fmt.Errorf("DayOfWeek: %w", err)
+		}
+	}
+	if r.MonthInterval == 0 {
+		return fmt.Errorf("field 'MonthInterval' is required")
+	}
+	return nil
+}
+
+type AppointmentRecurrenceTemplateYearlyTemplate struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"`  // Unique id for inter-element referencing
+	YearInterval int     `json:"yearInterval" bson:"year_interval"` // Recurs every nth year
+}
+
+func (r *AppointmentRecurrenceTemplateYearlyTemplate) Validate() error {
+	if r.YearInterval == 0 {
+		return fmt.Errorf("field 'YearInterval' is required")
+	}
 	return nil
 }

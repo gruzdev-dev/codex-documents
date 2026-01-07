@@ -98,6 +98,56 @@ func (r *AdministrableProductDefinition) Validate() error {
 	return nil
 }
 
+type AdministrableProductDefinitionRouteOfAdministrationTargetSpecies struct {
+	Id               *string                                                                            `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
+	Code             *CodeableConcept                                                                   `json:"code" bson:"code"`                                              // Coded expression for the species
+	WithdrawalPeriod []AdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod `json:"withdrawalPeriod,omitempty" bson:"withdrawal_period,omitempty"` // A species specific time during which consumption of animal product is not appropriate
+}
+
+func (r *AdministrableProductDefinitionRouteOfAdministrationTargetSpecies) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	for i, item := range r.WithdrawalPeriod {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("WithdrawalPeriod[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type AdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod struct {
+	Id                    *string          `json:"id,omitempty" bson:"id,omitempty"`                                        // Unique id for inter-element referencing
+	Tissue                *CodeableConcept `json:"tissue" bson:"tissue"`                                                    // The type of tissue for which the withdrawal period applies, e.g. meat, milk
+	Value                 *Quantity        `json:"value" bson:"value"`                                                      // A value for the time
+	SupportingInformation *string          `json:"supportingInformation,omitempty" bson:"supporting_information,omitempty"` // Extra information about the withdrawal period
+}
+
+func (r *AdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod) Validate() error {
+	if r.Tissue == nil {
+		return fmt.Errorf("field 'Tissue' is required")
+	}
+	if r.Tissue != nil {
+		if err := r.Tissue.Validate(); err != nil {
+			return fmt.Errorf("Tissue: %w", err)
+		}
+	}
+	if r.Value == nil {
+		return fmt.Errorf("field 'Value' is required")
+	}
+	if r.Value != nil {
+		if err := r.Value.Validate(); err != nil {
+			return fmt.Errorf("Value: %w", err)
+		}
+	}
+	return nil
+}
+
 type AdministrableProductDefinitionProperty struct {
 	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
 	Type                 *CodeableConcept `json:"type" bson:"type"`                                                       // A code expressing the type of characteristic
@@ -202,56 +252,6 @@ func (r *AdministrableProductDefinitionRouteOfAdministration) Validate() error {
 	for i, item := range r.TargetSpecies {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("TargetSpecies[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type AdministrableProductDefinitionRouteOfAdministrationTargetSpecies struct {
-	Id               *string                                                                            `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
-	Code             *CodeableConcept                                                                   `json:"code" bson:"code"`                                              // Coded expression for the species
-	WithdrawalPeriod []AdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod `json:"withdrawalPeriod,omitempty" bson:"withdrawal_period,omitempty"` // A species specific time during which consumption of animal product is not appropriate
-}
-
-func (r *AdministrableProductDefinitionRouteOfAdministrationTargetSpecies) Validate() error {
-	if r.Code == nil {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	for i, item := range r.WithdrawalPeriod {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("WithdrawalPeriod[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type AdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod struct {
-	Id                    *string          `json:"id,omitempty" bson:"id,omitempty"`                                        // Unique id for inter-element referencing
-	Tissue                *CodeableConcept `json:"tissue" bson:"tissue"`                                                    // The type of tissue for which the withdrawal period applies, e.g. meat, milk
-	Value                 *Quantity        `json:"value" bson:"value"`                                                      // A value for the time
-	SupportingInformation *string          `json:"supportingInformation,omitempty" bson:"supporting_information,omitempty"` // Extra information about the withdrawal period
-}
-
-func (r *AdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod) Validate() error {
-	if r.Tissue == nil {
-		return fmt.Errorf("field 'Tissue' is required")
-	}
-	if r.Tissue != nil {
-		if err := r.Tissue.Validate(); err != nil {
-			return fmt.Errorf("Tissue: %w", err)
-		}
-	}
-	if r.Value == nil {
-		return fmt.Errorf("field 'Value' is required")
-	}
-	if r.Value != nil {
-		if err := r.Value.Validate(); err != nil {
-			return fmt.Errorf("Value: %w", err)
 		}
 	}
 	return nil

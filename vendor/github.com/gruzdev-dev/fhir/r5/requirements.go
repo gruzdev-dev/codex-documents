@@ -96,6 +96,20 @@ func (r *Requirements) Validate() error {
 	return nil
 }
 
+type RequirementsStatementPartOf struct {
+	Id        *string `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Reference *string `json:"reference,omitempty" bson:"reference,omitempty"` // Pointer to Requirements instance
+	Key       string  `json:"key" bson:"key"`                                 // Key of referenced statement
+}
+
+func (r *RequirementsStatementPartOf) Validate() error {
+	var emptyString string
+	if r.Key == emptyString {
+		return fmt.Errorf("field 'Key' is required")
+	}
+	return nil
+}
+
 type RequirementsImports struct {
 	Id        *string  `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
 	Reference string   `json:"reference" bson:"reference"`         // Source of imported statements
@@ -178,20 +192,6 @@ type RequirementsStatementDerivedFrom struct {
 }
 
 func (r *RequirementsStatementDerivedFrom) Validate() error {
-	var emptyString string
-	if r.Key == emptyString {
-		return fmt.Errorf("field 'Key' is required")
-	}
-	return nil
-}
-
-type RequirementsStatementPartOf struct {
-	Id        *string `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Reference *string `json:"reference,omitempty" bson:"reference,omitempty"` // Pointer to Requirements instance
-	Key       string  `json:"key" bson:"key"`                                 // Key of referenced statement
-}
-
-func (r *RequirementsStatementPartOf) Validate() error {
 	var emptyString string
 	if r.Key == emptyString {
 		return fmt.Errorf("field 'Key' is required")

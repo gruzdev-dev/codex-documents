@@ -303,255 +303,6 @@ func (r *ContractTermSecurityLabel) Validate() error {
 	return nil
 }
 
-type ContractTermAssetContext struct {
-	Id        *string           `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Reference *Reference        `json:"reference,omitempty" bson:"reference,omitempty"` // Creator,custodian or owner
-	Code      []CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`           // Codeable asset context
-	Text      *string           `json:"text,omitempty" bson:"text,omitempty"`           // Context description
-}
-
-func (r *ContractTermAssetContext) Validate() error {
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	for i, item := range r.Code {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Code[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ContractFriendly struct {
-	Id                *string     `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
-	ContentAttachment *Attachment `json:"contentAttachment" bson:"content_attachment"` // Easily comprehended representation of this Contract
-	ContentReference  *Reference  `json:"contentReference" bson:"content_reference"`   // Easily comprehended representation of this Contract
-}
-
-func (r *ContractFriendly) Validate() error {
-	if r.ContentAttachment == nil {
-		return fmt.Errorf("field 'ContentAttachment' is required")
-	}
-	if r.ContentAttachment != nil {
-		if err := r.ContentAttachment.Validate(); err != nil {
-			return fmt.Errorf("ContentAttachment: %w", err)
-		}
-	}
-	if r.ContentReference == nil {
-		return fmt.Errorf("field 'ContentReference' is required")
-	}
-	if r.ContentReference != nil {
-		if err := r.ContentReference.Validate(); err != nil {
-			return fmt.Errorf("ContentReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ContractRule struct {
-	Id                *string     `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
-	ContentAttachment *Attachment `json:"contentAttachment" bson:"content_attachment"` // Computable Contract Rules
-	ContentReference  *Reference  `json:"contentReference" bson:"content_reference"`   // Computable Contract Rules
-}
-
-func (r *ContractRule) Validate() error {
-	if r.ContentAttachment == nil {
-		return fmt.Errorf("field 'ContentAttachment' is required")
-	}
-	if r.ContentAttachment != nil {
-		if err := r.ContentAttachment.Validate(); err != nil {
-			return fmt.Errorf("ContentAttachment: %w", err)
-		}
-	}
-	if r.ContentReference == nil {
-		return fmt.Errorf("field 'ContentReference' is required")
-	}
-	if r.ContentReference != nil {
-		if err := r.ContentReference.Validate(); err != nil {
-			return fmt.Errorf("ContentReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ContractTermOfferParty struct {
-	Id        *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Reference []Reference      `json:"reference" bson:"reference"`       // Referenced entity
-	Role      *CodeableConcept `json:"role" bson:"role"`                 // Participant engagement type
-}
-
-func (r *ContractTermOfferParty) Validate() error {
-	if len(r.Reference) < 1 {
-		return fmt.Errorf("field 'Reference' must have at least 1 elements")
-	}
-	for i, item := range r.Reference {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Reference[%d]: %w", i, err)
-		}
-	}
-	if r.Role == nil {
-		return fmt.Errorf("field 'Role' is required")
-	}
-	if r.Role != nil {
-		if err := r.Role.Validate(); err != nil {
-			return fmt.Errorf("Role: %w", err)
-		}
-	}
-	return nil
-}
-
-type ContractSigner struct {
-	Id        *string     `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Type      *Coding     `json:"type" bson:"type"`                 // Contract Signatory Role
-	Party     *Reference  `json:"party" bson:"party"`               // Contract Signatory Party
-	Signature []Signature `json:"signature" bson:"signature"`       // Contract Documentation Signature
-}
-
-func (r *ContractSigner) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Party == nil {
-		return fmt.Errorf("field 'Party' is required")
-	}
-	if r.Party != nil {
-		if err := r.Party.Validate(); err != nil {
-			return fmt.Errorf("Party: %w", err)
-		}
-	}
-	if len(r.Signature) < 1 {
-		return fmt.Errorf("field 'Signature' must have at least 1 elements")
-	}
-	for i, item := range r.Signature {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Signature[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ContractLegal struct {
-	Id                *string     `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
-	ContentAttachment *Attachment `json:"contentAttachment" bson:"content_attachment"` // Contract Legal Text
-	ContentReference  *Reference  `json:"contentReference" bson:"content_reference"`   // Contract Legal Text
-}
-
-func (r *ContractLegal) Validate() error {
-	if r.ContentAttachment == nil {
-		return fmt.Errorf("field 'ContentAttachment' is required")
-	}
-	if r.ContentAttachment != nil {
-		if err := r.ContentAttachment.Validate(); err != nil {
-			return fmt.Errorf("ContentAttachment: %w", err)
-		}
-	}
-	if r.ContentReference == nil {
-		return fmt.Errorf("field 'ContentReference' is required")
-	}
-	if r.ContentReference != nil {
-		if err := r.ContentReference.Validate(); err != nil {
-			return fmt.Errorf("ContentReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ContractContentDefinition struct {
-	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
-	Type              *CodeableConcept `json:"type" bson:"type"`                                            // Content structure and use
-	SubType           *CodeableConcept `json:"subType,omitempty" bson:"sub_type,omitempty"`                 // Detailed Content Type Definition
-	Publisher         *Reference       `json:"publisher,omitempty" bson:"publisher,omitempty"`              // Publisher Entity
-	PublicationDate   *string          `json:"publicationDate,omitempty" bson:"publication_date,omitempty"` // When published
-	PublicationStatus string           `json:"publicationStatus" bson:"publication_status"`                 // amended | appended | cancelled | disputed | entered-in-error | executable +
-	Copyright         *string          `json:"copyright,omitempty" bson:"copyright,omitempty"`              // Publication Ownership
-}
-
-func (r *ContractContentDefinition) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.SubType != nil {
-		if err := r.SubType.Validate(); err != nil {
-			return fmt.Errorf("SubType: %w", err)
-		}
-	}
-	if r.Publisher != nil {
-		if err := r.Publisher.Validate(); err != nil {
-			return fmt.Errorf("Publisher: %w", err)
-		}
-	}
-	var emptyString string
-	if r.PublicationStatus == emptyString {
-		return fmt.Errorf("field 'PublicationStatus' is required")
-	}
-	return nil
-}
-
-type ContractTermOffer struct {
-	Id                  *string                   `json:"id,omitempty" bson:"id,omitempty"`                                     // Unique id for inter-element referencing
-	Identifier          []Identifier              `json:"identifier,omitempty" bson:"identifier,omitempty"`                     // Offer business ID
-	Party               []ContractTermOfferParty  `json:"party,omitempty" bson:"party,omitempty"`                               // Offer Recipient
-	Topic               *Reference                `json:"topic,omitempty" bson:"topic,omitempty"`                               // Negotiable offer asset
-	Type                *CodeableConcept          `json:"type,omitempty" bson:"type,omitempty"`                                 // Contract Offer Type or Form
-	Decision            *CodeableConcept          `json:"decision,omitempty" bson:"decision,omitempty"`                         // Accepting party choice
-	DecisionMode        []CodeableConcept         `json:"decisionMode,omitempty" bson:"decision_mode,omitempty"`                // How decision is conveyed
-	Answer              []ContractTermOfferAnswer `json:"answer,omitempty" bson:"answer,omitempty"`                             // Response to offer text
-	Text                *string                   `json:"text,omitempty" bson:"text,omitempty"`                                 // Human readable offer text
-	LinkId              []string                  `json:"linkId,omitempty" bson:"link_id,omitempty"`                            // Pointer to text
-	SecurityLabelNumber []int                     `json:"securityLabelNumber,omitempty" bson:"security_label_number,omitempty"` // Offer restriction numbers
-}
-
-func (r *ContractTermOffer) Validate() error {
-	for i, item := range r.Identifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Identifier[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Party {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Party[%d]: %w", i, err)
-		}
-	}
-	if r.Topic != nil {
-		if err := r.Topic.Validate(); err != nil {
-			return fmt.Errorf("Topic: %w", err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Decision != nil {
-		if err := r.Decision.Validate(); err != nil {
-			return fmt.Errorf("Decision: %w", err)
-		}
-	}
-	for i, item := range r.DecisionMode {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("DecisionMode[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Answer {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Answer[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type ContractTermOfferAnswer struct {
 	Id              *string     `json:"id,omitempty" bson:"id,omitempty"`        // Unique id for inter-element referencing
 	ValueBoolean    *bool       `json:"valueBoolean" bson:"value_boolean"`       // The actual answer response
@@ -754,6 +505,208 @@ func (r *ContractTermActionSubject) Validate() error {
 	return nil
 }
 
+type ContractSigner struct {
+	Id        *string     `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Type      *Coding     `json:"type" bson:"type"`                 // Contract Signatory Role
+	Party     *Reference  `json:"party" bson:"party"`               // Contract Signatory Party
+	Signature []Signature `json:"signature" bson:"signature"`       // Contract Documentation Signature
+}
+
+func (r *ContractSigner) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Party == nil {
+		return fmt.Errorf("field 'Party' is required")
+	}
+	if r.Party != nil {
+		if err := r.Party.Validate(); err != nil {
+			return fmt.Errorf("Party: %w", err)
+		}
+	}
+	if len(r.Signature) < 1 {
+		return fmt.Errorf("field 'Signature' must have at least 1 elements")
+	}
+	for i, item := range r.Signature {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Signature[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ContractRule struct {
+	Id                *string     `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
+	ContentAttachment *Attachment `json:"contentAttachment" bson:"content_attachment"` // Computable Contract Rules
+	ContentReference  *Reference  `json:"contentReference" bson:"content_reference"`   // Computable Contract Rules
+}
+
+func (r *ContractRule) Validate() error {
+	if r.ContentAttachment == nil {
+		return fmt.Errorf("field 'ContentAttachment' is required")
+	}
+	if r.ContentAttachment != nil {
+		if err := r.ContentAttachment.Validate(); err != nil {
+			return fmt.Errorf("ContentAttachment: %w", err)
+		}
+	}
+	if r.ContentReference == nil {
+		return fmt.Errorf("field 'ContentReference' is required")
+	}
+	if r.ContentReference != nil {
+		if err := r.ContentReference.Validate(); err != nil {
+			return fmt.Errorf("ContentReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type ContractContentDefinition struct {
+	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
+	Type              *CodeableConcept `json:"type" bson:"type"`                                            // Content structure and use
+	SubType           *CodeableConcept `json:"subType,omitempty" bson:"sub_type,omitempty"`                 // Detailed Content Type Definition
+	Publisher         *Reference       `json:"publisher,omitempty" bson:"publisher,omitempty"`              // Publisher Entity
+	PublicationDate   *string          `json:"publicationDate,omitempty" bson:"publication_date,omitempty"` // When published
+	PublicationStatus string           `json:"publicationStatus" bson:"publication_status"`                 // amended | appended | cancelled | disputed | entered-in-error | executable +
+	Copyright         *string          `json:"copyright,omitempty" bson:"copyright,omitempty"`              // Publication Ownership
+}
+
+func (r *ContractContentDefinition) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.SubType != nil {
+		if err := r.SubType.Validate(); err != nil {
+			return fmt.Errorf("SubType: %w", err)
+		}
+	}
+	if r.Publisher != nil {
+		if err := r.Publisher.Validate(); err != nil {
+			return fmt.Errorf("Publisher: %w", err)
+		}
+	}
+	var emptyString string
+	if r.PublicationStatus == emptyString {
+		return fmt.Errorf("field 'PublicationStatus' is required")
+	}
+	return nil
+}
+
+type ContractTermOfferParty struct {
+	Id        *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Reference []Reference      `json:"reference" bson:"reference"`       // Referenced entity
+	Role      *CodeableConcept `json:"role" bson:"role"`                 // Participant engagement type
+}
+
+func (r *ContractTermOfferParty) Validate() error {
+	if len(r.Reference) < 1 {
+		return fmt.Errorf("field 'Reference' must have at least 1 elements")
+	}
+	for i, item := range r.Reference {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Reference[%d]: %w", i, err)
+		}
+	}
+	if r.Role == nil {
+		return fmt.Errorf("field 'Role' is required")
+	}
+	if r.Role != nil {
+		if err := r.Role.Validate(); err != nil {
+			return fmt.Errorf("Role: %w", err)
+		}
+	}
+	return nil
+}
+
+type ContractLegal struct {
+	Id                *string     `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
+	ContentAttachment *Attachment `json:"contentAttachment" bson:"content_attachment"` // Contract Legal Text
+	ContentReference  *Reference  `json:"contentReference" bson:"content_reference"`   // Contract Legal Text
+}
+
+func (r *ContractLegal) Validate() error {
+	if r.ContentAttachment == nil {
+		return fmt.Errorf("field 'ContentAttachment' is required")
+	}
+	if r.ContentAttachment != nil {
+		if err := r.ContentAttachment.Validate(); err != nil {
+			return fmt.Errorf("ContentAttachment: %w", err)
+		}
+	}
+	if r.ContentReference == nil {
+		return fmt.Errorf("field 'ContentReference' is required")
+	}
+	if r.ContentReference != nil {
+		if err := r.ContentReference.Validate(); err != nil {
+			return fmt.Errorf("ContentReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type ContractTermOffer struct {
+	Id                  *string                   `json:"id,omitempty" bson:"id,omitempty"`                                     // Unique id for inter-element referencing
+	Identifier          []Identifier              `json:"identifier,omitempty" bson:"identifier,omitempty"`                     // Offer business ID
+	Party               []ContractTermOfferParty  `json:"party,omitempty" bson:"party,omitempty"`                               // Offer Recipient
+	Topic               *Reference                `json:"topic,omitempty" bson:"topic,omitempty"`                               // Negotiable offer asset
+	Type                *CodeableConcept          `json:"type,omitempty" bson:"type,omitempty"`                                 // Contract Offer Type or Form
+	Decision            *CodeableConcept          `json:"decision,omitempty" bson:"decision,omitempty"`                         // Accepting party choice
+	DecisionMode        []CodeableConcept         `json:"decisionMode,omitempty" bson:"decision_mode,omitempty"`                // How decision is conveyed
+	Answer              []ContractTermOfferAnswer `json:"answer,omitempty" bson:"answer,omitempty"`                             // Response to offer text
+	Text                *string                   `json:"text,omitempty" bson:"text,omitempty"`                                 // Human readable offer text
+	LinkId              []string                  `json:"linkId,omitempty" bson:"link_id,omitempty"`                            // Pointer to text
+	SecurityLabelNumber []int                     `json:"securityLabelNumber,omitempty" bson:"security_label_number,omitempty"` // Offer restriction numbers
+}
+
+func (r *ContractTermOffer) Validate() error {
+	for i, item := range r.Identifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Identifier[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Party {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Party[%d]: %w", i, err)
+		}
+	}
+	if r.Topic != nil {
+		if err := r.Topic.Validate(); err != nil {
+			return fmt.Errorf("Topic: %w", err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Decision != nil {
+		if err := r.Decision.Validate(); err != nil {
+			return fmt.Errorf("Decision: %w", err)
+		}
+	}
+	for i, item := range r.DecisionMode {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("DecisionMode[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Answer {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Answer[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type ContractTermAsset struct {
 	Id                  *string                       `json:"id,omitempty" bson:"id,omitempty"`                                     // Unique id for inter-element referencing
 	Scope               *CodeableConcept              `json:"scope,omitempty" bson:"scope,omitempty"`                               // Range of asset
@@ -832,6 +785,27 @@ func (r *ContractTermAsset) Validate() error {
 	return nil
 }
 
+type ContractTermAssetContext struct {
+	Id        *string           `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Reference *Reference        `json:"reference,omitempty" bson:"reference,omitempty"` // Creator,custodian or owner
+	Code      []CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`           // Codeable asset context
+	Text      *string           `json:"text,omitempty" bson:"text,omitempty"`           // Context description
+}
+
+func (r *ContractTermAssetContext) Validate() error {
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
+		}
+	}
+	for i, item := range r.Code {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Code[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type ContractTermAssetValuedItem struct {
 	Id                    *string          `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
 	EntityCodeableConcept *CodeableConcept `json:"entityCodeableConcept,omitempty" bson:"entity_codeable_concept,omitempty"` // Contract Valued Item Type
@@ -890,6 +864,32 @@ func (r *ContractTermAssetValuedItem) Validate() error {
 	if r.Recipient != nil {
 		if err := r.Recipient.Validate(); err != nil {
 			return fmt.Errorf("Recipient: %w", err)
+		}
+	}
+	return nil
+}
+
+type ContractFriendly struct {
+	Id                *string     `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
+	ContentAttachment *Attachment `json:"contentAttachment" bson:"content_attachment"` // Easily comprehended representation of this Contract
+	ContentReference  *Reference  `json:"contentReference" bson:"content_reference"`   // Easily comprehended representation of this Contract
+}
+
+func (r *ContractFriendly) Validate() error {
+	if r.ContentAttachment == nil {
+		return fmt.Errorf("field 'ContentAttachment' is required")
+	}
+	if r.ContentAttachment != nil {
+		if err := r.ContentAttachment.Validate(); err != nil {
+			return fmt.Errorf("ContentAttachment: %w", err)
+		}
+	}
+	if r.ContentReference == nil {
+		return fmt.Errorf("field 'ContentReference' is required")
+	}
+	if r.ContentReference != nil {
+		if err := r.ContentReference.Validate(); err != nil {
+			return fmt.Errorf("ContentReference: %w", err)
 		}
 	}
 	return nil

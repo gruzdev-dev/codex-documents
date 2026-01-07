@@ -123,58 +123,6 @@ func (r *SpecimenDefinition) Validate() error {
 	return nil
 }
 
-type SpecimenDefinitionTypeTested struct {
-	Id                 *string                                `json:"id,omitempty" bson:"id,omitempty"`                                  // Unique id for inter-element referencing
-	IsDerived          bool                                   `json:"isDerived,omitempty" bson:"is_derived,omitempty"`                   // Primary or secondary specimen
-	Type               *CodeableConcept                       `json:"type,omitempty" bson:"type,omitempty"`                              // Type of intended specimen
-	Preference         string                                 `json:"preference" bson:"preference"`                                      // preferred | alternate
-	Container          *SpecimenDefinitionTypeTestedContainer `json:"container,omitempty" bson:"container,omitempty"`                    // The specimen's container
-	Requirement        *string                                `json:"requirement,omitempty" bson:"requirement,omitempty"`                // Requirements for specimen delivery and special handling
-	RetentionTime      *Duration                              `json:"retentionTime,omitempty" bson:"retention_time,omitempty"`           // The usual time for retaining this kind of specimen
-	SingleUse          bool                                   `json:"singleUse,omitempty" bson:"single_use,omitempty"`                   // Specimen for single use only
-	RejectionCriterion []CodeableConcept                      `json:"rejectionCriterion,omitempty" bson:"rejection_criterion,omitempty"` // Criterion specified for specimen rejection
-	Handling           []SpecimenDefinitionTypeTestedHandling `json:"handling,omitempty" bson:"handling,omitempty"`                      // Specimen handling before testing
-	TestingDestination []CodeableConcept                      `json:"testingDestination,omitempty" bson:"testing_destination,omitempty"` // Where the specimen will be tested
-}
-
-func (r *SpecimenDefinitionTypeTested) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	var emptyString string
-	if r.Preference == emptyString {
-		return fmt.Errorf("field 'Preference' is required")
-	}
-	if r.Container != nil {
-		if err := r.Container.Validate(); err != nil {
-			return fmt.Errorf("Container: %w", err)
-		}
-	}
-	if r.RetentionTime != nil {
-		if err := r.RetentionTime.Validate(); err != nil {
-			return fmt.Errorf("RetentionTime: %w", err)
-		}
-	}
-	for i, item := range r.RejectionCriterion {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("RejectionCriterion[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Handling {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Handling[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.TestingDestination {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TestingDestination[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type SpecimenDefinitionTypeTestedContainer struct {
 	Id                    *string                                         `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
 	Material              *CodeableConcept                                `json:"material,omitempty" bson:"material,omitempty"`                             // The material type used for the container
@@ -270,6 +218,58 @@ func (r *SpecimenDefinitionTypeTestedHandling) Validate() error {
 	if r.MaxDuration != nil {
 		if err := r.MaxDuration.Validate(); err != nil {
 			return fmt.Errorf("MaxDuration: %w", err)
+		}
+	}
+	return nil
+}
+
+type SpecimenDefinitionTypeTested struct {
+	Id                 *string                                `json:"id,omitempty" bson:"id,omitempty"`                                  // Unique id for inter-element referencing
+	IsDerived          bool                                   `json:"isDerived,omitempty" bson:"is_derived,omitempty"`                   // Primary or secondary specimen
+	Type               *CodeableConcept                       `json:"type,omitempty" bson:"type,omitempty"`                              // Type of intended specimen
+	Preference         string                                 `json:"preference" bson:"preference"`                                      // preferred | alternate
+	Container          *SpecimenDefinitionTypeTestedContainer `json:"container,omitempty" bson:"container,omitempty"`                    // The specimen's container
+	Requirement        *string                                `json:"requirement,omitempty" bson:"requirement,omitempty"`                // Requirements for specimen delivery and special handling
+	RetentionTime      *Duration                              `json:"retentionTime,omitempty" bson:"retention_time,omitempty"`           // The usual time for retaining this kind of specimen
+	SingleUse          bool                                   `json:"singleUse,omitempty" bson:"single_use,omitempty"`                   // Specimen for single use only
+	RejectionCriterion []CodeableConcept                      `json:"rejectionCriterion,omitempty" bson:"rejection_criterion,omitempty"` // Criterion specified for specimen rejection
+	Handling           []SpecimenDefinitionTypeTestedHandling `json:"handling,omitempty" bson:"handling,omitempty"`                      // Specimen handling before testing
+	TestingDestination []CodeableConcept                      `json:"testingDestination,omitempty" bson:"testing_destination,omitempty"` // Where the specimen will be tested
+}
+
+func (r *SpecimenDefinitionTypeTested) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	var emptyString string
+	if r.Preference == emptyString {
+		return fmt.Errorf("field 'Preference' is required")
+	}
+	if r.Container != nil {
+		if err := r.Container.Validate(); err != nil {
+			return fmt.Errorf("Container: %w", err)
+		}
+	}
+	if r.RetentionTime != nil {
+		if err := r.RetentionTime.Validate(); err != nil {
+			return fmt.Errorf("RetentionTime: %w", err)
+		}
+	}
+	for i, item := range r.RejectionCriterion {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("RejectionCriterion[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Handling {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Handling[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.TestingDestination {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TestingDestination[%d]: %w", i, err)
 		}
 	}
 	return nil

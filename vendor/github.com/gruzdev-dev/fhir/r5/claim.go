@@ -596,141 +596,6 @@ func (r *ClaimSupportingInfo) Validate() error {
 	return nil
 }
 
-type ClaimDiagnosis struct {
-	Id                       *string           `json:"id,omitempty" bson:"id,omitempty"`                           // Unique id for inter-element referencing
-	Sequence                 int               `json:"sequence" bson:"sequence"`                                   // Diagnosis instance identifier
-	DiagnosisCodeableConcept *CodeableConcept  `json:"diagnosisCodeableConcept" bson:"diagnosis_codeable_concept"` // Nature of illness or problem
-	DiagnosisReference       *Reference        `json:"diagnosisReference" bson:"diagnosis_reference"`              // Nature of illness or problem
-	Type                     []CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                       // Timing or nature of the diagnosis
-	OnAdmission              *CodeableConcept  `json:"onAdmission,omitempty" bson:"on_admission,omitempty"`        // Present on admission
-}
-
-func (r *ClaimDiagnosis) Validate() error {
-	if r.Sequence == 0 {
-		return fmt.Errorf("field 'Sequence' is required")
-	}
-	if r.DiagnosisCodeableConcept == nil {
-		return fmt.Errorf("field 'DiagnosisCodeableConcept' is required")
-	}
-	if r.DiagnosisCodeableConcept != nil {
-		if err := r.DiagnosisCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("DiagnosisCodeableConcept: %w", err)
-		}
-	}
-	if r.DiagnosisReference == nil {
-		return fmt.Errorf("field 'DiagnosisReference' is required")
-	}
-	if r.DiagnosisReference != nil {
-		if err := r.DiagnosisReference.Validate(); err != nil {
-			return fmt.Errorf("DiagnosisReference: %w", err)
-		}
-	}
-	for i, item := range r.Type {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Type[%d]: %w", i, err)
-		}
-	}
-	if r.OnAdmission != nil {
-		if err := r.OnAdmission.Validate(); err != nil {
-			return fmt.Errorf("OnAdmission: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClaimInsurance struct {
-	Id                  *string     `json:"id,omitempty" bson:"id,omitempty"`                                    // Unique id for inter-element referencing
-	Sequence            int         `json:"sequence" bson:"sequence"`                                            // Insurance instance identifier
-	Focal               bool        `json:"focal" bson:"focal"`                                                  // Coverage to be used for adjudication
-	Identifier          *Identifier `json:"identifier,omitempty" bson:"identifier,omitempty"`                    // Pre-assigned Claim number
-	Coverage            *Reference  `json:"coverage" bson:"coverage"`                                            // Insurance information
-	BusinessArrangement *string     `json:"businessArrangement,omitempty" bson:"business_arrangement,omitempty"` // Additional provider contract number
-	PreAuthRef          []string    `json:"preAuthRef,omitempty" bson:"pre_auth_ref,omitempty"`                  // Prior authorization reference number
-	ClaimResponse       *Reference  `json:"claimResponse,omitempty" bson:"claim_response,omitempty"`             // Adjudication results
-}
-
-func (r *ClaimInsurance) Validate() error {
-	if r.Sequence == 0 {
-		return fmt.Errorf("field 'Sequence' is required")
-	}
-	if r.Identifier != nil {
-		if err := r.Identifier.Validate(); err != nil {
-			return fmt.Errorf("Identifier: %w", err)
-		}
-	}
-	if r.Coverage == nil {
-		return fmt.Errorf("field 'Coverage' is required")
-	}
-	if r.Coverage != nil {
-		if err := r.Coverage.Validate(); err != nil {
-			return fmt.Errorf("Coverage: %w", err)
-		}
-	}
-	if r.ClaimResponse != nil {
-		if err := r.ClaimResponse.Validate(); err != nil {
-			return fmt.Errorf("ClaimResponse: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClaimAccident struct {
-	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
-	Date              string           `json:"date" bson:"date"`                                                // When the incident occurred
-	Type              *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                            // The nature of the accident
-	LocationAddress   *Address         `json:"locationAddress,omitempty" bson:"location_address,omitempty"`     // Where the event occurred
-	LocationReference *Reference       `json:"locationReference,omitempty" bson:"location_reference,omitempty"` // Where the event occurred
-}
-
-func (r *ClaimAccident) Validate() error {
-	var emptyString string
-	if r.Date == emptyString {
-		return fmt.Errorf("field 'Date' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.LocationAddress != nil {
-		if err := r.LocationAddress.Validate(); err != nil {
-			return fmt.Errorf("LocationAddress: %w", err)
-		}
-	}
-	if r.LocationReference != nil {
-		if err := r.LocationReference.Validate(); err != nil {
-			return fmt.Errorf("LocationReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClaimRelated struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Claim        *Reference       `json:"claim,omitempty" bson:"claim,omitempty"`               // Reference to the related claim
-	Relationship *CodeableConcept `json:"relationship,omitempty" bson:"relationship,omitempty"` // How the reference claim is related
-	Reference    *Identifier      `json:"reference,omitempty" bson:"reference,omitempty"`       // File or case reference
-}
-
-func (r *ClaimRelated) Validate() error {
-	if r.Claim != nil {
-		if err := r.Claim.Validate(); err != nil {
-			return fmt.Errorf("Claim: %w", err)
-		}
-	}
-	if r.Relationship != nil {
-		if err := r.Relationship.Validate(); err != nil {
-			return fmt.Errorf("Relationship: %w", err)
-		}
-	}
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	return nil
-}
-
 type ClaimProcedure struct {
 	Id                       *string           `json:"id,omitempty" bson:"id,omitempty"`                           // Unique id for inter-element referencing
 	Sequence                 int               `json:"sequence" bson:"sequence"`                                   // Procedure instance identifier
@@ -769,6 +634,37 @@ func (r *ClaimProcedure) Validate() error {
 	for i, item := range r.Udi {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Udi[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ClaimAccident struct {
+	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
+	Date              string           `json:"date" bson:"date"`                                                // When the incident occurred
+	Type              *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                            // The nature of the accident
+	LocationAddress   *Address         `json:"locationAddress,omitempty" bson:"location_address,omitempty"`     // Where the event occurred
+	LocationReference *Reference       `json:"locationReference,omitempty" bson:"location_reference,omitempty"` // Where the event occurred
+}
+
+func (r *ClaimAccident) Validate() error {
+	var emptyString string
+	if r.Date == emptyString {
+		return fmt.Errorf("field 'Date' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.LocationAddress != nil {
+		if err := r.LocationAddress.Validate(); err != nil {
+			return fmt.Errorf("LocationAddress: %w", err)
+		}
+	}
+	if r.LocationReference != nil {
+		if err := r.LocationReference.Validate(); err != nil {
+			return fmt.Errorf("LocationReference: %w", err)
 		}
 	}
 	return nil
@@ -942,6 +838,110 @@ func (r *ClaimItemBodySite) Validate() error {
 	for i, item := range r.SubSite {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("SubSite[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ClaimRelated struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Claim        *Reference       `json:"claim,omitempty" bson:"claim,omitempty"`               // Reference to the related claim
+	Relationship *CodeableConcept `json:"relationship,omitempty" bson:"relationship,omitempty"` // How the reference claim is related
+	Reference    *Identifier      `json:"reference,omitempty" bson:"reference,omitempty"`       // File or case reference
+}
+
+func (r *ClaimRelated) Validate() error {
+	if r.Claim != nil {
+		if err := r.Claim.Validate(); err != nil {
+			return fmt.Errorf("Claim: %w", err)
+		}
+	}
+	if r.Relationship != nil {
+		if err := r.Relationship.Validate(); err != nil {
+			return fmt.Errorf("Relationship: %w", err)
+		}
+	}
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClaimDiagnosis struct {
+	Id                       *string           `json:"id,omitempty" bson:"id,omitempty"`                           // Unique id for inter-element referencing
+	Sequence                 int               `json:"sequence" bson:"sequence"`                                   // Diagnosis instance identifier
+	DiagnosisCodeableConcept *CodeableConcept  `json:"diagnosisCodeableConcept" bson:"diagnosis_codeable_concept"` // Nature of illness or problem
+	DiagnosisReference       *Reference        `json:"diagnosisReference" bson:"diagnosis_reference"`              // Nature of illness or problem
+	Type                     []CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                       // Timing or nature of the diagnosis
+	OnAdmission              *CodeableConcept  `json:"onAdmission,omitempty" bson:"on_admission,omitempty"`        // Present on admission
+}
+
+func (r *ClaimDiagnosis) Validate() error {
+	if r.Sequence == 0 {
+		return fmt.Errorf("field 'Sequence' is required")
+	}
+	if r.DiagnosisCodeableConcept == nil {
+		return fmt.Errorf("field 'DiagnosisCodeableConcept' is required")
+	}
+	if r.DiagnosisCodeableConcept != nil {
+		if err := r.DiagnosisCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("DiagnosisCodeableConcept: %w", err)
+		}
+	}
+	if r.DiagnosisReference == nil {
+		return fmt.Errorf("field 'DiagnosisReference' is required")
+	}
+	if r.DiagnosisReference != nil {
+		if err := r.DiagnosisReference.Validate(); err != nil {
+			return fmt.Errorf("DiagnosisReference: %w", err)
+		}
+	}
+	for i, item := range r.Type {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Type[%d]: %w", i, err)
+		}
+	}
+	if r.OnAdmission != nil {
+		if err := r.OnAdmission.Validate(); err != nil {
+			return fmt.Errorf("OnAdmission: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClaimInsurance struct {
+	Id                  *string     `json:"id,omitempty" bson:"id,omitempty"`                                    // Unique id for inter-element referencing
+	Sequence            int         `json:"sequence" bson:"sequence"`                                            // Insurance instance identifier
+	Focal               bool        `json:"focal" bson:"focal"`                                                  // Coverage to be used for adjudication
+	Identifier          *Identifier `json:"identifier,omitempty" bson:"identifier,omitempty"`                    // Pre-assigned Claim number
+	Coverage            *Reference  `json:"coverage" bson:"coverage"`                                            // Insurance information
+	BusinessArrangement *string     `json:"businessArrangement,omitempty" bson:"business_arrangement,omitempty"` // Additional provider contract number
+	PreAuthRef          []string    `json:"preAuthRef,omitempty" bson:"pre_auth_ref,omitempty"`                  // Prior authorization reference number
+	ClaimResponse       *Reference  `json:"claimResponse,omitempty" bson:"claim_response,omitempty"`             // Adjudication results
+}
+
+func (r *ClaimInsurance) Validate() error {
+	if r.Sequence == 0 {
+		return fmt.Errorf("field 'Sequence' is required")
+	}
+	if r.Identifier != nil {
+		if err := r.Identifier.Validate(); err != nil {
+			return fmt.Errorf("Identifier: %w", err)
+		}
+	}
+	if r.Coverage == nil {
+		return fmt.Errorf("field 'Coverage' is required")
+	}
+	if r.Coverage != nil {
+		if err := r.Coverage.Validate(); err != nil {
+			return fmt.Errorf("Coverage: %w", err)
+		}
+	}
+	if r.ClaimResponse != nil {
+		if err := r.ClaimResponse.Validate(); err != nil {
+			return fmt.Errorf("ClaimResponse: %w", err)
 		}
 	}
 	return nil

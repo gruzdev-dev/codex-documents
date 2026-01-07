@@ -67,6 +67,26 @@ func (r *BodyStructure) Validate() error {
 	return nil
 }
 
+type BodyStructureIncludedStructureBodyLandmarkOrientationDistanceFromLandmark struct {
+	Id     *string             `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Device []CodeableReference `json:"device,omitempty" bson:"device,omitempty"` // Measurement device
+	Value  []Quantity          `json:"value,omitempty" bson:"value,omitempty"`   // Measured distance from body landmark
+}
+
+func (r *BodyStructureIncludedStructureBodyLandmarkOrientationDistanceFromLandmark) Validate() error {
+	for i, item := range r.Device {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Device[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Value {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Value[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type BodyStructureIncludedStructure struct {
 	Id                      *string                                                 `json:"id,omitempty" bson:"id,omitempty"`                                             // Unique id for inter-element referencing
 	Structure               *CodeableConcept                                        `json:"structure" bson:"structure"`                                                   // Code that represents the included structure
@@ -147,26 +167,6 @@ func (r *BodyStructureIncludedStructureBodyLandmarkOrientation) Validate() error
 	for i, item := range r.SurfaceOrientation {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("SurfaceOrientation[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type BodyStructureIncludedStructureBodyLandmarkOrientationDistanceFromLandmark struct {
-	Id     *string             `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Device []CodeableReference `json:"device,omitempty" bson:"device,omitempty"` // Measurement device
-	Value  []Quantity          `json:"value,omitempty" bson:"value,omitempty"`   // Measured distance from body landmark
-}
-
-func (r *BodyStructureIncludedStructureBodyLandmarkOrientationDistanceFromLandmark) Validate() error {
-	for i, item := range r.Device {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Device[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Value {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Value[%d]: %w", i, err)
 		}
 	}
 	return nil

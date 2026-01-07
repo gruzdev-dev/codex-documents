@@ -184,39 +184,6 @@ func (r *Immunization) Validate() error {
 	return nil
 }
 
-type ImmunizationProtocolApplied struct {
-	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	Series        *string           `json:"series,omitempty" bson:"series,omitempty"`                // Name of vaccine series
-	Authority     *Reference        `json:"authority,omitempty" bson:"authority,omitempty"`          // Who is responsible for publishing the recommendations
-	TargetDisease []CodeableConcept `json:"targetDisease,omitempty" bson:"target_disease,omitempty"` // Vaccine preventable disease being targeted
-	DoseNumber    *CodeableConcept  `json:"doseNumber,omitempty" bson:"dose_number,omitempty"`       // Dose number within series
-	SeriesDoses   *CodeableConcept  `json:"seriesDoses,omitempty" bson:"series_doses,omitempty"`     // Recommended number of doses for immunity
-}
-
-func (r *ImmunizationProtocolApplied) Validate() error {
-	if r.Authority != nil {
-		if err := r.Authority.Validate(); err != nil {
-			return fmt.Errorf("Authority: %w", err)
-		}
-	}
-	for i, item := range r.TargetDisease {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TargetDisease[%d]: %w", i, err)
-		}
-	}
-	if r.DoseNumber != nil {
-		if err := r.DoseNumber.Validate(); err != nil {
-			return fmt.Errorf("DoseNumber: %w", err)
-		}
-	}
-	if r.SeriesDoses != nil {
-		if err := r.SeriesDoses.Validate(); err != nil {
-			return fmt.Errorf("SeriesDoses: %w", err)
-		}
-	}
-	return nil
-}
-
 type ImmunizationPerformer struct {
 	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
 	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
@@ -277,6 +244,39 @@ func (r *ImmunizationReaction) Validate() error {
 	if r.Manifestation != nil {
 		if err := r.Manifestation.Validate(); err != nil {
 			return fmt.Errorf("Manifestation: %w", err)
+		}
+	}
+	return nil
+}
+
+type ImmunizationProtocolApplied struct {
+	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	Series        *string           `json:"series,omitempty" bson:"series,omitempty"`                // Name of vaccine series
+	Authority     *Reference        `json:"authority,omitempty" bson:"authority,omitempty"`          // Who is responsible for publishing the recommendations
+	TargetDisease []CodeableConcept `json:"targetDisease,omitempty" bson:"target_disease,omitempty"` // Vaccine preventable disease being targeted
+	DoseNumber    *CodeableConcept  `json:"doseNumber,omitempty" bson:"dose_number,omitempty"`       // Dose number within series
+	SeriesDoses   *CodeableConcept  `json:"seriesDoses,omitempty" bson:"series_doses,omitempty"`     // Recommended number of doses for immunity
+}
+
+func (r *ImmunizationProtocolApplied) Validate() error {
+	if r.Authority != nil {
+		if err := r.Authority.Validate(); err != nil {
+			return fmt.Errorf("Authority: %w", err)
+		}
+	}
+	for i, item := range r.TargetDisease {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TargetDisease[%d]: %w", i, err)
+		}
+	}
+	if r.DoseNumber != nil {
+		if err := r.DoseNumber.Validate(); err != nil {
+			return fmt.Errorf("DoseNumber: %w", err)
+		}
+	}
+	if r.SeriesDoses != nil {
+		if err := r.SeriesDoses.Validate(); err != nil {
+			return fmt.Errorf("SeriesDoses: %w", err)
 		}
 	}
 	return nil

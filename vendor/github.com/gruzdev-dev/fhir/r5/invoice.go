@@ -116,6 +116,29 @@ func (r *Invoice) Validate() error {
 	return nil
 }
 
+type InvoiceParticipant struct {
+	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Role  *CodeableConcept `json:"role,omitempty" bson:"role,omitempty"` // Type of involvement in creation of this Invoice
+	Actor *Reference       `json:"actor" bson:"actor"`                   // Individual who was involved
+}
+
+func (r *InvoiceParticipant) Validate() error {
+	if r.Role != nil {
+		if err := r.Role.Validate(); err != nil {
+			return fmt.Errorf("Role: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
+		}
+	}
+	return nil
+}
+
 type InvoiceLineItem struct {
 	Id                        *string             `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
 	Sequence                  *int                `json:"sequence,omitempty" bson:"sequence,omitempty"`                  // Sequence number of line item
@@ -151,29 +174,6 @@ func (r *InvoiceLineItem) Validate() error {
 	for i, item := range r.PriceComponent {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("PriceComponent[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type InvoiceParticipant struct {
-	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Role  *CodeableConcept `json:"role,omitempty" bson:"role,omitempty"` // Type of involvement in creation of this Invoice
-	Actor *Reference       `json:"actor" bson:"actor"`                   // Individual who was involved
-}
-
-func (r *InvoiceParticipant) Validate() error {
-	if r.Role != nil {
-		if err := r.Role.Validate(); err != nil {
-			return fmt.Errorf("Role: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
 		}
 	}
 	return nil

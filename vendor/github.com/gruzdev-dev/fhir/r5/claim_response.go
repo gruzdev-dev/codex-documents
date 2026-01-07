@@ -217,6 +217,44 @@ func (r *ClaimResponse) Validate() error {
 	return nil
 }
 
+type ClaimResponseItem struct {
+	Id                  *string                         `json:"id,omitempty" bson:"id,omitempty"`                                    // Unique id for inter-element referencing
+	ItemSequence        int                             `json:"itemSequence" bson:"item_sequence"`                                   // Claim item instance identifier
+	TraceNumber         []Identifier                    `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                 // Number for tracking
+	InformationSequence []int                           `json:"informationSequence,omitempty" bson:"information_sequence,omitempty"` // Applicable exception and supporting information
+	NoteNumber          []int                           `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                   // Applicable note numbers
+	ReviewOutcome       *ClaimResponseItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`             // Adjudication results
+	Adjudication        []ClaimResponseItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                // Adjudication details
+	Detail              []ClaimResponseItemDetail       `json:"detail,omitempty" bson:"detail,omitempty"`                            // Adjudication for claim details
+}
+
+func (r *ClaimResponseItem) Validate() error {
+	if r.ItemSequence == 0 {
+		return fmt.Errorf("field 'ItemSequence' is required")
+	}
+	for i, item := range r.TraceNumber {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
+		}
+	}
+	if r.ReviewOutcome != nil {
+		if err := r.ReviewOutcome.Validate(); err != nil {
+			return fmt.Errorf("ReviewOutcome: %w", err)
+		}
+	}
+	for i, item := range r.Adjudication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Adjudication[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Detail {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Detail[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type ClaimResponseItemReviewOutcome struct {
 	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`                         // Unique id for inter-element referencing
 	Decision      *CodeableConcept  `json:"decision,omitempty" bson:"decision,omitempty"`             // Result of the adjudication
@@ -239,6 +277,159 @@ func (r *ClaimResponseItemReviewOutcome) Validate() error {
 	if r.PreAuthPeriod != nil {
 		if err := r.PreAuthPeriod.Validate(); err != nil {
 			return fmt.Errorf("PreAuthPeriod: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClaimResponseAddItemDetail struct {
+	Id                  *string                               `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
+	TraceNumber         []Identifier                          `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
+	Revenue             *CodeableConcept                      `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
+	ProductOrService    *CodeableConcept                      `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
+	ProductOrServiceEnd *CodeableConcept                      `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
+	Modifier            []CodeableConcept                     `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
+	Quantity            *Quantity                             `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
+	UnitPrice           *Money                                `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
+	Factor              *float64                              `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
+	Tax                 *Money                                `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
+	Net                 *Money                                `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
+	NoteNumber          []int                                 `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
+	ReviewOutcome       *ClaimResponseItemReviewOutcome       `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Added items detail level adjudication results
+	Adjudication        []ClaimResponseItemAdjudication       `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Added items detail adjudication
+	SubDetail           []ClaimResponseAddItemDetailSubDetail `json:"subDetail,omitempty" bson:"sub_detail,omitempty"`                       // Insurer added line items
+}
+
+func (r *ClaimResponseAddItemDetail) Validate() error {
+	for i, item := range r.TraceNumber {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
+		}
+	}
+	if r.Revenue != nil {
+		if err := r.Revenue.Validate(); err != nil {
+			return fmt.Errorf("Revenue: %w", err)
+		}
+	}
+	if r.ProductOrService != nil {
+		if err := r.ProductOrService.Validate(); err != nil {
+			return fmt.Errorf("ProductOrService: %w", err)
+		}
+	}
+	if r.ProductOrServiceEnd != nil {
+		if err := r.ProductOrServiceEnd.Validate(); err != nil {
+			return fmt.Errorf("ProductOrServiceEnd: %w", err)
+		}
+	}
+	for i, item := range r.Modifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Modifier[%d]: %w", i, err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.UnitPrice != nil {
+		if err := r.UnitPrice.Validate(); err != nil {
+			return fmt.Errorf("UnitPrice: %w", err)
+		}
+	}
+	if r.Tax != nil {
+		if err := r.Tax.Validate(); err != nil {
+			return fmt.Errorf("Tax: %w", err)
+		}
+	}
+	if r.Net != nil {
+		if err := r.Net.Validate(); err != nil {
+			return fmt.Errorf("Net: %w", err)
+		}
+	}
+	if r.ReviewOutcome != nil {
+		if err := r.ReviewOutcome.Validate(); err != nil {
+			return fmt.Errorf("ReviewOutcome: %w", err)
+		}
+	}
+	for i, item := range r.Adjudication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Adjudication[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SubDetail {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SubDetail[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ClaimResponseTotal struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Category *CodeableConcept `json:"category" bson:"category"`         // Type of adjudication information
+	Amount   *Money           `json:"amount" bson:"amount"`             // Financial total for the category
+}
+
+func (r *ClaimResponseTotal) Validate() error {
+	if r.Category == nil {
+		return fmt.Errorf("field 'Category' is required")
+	}
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
+		}
+	}
+	if r.Amount == nil {
+		return fmt.Errorf("field 'Amount' is required")
+	}
+	if r.Amount != nil {
+		if err := r.Amount.Validate(); err != nil {
+			return fmt.Errorf("Amount: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClaimResponsePayment struct {
+	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
+	Type             *CodeableConcept `json:"type" bson:"type"`                                              // Partial or complete payment
+	Adjustment       *Money           `json:"adjustment,omitempty" bson:"adjustment,omitempty"`              // Payment adjustment for non-claim issues
+	AdjustmentReason *CodeableConcept `json:"adjustmentReason,omitempty" bson:"adjustment_reason,omitempty"` // Explanation for the adjustment
+	Date             *string          `json:"date,omitempty" bson:"date,omitempty"`                          // Expected date of payment
+	Amount           *Money           `json:"amount" bson:"amount"`                                          // Payable amount after adjustment
+	Identifier       *Identifier      `json:"identifier,omitempty" bson:"identifier,omitempty"`              // Business identifier for the payment
+}
+
+func (r *ClaimResponsePayment) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Adjustment != nil {
+		if err := r.Adjustment.Validate(); err != nil {
+			return fmt.Errorf("Adjustment: %w", err)
+		}
+	}
+	if r.AdjustmentReason != nil {
+		if err := r.AdjustmentReason.Validate(); err != nil {
+			return fmt.Errorf("AdjustmentReason: %w", err)
+		}
+	}
+	if r.Amount == nil {
+		return fmt.Errorf("field 'Amount' is required")
+	}
+	if r.Amount != nil {
+		if err := r.Amount.Validate(); err != nil {
+			return fmt.Errorf("Amount: %w", err)
+		}
+	}
+	if r.Identifier != nil {
+		if err := r.Identifier.Validate(); err != nil {
+			return fmt.Errorf("Identifier: %w", err)
 		}
 	}
 	return nil
@@ -391,29 +582,6 @@ func (r *ClaimResponseAddItem) Validate() error {
 	return nil
 }
 
-type ClaimResponseAddItemBodySite struct {
-	Id      *string             `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
-	Site    []CodeableReference `json:"site" bson:"site"`                            // Location
-	SubSite []CodeableConcept   `json:"subSite,omitempty" bson:"sub_site,omitempty"` // Sub-location
-}
-
-func (r *ClaimResponseAddItemBodySite) Validate() error {
-	if len(r.Site) < 1 {
-		return fmt.Errorf("field 'Site' must have at least 1 elements")
-	}
-	for i, item := range r.Site {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Site[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SubSite {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SubSite[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type ClaimResponseError struct {
 	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                                 // Unique id for inter-element referencing
 	ItemSequence      *int             `json:"itemSequence,omitempty" bson:"item_sequence,omitempty"`            // Item sequence number
@@ -430,219 +598,6 @@ func (r *ClaimResponseError) Validate() error {
 	if r.Code != nil {
 		if err := r.Code.Validate(); err != nil {
 			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClaimResponseItem struct {
-	Id                  *string                         `json:"id,omitempty" bson:"id,omitempty"`                                    // Unique id for inter-element referencing
-	ItemSequence        int                             `json:"itemSequence" bson:"item_sequence"`                                   // Claim item instance identifier
-	TraceNumber         []Identifier                    `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                 // Number for tracking
-	InformationSequence []int                           `json:"informationSequence,omitempty" bson:"information_sequence,omitempty"` // Applicable exception and supporting information
-	NoteNumber          []int                           `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                   // Applicable note numbers
-	ReviewOutcome       *ClaimResponseItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`             // Adjudication results
-	Adjudication        []ClaimResponseItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                // Adjudication details
-	Detail              []ClaimResponseItemDetail       `json:"detail,omitempty" bson:"detail,omitempty"`                            // Adjudication for claim details
-}
-
-func (r *ClaimResponseItem) Validate() error {
-	if r.ItemSequence == 0 {
-		return fmt.Errorf("field 'ItemSequence' is required")
-	}
-	for i, item := range r.TraceNumber {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
-		}
-	}
-	if r.ReviewOutcome != nil {
-		if err := r.ReviewOutcome.Validate(); err != nil {
-			return fmt.Errorf("ReviewOutcome: %w", err)
-		}
-	}
-	for i, item := range r.Adjudication {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Adjudication[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Detail {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Detail[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ClaimResponseItemDetailSubDetail struct {
-	Id                *string                         `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	SubDetailSequence int                             `json:"subDetailSequence" bson:"sub_detail_sequence"`            // Claim sub-detail instance identifier
-	TraceNumber       []Identifier                    `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`     // Number for tracking
-	NoteNumber        []int                           `json:"noteNumber,omitempty" bson:"note_number,omitempty"`       // Applicable note numbers
-	ReviewOutcome     *ClaimResponseItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"` // Subdetail level adjudication results
-	Adjudication      []ClaimResponseItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`    // Subdetail level adjudication details
-}
-
-func (r *ClaimResponseItemDetailSubDetail) Validate() error {
-	if r.SubDetailSequence == 0 {
-		return fmt.Errorf("field 'SubDetailSequence' is required")
-	}
-	for i, item := range r.TraceNumber {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
-		}
-	}
-	if r.ReviewOutcome != nil {
-		if err := r.ReviewOutcome.Validate(); err != nil {
-			return fmt.Errorf("ReviewOutcome: %w", err)
-		}
-	}
-	for i, item := range r.Adjudication {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Adjudication[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ClaimResponseAddItemDetail struct {
-	Id                  *string                               `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
-	TraceNumber         []Identifier                          `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
-	Revenue             *CodeableConcept                      `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
-	ProductOrService    *CodeableConcept                      `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
-	ProductOrServiceEnd *CodeableConcept                      `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
-	Modifier            []CodeableConcept                     `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
-	Quantity            *Quantity                             `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
-	UnitPrice           *Money                                `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
-	Factor              *float64                              `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
-	Tax                 *Money                                `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
-	Net                 *Money                                `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
-	NoteNumber          []int                                 `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
-	ReviewOutcome       *ClaimResponseItemReviewOutcome       `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Added items detail level adjudication results
-	Adjudication        []ClaimResponseItemAdjudication       `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Added items detail adjudication
-	SubDetail           []ClaimResponseAddItemDetailSubDetail `json:"subDetail,omitempty" bson:"sub_detail,omitempty"`                       // Insurer added line items
-}
-
-func (r *ClaimResponseAddItemDetail) Validate() error {
-	for i, item := range r.TraceNumber {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
-		}
-	}
-	if r.Revenue != nil {
-		if err := r.Revenue.Validate(); err != nil {
-			return fmt.Errorf("Revenue: %w", err)
-		}
-	}
-	if r.ProductOrService != nil {
-		if err := r.ProductOrService.Validate(); err != nil {
-			return fmt.Errorf("ProductOrService: %w", err)
-		}
-	}
-	if r.ProductOrServiceEnd != nil {
-		if err := r.ProductOrServiceEnd.Validate(); err != nil {
-			return fmt.Errorf("ProductOrServiceEnd: %w", err)
-		}
-	}
-	for i, item := range r.Modifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Modifier[%d]: %w", i, err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.UnitPrice != nil {
-		if err := r.UnitPrice.Validate(); err != nil {
-			return fmt.Errorf("UnitPrice: %w", err)
-		}
-	}
-	if r.Tax != nil {
-		if err := r.Tax.Validate(); err != nil {
-			return fmt.Errorf("Tax: %w", err)
-		}
-	}
-	if r.Net != nil {
-		if err := r.Net.Validate(); err != nil {
-			return fmt.Errorf("Net: %w", err)
-		}
-	}
-	if r.ReviewOutcome != nil {
-		if err := r.ReviewOutcome.Validate(); err != nil {
-			return fmt.Errorf("ReviewOutcome: %w", err)
-		}
-	}
-	for i, item := range r.Adjudication {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Adjudication[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SubDetail {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SubDetail[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ClaimResponseProcessNote struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Class    *CodeableConcept `json:"class,omitempty" bson:"class,omitempty"`       // Business kind of note
-	Number   *int             `json:"number,omitempty" bson:"number,omitempty"`     // Note instance identifier
-	Type     *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // Note purpose
-	Text     string           `json:"text" bson:"text"`                             // Note explanatory text
-	Language *CodeableConcept `json:"language,omitempty" bson:"language,omitempty"` // Language of the text
-}
-
-func (r *ClaimResponseProcessNote) Validate() error {
-	if r.Class != nil {
-		if err := r.Class.Validate(); err != nil {
-			return fmt.Errorf("Class: %w", err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	var emptyString string
-	if r.Text == emptyString {
-		return fmt.Errorf("field 'Text' is required")
-	}
-	if r.Language != nil {
-		if err := r.Language.Validate(); err != nil {
-			return fmt.Errorf("Language: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClaimResponseEvent struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
-	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
-	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
-	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
-}
-
-func (r *ClaimResponseEvent) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.WhenDateTime == nil {
-		return fmt.Errorf("field 'WhenDateTime' is required")
-	}
-	if r.WhenPeriod == nil {
-		return fmt.Errorf("field 'WhenPeriod' is required")
-	}
-	if r.WhenPeriod != nil {
-		if err := r.WhenPeriod.Validate(); err != nil {
-			return fmt.Errorf("WhenPeriod: %w", err)
 		}
 	}
 	return nil
@@ -966,17 +921,14 @@ func (r *ClaimResponseItemDetail) Validate() error {
 	return nil
 }
 
-type ClaimResponsePayment struct {
-	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
-	Type             *CodeableConcept `json:"type" bson:"type"`                                              // Partial or complete payment
-	Adjustment       *Money           `json:"adjustment,omitempty" bson:"adjustment,omitempty"`              // Payment adjustment for non-claim issues
-	AdjustmentReason *CodeableConcept `json:"adjustmentReason,omitempty" bson:"adjustment_reason,omitempty"` // Explanation for the adjustment
-	Date             *string          `json:"date,omitempty" bson:"date,omitempty"`                          // Expected date of payment
-	Amount           *Money           `json:"amount" bson:"amount"`                                          // Payable amount after adjustment
-	Identifier       *Identifier      `json:"identifier,omitempty" bson:"identifier,omitempty"`              // Business identifier for the payment
+type ClaimResponseEvent struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
+	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
+	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
+	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
 }
 
-func (r *ClaimResponsePayment) Validate() error {
+func (r *ClaimResponseEvent) Validate() error {
 	if r.Type == nil {
 		return fmt.Errorf("field 'Type' is required")
 	}
@@ -985,56 +937,15 @@ func (r *ClaimResponsePayment) Validate() error {
 			return fmt.Errorf("Type: %w", err)
 		}
 	}
-	if r.Adjustment != nil {
-		if err := r.Adjustment.Validate(); err != nil {
-			return fmt.Errorf("Adjustment: %w", err)
-		}
+	if r.WhenDateTime == nil {
+		return fmt.Errorf("field 'WhenDateTime' is required")
 	}
-	if r.AdjustmentReason != nil {
-		if err := r.AdjustmentReason.Validate(); err != nil {
-			return fmt.Errorf("AdjustmentReason: %w", err)
-		}
+	if r.WhenPeriod == nil {
+		return fmt.Errorf("field 'WhenPeriod' is required")
 	}
-	if r.Amount == nil {
-		return fmt.Errorf("field 'Amount' is required")
-	}
-	if r.Amount != nil {
-		if err := r.Amount.Validate(); err != nil {
-			return fmt.Errorf("Amount: %w", err)
-		}
-	}
-	if r.Identifier != nil {
-		if err := r.Identifier.Validate(); err != nil {
-			return fmt.Errorf("Identifier: %w", err)
-		}
-	}
-	return nil
-}
-
-type ClaimResponseInsurance struct {
-	Id                  *string    `json:"id,omitempty" bson:"id,omitempty"`                                    // Unique id for inter-element referencing
-	Sequence            int        `json:"sequence" bson:"sequence"`                                            // Insurance instance identifier
-	Focal               bool       `json:"focal" bson:"focal"`                                                  // Coverage to be used for adjudication
-	Coverage            *Reference `json:"coverage" bson:"coverage"`                                            // Insurance information
-	BusinessArrangement *string    `json:"businessArrangement,omitempty" bson:"business_arrangement,omitempty"` // Additional provider contract number
-	ClaimResponse       *Reference `json:"claimResponse,omitempty" bson:"claim_response,omitempty"`             // Adjudication results
-}
-
-func (r *ClaimResponseInsurance) Validate() error {
-	if r.Sequence == 0 {
-		return fmt.Errorf("field 'Sequence' is required")
-	}
-	if r.Coverage == nil {
-		return fmt.Errorf("field 'Coverage' is required")
-	}
-	if r.Coverage != nil {
-		if err := r.Coverage.Validate(); err != nil {
-			return fmt.Errorf("Coverage: %w", err)
-		}
-	}
-	if r.ClaimResponse != nil {
-		if err := r.ClaimResponse.Validate(); err != nil {
-			return fmt.Errorf("ClaimResponse: %w", err)
+	if r.WhenPeriod != nil {
+		if err := r.WhenPeriod.Validate(); err != nil {
+			return fmt.Errorf("WhenPeriod: %w", err)
 		}
 	}
 	return nil
@@ -1071,6 +982,60 @@ func (r *ClaimResponseItemAdjudication) Validate() error {
 	if r.Quantity != nil {
 		if err := r.Quantity.Validate(); err != nil {
 			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClaimResponseItemDetailSubDetail struct {
+	Id                *string                         `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	SubDetailSequence int                             `json:"subDetailSequence" bson:"sub_detail_sequence"`            // Claim sub-detail instance identifier
+	TraceNumber       []Identifier                    `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`     // Number for tracking
+	NoteNumber        []int                           `json:"noteNumber,omitempty" bson:"note_number,omitempty"`       // Applicable note numbers
+	ReviewOutcome     *ClaimResponseItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"` // Subdetail level adjudication results
+	Adjudication      []ClaimResponseItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`    // Subdetail level adjudication details
+}
+
+func (r *ClaimResponseItemDetailSubDetail) Validate() error {
+	if r.SubDetailSequence == 0 {
+		return fmt.Errorf("field 'SubDetailSequence' is required")
+	}
+	for i, item := range r.TraceNumber {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
+		}
+	}
+	if r.ReviewOutcome != nil {
+		if err := r.ReviewOutcome.Validate(); err != nil {
+			return fmt.Errorf("ReviewOutcome: %w", err)
+		}
+	}
+	for i, item := range r.Adjudication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Adjudication[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ClaimResponseAddItemBodySite struct {
+	Id      *string             `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
+	Site    []CodeableReference `json:"site" bson:"site"`                            // Location
+	SubSite []CodeableConcept   `json:"subSite,omitempty" bson:"sub_site,omitempty"` // Sub-location
+}
+
+func (r *ClaimResponseAddItemBodySite) Validate() error {
+	if len(r.Site) < 1 {
+		return fmt.Errorf("field 'Site' must have at least 1 elements")
+	}
+	for i, item := range r.Site {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Site[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SubSite {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SubSite[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -1152,27 +1117,62 @@ func (r *ClaimResponseAddItemDetailSubDetail) Validate() error {
 	return nil
 }
 
-type ClaimResponseTotal struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Category *CodeableConcept `json:"category" bson:"category"`         // Type of adjudication information
-	Amount   *Money           `json:"amount" bson:"amount"`             // Financial total for the category
+type ClaimResponseProcessNote struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Class    *CodeableConcept `json:"class,omitempty" bson:"class,omitempty"`       // Business kind of note
+	Number   *int             `json:"number,omitempty" bson:"number,omitempty"`     // Note instance identifier
+	Type     *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // Note purpose
+	Text     string           `json:"text" bson:"text"`                             // Note explanatory text
+	Language *CodeableConcept `json:"language,omitempty" bson:"language,omitempty"` // Language of the text
 }
 
-func (r *ClaimResponseTotal) Validate() error {
-	if r.Category == nil {
-		return fmt.Errorf("field 'Category' is required")
-	}
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
+func (r *ClaimResponseProcessNote) Validate() error {
+	if r.Class != nil {
+		if err := r.Class.Validate(); err != nil {
+			return fmt.Errorf("Class: %w", err)
 		}
 	}
-	if r.Amount == nil {
-		return fmt.Errorf("field 'Amount' is required")
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
 	}
-	if r.Amount != nil {
-		if err := r.Amount.Validate(); err != nil {
-			return fmt.Errorf("Amount: %w", err)
+	var emptyString string
+	if r.Text == emptyString {
+		return fmt.Errorf("field 'Text' is required")
+	}
+	if r.Language != nil {
+		if err := r.Language.Validate(); err != nil {
+			return fmt.Errorf("Language: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClaimResponseInsurance struct {
+	Id                  *string    `json:"id,omitempty" bson:"id,omitempty"`                                    // Unique id for inter-element referencing
+	Sequence            int        `json:"sequence" bson:"sequence"`                                            // Insurance instance identifier
+	Focal               bool       `json:"focal" bson:"focal"`                                                  // Coverage to be used for adjudication
+	Coverage            *Reference `json:"coverage" bson:"coverage"`                                            // Insurance information
+	BusinessArrangement *string    `json:"businessArrangement,omitempty" bson:"business_arrangement,omitempty"` // Additional provider contract number
+	ClaimResponse       *Reference `json:"claimResponse,omitempty" bson:"claim_response,omitempty"`             // Adjudication results
+}
+
+func (r *ClaimResponseInsurance) Validate() error {
+	if r.Sequence == 0 {
+		return fmt.Errorf("field 'Sequence' is required")
+	}
+	if r.Coverage == nil {
+		return fmt.Errorf("field 'Coverage' is required")
+	}
+	if r.Coverage != nil {
+		if err := r.Coverage.Validate(); err != nil {
+			return fmt.Errorf("Coverage: %w", err)
+		}
+	}
+	if r.ClaimResponse != nil {
+		if err := r.ClaimResponse.Validate(); err != nil {
+			return fmt.Errorf("ClaimResponse: %w", err)
 		}
 	}
 	return nil

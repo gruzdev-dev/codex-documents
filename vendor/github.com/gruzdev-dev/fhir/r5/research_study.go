@@ -180,71 +180,6 @@ func (r *ResearchStudy) Validate() error {
 	return nil
 }
 
-type ResearchStudyObjective struct {
-	Id             *string                                `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
-	Name           *string                                `json:"name,omitempty" bson:"name,omitempty"`                      // Label for the objective
-	Type           *CodeableConcept                       `json:"type,omitempty" bson:"type,omitempty"`                      // primary | secondary | exploratory
-	Description    *string                                `json:"description,omitempty" bson:"description,omitempty"`        // Description of the objective
-	OutcomeMeasure []ResearchStudyObjectiveOutcomeMeasure `json:"outcomeMeasure,omitempty" bson:"outcome_measure,omitempty"` // A variable measured during the study
-}
-
-func (r *ResearchStudyObjective) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	for i, item := range r.OutcomeMeasure {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("OutcomeMeasure[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ResearchStudyObjectiveOutcomeMeasureEventHandling struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Event       *CodeableConcept `json:"event,omitempty" bson:"event,omitempty"`             // The event
-	Group       *CodeableConcept `json:"group,omitempty" bson:"group,omitempty"`             // The group that is affected by this event handling
-	Handling    *CodeableConcept `json:"handling,omitempty" bson:"handling,omitempty"`       // How the data is handled
-	Description *string          `json:"description,omitempty" bson:"description,omitempty"` // Text summary of event handling
-}
-
-func (r *ResearchStudyObjectiveOutcomeMeasureEventHandling) Validate() error {
-	if r.Event != nil {
-		if err := r.Event.Validate(); err != nil {
-			return fmt.Errorf("Event: %w", err)
-		}
-	}
-	if r.Group != nil {
-		if err := r.Group.Validate(); err != nil {
-			return fmt.Errorf("Group: %w", err)
-		}
-	}
-	if r.Handling != nil {
-		if err := r.Handling.Validate(); err != nil {
-			return fmt.Errorf("Handling: %w", err)
-		}
-	}
-	return nil
-}
-
-type ResearchStudyLabel struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Type     *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // primary | official | scientific | plain-language | subtitle | short-title | acronym | earlier-title | language | auto-translated | human-use | machine-use | duplicate-uid
-	Value    *string          `json:"value,omitempty" bson:"value,omitempty"`       // The name
-	Language *string          `json:"language,omitempty" bson:"language,omitempty"` // Used to express the specific language
-}
-
-func (r *ResearchStudyLabel) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	return nil
-}
-
 type ResearchStudyRelatesTo struct {
 	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
 	Type             *CodeableConcept `json:"type" bson:"type"`                          // documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with | documents | specification-of | created-with | cite-as | reprint | reprint-of | summarizes
@@ -292,6 +227,42 @@ func (r *ResearchStudyRelatesTo) Validate() error {
 	return nil
 }
 
+type ResearchStudyAssociatedParty struct {
+	Id         *string           `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Name       *string           `json:"name,omitempty" bson:"name,omitempty"`             // Name of associated party
+	Role       *CodeableConcept  `json:"role" bson:"role"`                                 // sponsor | lead-sponsor | sponsor-investigator | primary-investigator | collaborator | funding-source | general-contact | recruitment-contact | sub-investigator | study-chair | irb | data-monitoring
+	Period     []Period          `json:"period,omitempty" bson:"period,omitempty"`         // When active in the role
+	Classifier []CodeableConcept `json:"classifier,omitempty" bson:"classifier,omitempty"` // nih | fda | government | nonprofit | academic | industry
+	Party      *Reference        `json:"party,omitempty" bson:"party,omitempty"`           // Individual or organization associated with study (use practitionerRole to specify their organisation)
+}
+
+func (r *ResearchStudyAssociatedParty) Validate() error {
+	if r.Role == nil {
+		return fmt.Errorf("field 'Role' is required")
+	}
+	if r.Role != nil {
+		if err := r.Role.Validate(); err != nil {
+			return fmt.Errorf("Role: %w", err)
+		}
+	}
+	for i, item := range r.Period {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Period[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Classifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Classifier[%d]: %w", i, err)
+		}
+	}
+	if r.Party != nil {
+		if err := r.Party.Validate(); err != nil {
+			return fmt.Errorf("Party: %w", err)
+		}
+	}
+	return nil
+}
+
 type ResearchStudyProgressStatus struct {
 	Id     *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
 	State  *CodeableConcept `json:"state" bson:"state"`                       // Label for status or state (e.g. recruitment status)
@@ -334,6 +305,28 @@ func (r *ResearchStudyRecruitment) Validate() error {
 	if r.ActualGroup != nil {
 		if err := r.ActualGroup.Validate(); err != nil {
 			return fmt.Errorf("ActualGroup: %w", err)
+		}
+	}
+	return nil
+}
+
+type ResearchStudyObjective struct {
+	Id             *string                                `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
+	Name           *string                                `json:"name,omitempty" bson:"name,omitempty"`                      // Label for the objective
+	Type           *CodeableConcept                       `json:"type,omitempty" bson:"type,omitempty"`                      // primary | secondary | exploratory
+	Description    *string                                `json:"description,omitempty" bson:"description,omitempty"`        // Description of the objective
+	OutcomeMeasure []ResearchStudyObjectiveOutcomeMeasure `json:"outcomeMeasure,omitempty" bson:"outcome_measure,omitempty"` // A variable measured during the study
+}
+
+func (r *ResearchStudyObjective) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.OutcomeMeasure {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("OutcomeMeasure[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -400,37 +393,17 @@ func (r *ResearchStudyObjectiveOutcomeMeasure) Validate() error {
 	return nil
 }
 
-type ResearchStudyAssociatedParty struct {
-	Id         *string           `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Name       *string           `json:"name,omitempty" bson:"name,omitempty"`             // Name of associated party
-	Role       *CodeableConcept  `json:"role" bson:"role"`                                 // sponsor | lead-sponsor | sponsor-investigator | primary-investigator | collaborator | funding-source | general-contact | recruitment-contact | sub-investigator | study-chair | irb | data-monitoring
-	Period     []Period          `json:"period,omitempty" bson:"period,omitempty"`         // When active in the role
-	Classifier []CodeableConcept `json:"classifier,omitempty" bson:"classifier,omitempty"` // nih | fda | government | nonprofit | academic | industry
-	Party      *Reference        `json:"party,omitempty" bson:"party,omitempty"`           // Individual or organization associated with study (use practitionerRole to specify their organisation)
+type ResearchStudyLabel struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Type     *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // primary | official | scientific | plain-language | subtitle | short-title | acronym | earlier-title | language | auto-translated | human-use | machine-use | duplicate-uid
+	Value    *string          `json:"value,omitempty" bson:"value,omitempty"`       // The name
+	Language *string          `json:"language,omitempty" bson:"language,omitempty"` // Used to express the specific language
 }
 
-func (r *ResearchStudyAssociatedParty) Validate() error {
-	if r.Role == nil {
-		return fmt.Errorf("field 'Role' is required")
-	}
-	if r.Role != nil {
-		if err := r.Role.Validate(); err != nil {
-			return fmt.Errorf("Role: %w", err)
-		}
-	}
-	for i, item := range r.Period {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Period[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Classifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Classifier[%d]: %w", i, err)
-		}
-	}
-	if r.Party != nil {
-		if err := r.Party.Validate(); err != nil {
-			return fmt.Errorf("Party: %w", err)
+func (r *ResearchStudyLabel) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
 		}
 	}
 	return nil
@@ -454,6 +427,33 @@ func (r *ResearchStudyComparisonGroup) Validate() error {
 	if r.ObservedGroup != nil {
 		if err := r.ObservedGroup.Validate(); err != nil {
 			return fmt.Errorf("ObservedGroup: %w", err)
+		}
+	}
+	return nil
+}
+
+type ResearchStudyObjectiveOutcomeMeasureEventHandling struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Event       *CodeableConcept `json:"event,omitempty" bson:"event,omitempty"`             // The event
+	Group       *CodeableConcept `json:"group,omitempty" bson:"group,omitempty"`             // The group that is affected by this event handling
+	Handling    *CodeableConcept `json:"handling,omitempty" bson:"handling,omitempty"`       // How the data is handled
+	Description *string          `json:"description,omitempty" bson:"description,omitempty"` // Text summary of event handling
+}
+
+func (r *ResearchStudyObjectiveOutcomeMeasureEventHandling) Validate() error {
+	if r.Event != nil {
+		if err := r.Event.Validate(); err != nil {
+			return fmt.Errorf("Event: %w", err)
+		}
+	}
+	if r.Group != nil {
+		if err := r.Group.Validate(); err != nil {
+			return fmt.Errorf("Group: %w", err)
+		}
+	}
+	if r.Handling != nil {
+		if err := r.Handling.Validate(); err != nil {
+			return fmt.Errorf("Handling: %w", err)
 		}
 	}
 	return nil

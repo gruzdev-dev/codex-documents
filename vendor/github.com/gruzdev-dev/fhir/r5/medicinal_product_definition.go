@@ -186,19 +186,20 @@ func (r *MedicinalProductDefinition) Validate() error {
 	return nil
 }
 
-type MedicinalProductDefinitionNamePart struct {
-	Id   *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Part string           `json:"part" bson:"part"`                 // A fragment of a product name
-	Type *CodeableConcept `json:"type" bson:"type"`                 // Identifying type for this part of the name (e.g. strength part)
+type MedicinalProductDefinitionCrossReference struct {
+	Id      *string            `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Product *CodeableReference `json:"product" bson:"product"`               // Reference to another product, e.g. for linking authorised to investigational product
+	Type    *CodeableConcept   `json:"type,omitempty" bson:"type,omitempty"` // The type of relationship, for instance branded to generic or virtual to actual product
 }
 
-func (r *MedicinalProductDefinitionNamePart) Validate() error {
-	var emptyString string
-	if r.Part == emptyString {
-		return fmt.Errorf("field 'Part' is required")
+func (r *MedicinalProductDefinitionCrossReference) Validate() error {
+	if r.Product == nil {
+		return fmt.Errorf("field 'Product' is required")
 	}
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
+	if r.Product != nil {
+		if err := r.Product.Validate(); err != nil {
+			return fmt.Errorf("Product: %w", err)
+		}
 	}
 	if r.Type != nil {
 		if err := r.Type.Validate(); err != nil {
@@ -235,92 +236,6 @@ func (r *MedicinalProductDefinitionOperation) Validate() error {
 	if r.ConfidentialityIndicator != nil {
 		if err := r.ConfidentialityIndicator.Validate(); err != nil {
 			return fmt.Errorf("ConfidentialityIndicator: %w", err)
-		}
-	}
-	return nil
-}
-
-type MedicinalProductDefinitionName struct {
-	Id          *string                               `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	ProductName string                                `json:"productName" bson:"product_name"`        // The full product name
-	Type        *CodeableConcept                      `json:"type,omitempty" bson:"type,omitempty"`   // Type of product name, such as rINN, BAN, Proprietary, Non-Proprietary
-	Part        []MedicinalProductDefinitionNamePart  `json:"part,omitempty" bson:"part,omitempty"`   // Coding words or phrases of the name
-	Usage       []MedicinalProductDefinitionNameUsage `json:"usage,omitempty" bson:"usage,omitempty"` // Country and jurisdiction where the name applies
-}
-
-func (r *MedicinalProductDefinitionName) Validate() error {
-	var emptyString string
-	if r.ProductName == emptyString {
-		return fmt.Errorf("field 'ProductName' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	for i, item := range r.Part {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Part[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Usage {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Usage[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type MedicinalProductDefinitionNameUsage struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Country      *CodeableConcept `json:"country" bson:"country"`                               // Country code for where this name applies
-	Jurisdiction *CodeableConcept `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"` // Jurisdiction code for where this name applies
-	Language     *CodeableConcept `json:"language" bson:"language"`                             // Language code for this name
-}
-
-func (r *MedicinalProductDefinitionNameUsage) Validate() error {
-	if r.Country == nil {
-		return fmt.Errorf("field 'Country' is required")
-	}
-	if r.Country != nil {
-		if err := r.Country.Validate(); err != nil {
-			return fmt.Errorf("Country: %w", err)
-		}
-	}
-	if r.Jurisdiction != nil {
-		if err := r.Jurisdiction.Validate(); err != nil {
-			return fmt.Errorf("Jurisdiction: %w", err)
-		}
-	}
-	if r.Language == nil {
-		return fmt.Errorf("field 'Language' is required")
-	}
-	if r.Language != nil {
-		if err := r.Language.Validate(); err != nil {
-			return fmt.Errorf("Language: %w", err)
-		}
-	}
-	return nil
-}
-
-type MedicinalProductDefinitionCrossReference struct {
-	Id      *string            `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Product *CodeableReference `json:"product" bson:"product"`               // Reference to another product, e.g. for linking authorised to investigational product
-	Type    *CodeableConcept   `json:"type,omitempty" bson:"type,omitempty"` // The type of relationship, for instance branded to generic or virtual to actual product
-}
-
-func (r *MedicinalProductDefinitionCrossReference) Validate() error {
-	if r.Product == nil {
-		return fmt.Errorf("field 'Product' is required")
-	}
-	if r.Product != nil {
-		if err := r.Product.Validate(); err != nil {
-			return fmt.Errorf("Product: %w", err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
 		}
 	}
 	return nil
@@ -371,6 +286,37 @@ func (r *MedicinalProductDefinitionCharacteristic) Validate() error {
 	return nil
 }
 
+type MedicinalProductDefinitionName struct {
+	Id          *string                               `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	ProductName string                                `json:"productName" bson:"product_name"`        // The full product name
+	Type        *CodeableConcept                      `json:"type,omitempty" bson:"type,omitempty"`   // Type of product name, such as rINN, BAN, Proprietary, Non-Proprietary
+	Part        []MedicinalProductDefinitionNamePart  `json:"part,omitempty" bson:"part,omitempty"`   // Coding words or phrases of the name
+	Usage       []MedicinalProductDefinitionNameUsage `json:"usage,omitempty" bson:"usage,omitempty"` // Country and jurisdiction where the name applies
+}
+
+func (r *MedicinalProductDefinitionName) Validate() error {
+	var emptyString string
+	if r.ProductName == emptyString {
+		return fmt.Errorf("field 'ProductName' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.Part {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Part[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Usage {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Usage[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type MedicinalProductDefinitionContact struct {
 	Id      *string          `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
 	Type    *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"` // Allows the contact to be classified, for example QPPV, Pharmacovigilance Enquiry Information
@@ -389,6 +335,60 @@ func (r *MedicinalProductDefinitionContact) Validate() error {
 	if r.Contact != nil {
 		if err := r.Contact.Validate(); err != nil {
 			return fmt.Errorf("Contact: %w", err)
+		}
+	}
+	return nil
+}
+
+type MedicinalProductDefinitionNamePart struct {
+	Id   *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Part string           `json:"part" bson:"part"`                 // A fragment of a product name
+	Type *CodeableConcept `json:"type" bson:"type"`                 // Identifying type for this part of the name (e.g. strength part)
+}
+
+func (r *MedicinalProductDefinitionNamePart) Validate() error {
+	var emptyString string
+	if r.Part == emptyString {
+		return fmt.Errorf("field 'Part' is required")
+	}
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	return nil
+}
+
+type MedicinalProductDefinitionNameUsage struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Country      *CodeableConcept `json:"country" bson:"country"`                               // Country code for where this name applies
+	Jurisdiction *CodeableConcept `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"` // Jurisdiction code for where this name applies
+	Language     *CodeableConcept `json:"language" bson:"language"`                             // Language code for this name
+}
+
+func (r *MedicinalProductDefinitionNameUsage) Validate() error {
+	if r.Country == nil {
+		return fmt.Errorf("field 'Country' is required")
+	}
+	if r.Country != nil {
+		if err := r.Country.Validate(); err != nil {
+			return fmt.Errorf("Country: %w", err)
+		}
+	}
+	if r.Jurisdiction != nil {
+		if err := r.Jurisdiction.Validate(); err != nil {
+			return fmt.Errorf("Jurisdiction: %w", err)
+		}
+	}
+	if r.Language == nil {
+		return fmt.Errorf("field 'Language' is required")
+	}
+	if r.Language != nil {
+		if err := r.Language.Validate(); err != nil {
+			return fmt.Errorf("Language: %w", err)
 		}
 	}
 	return nil

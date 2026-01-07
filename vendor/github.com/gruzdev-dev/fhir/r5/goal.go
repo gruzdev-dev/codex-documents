@@ -127,6 +127,30 @@ func (r *Goal) Validate() error {
 	return nil
 }
 
+type GoalAcceptance struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Participant *Reference       `json:"participant" bson:"participant"`               // Individual or organization whose acceptance is reflected
+	Status      *string          `json:"status,omitempty" bson:"status,omitempty"`     // agree | disagree | pending
+	Priority    *CodeableConcept `json:"priority,omitempty" bson:"priority,omitempty"` // Priority of goal for individual
+}
+
+func (r *GoalAcceptance) Validate() error {
+	if r.Participant == nil {
+		return fmt.Errorf("field 'Participant' is required")
+	}
+	if r.Participant != nil {
+		if err := r.Participant.Validate(); err != nil {
+			return fmt.Errorf("Participant: %w", err)
+		}
+	}
+	if r.Priority != nil {
+		if err := r.Priority.Validate(); err != nil {
+			return fmt.Errorf("Priority: %w", err)
+		}
+	}
+	return nil
+}
+
 type GoalTarget struct {
 	Id                    *string          `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
 	Measure               *CodeableConcept `json:"measure,omitempty" bson:"measure,omitempty"`                               // The parameter whose value is being tracked
@@ -170,30 +194,6 @@ func (r *GoalTarget) Validate() error {
 	if r.DueDuration != nil {
 		if err := r.DueDuration.Validate(); err != nil {
 			return fmt.Errorf("DueDuration: %w", err)
-		}
-	}
-	return nil
-}
-
-type GoalAcceptance struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Participant *Reference       `json:"participant" bson:"participant"`               // Individual or organization whose acceptance is reflected
-	Status      *string          `json:"status,omitempty" bson:"status,omitempty"`     // agree | disagree | pending
-	Priority    *CodeableConcept `json:"priority,omitempty" bson:"priority,omitempty"` // Priority of goal for individual
-}
-
-func (r *GoalAcceptance) Validate() error {
-	if r.Participant == nil {
-		return fmt.Errorf("field 'Participant' is required")
-	}
-	if r.Participant != nil {
-		if err := r.Participant.Validate(); err != nil {
-			return fmt.Errorf("Participant: %w", err)
-		}
-	}
-	if r.Priority != nil {
-		if err := r.Priority.Validate(); err != nil {
-			return fmt.Errorf("Priority: %w", err)
 		}
 	}
 	return nil

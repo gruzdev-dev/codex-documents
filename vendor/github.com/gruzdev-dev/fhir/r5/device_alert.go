@@ -128,6 +128,35 @@ func (r *DeviceAlert) Validate() error {
 	return nil
 }
 
+type DeviceAlertDerivedFrom struct {
+	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Observation *Reference `json:"observation" bson:"observation"`                 // The Observation having a value causing the alert condition
+	Component   *Coding    `json:"component,omitempty" bson:"component,omitempty"` // The Observation.component having a value causing the alert condition
+	Limit       *Range     `json:"limit,omitempty" bson:"limit,omitempty"`         // The boundaries beyond which a value was detected to cause the alert condition
+}
+
+func (r *DeviceAlertDerivedFrom) Validate() error {
+	if r.Observation == nil {
+		return fmt.Errorf("field 'Observation' is required")
+	}
+	if r.Observation != nil {
+		if err := r.Observation.Validate(); err != nil {
+			return fmt.Errorf("Observation: %w", err)
+		}
+	}
+	if r.Component != nil {
+		if err := r.Component.Validate(); err != nil {
+			return fmt.Errorf("Component: %w", err)
+		}
+	}
+	if r.Limit != nil {
+		if err := r.Limit.Validate(); err != nil {
+			return fmt.Errorf("Limit: %w", err)
+		}
+	}
+	return nil
+}
+
 type DeviceAlertSignal struct {
 	Id              *string            `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	ActivationState *CodeableConcept   `json:"activationState" bson:"activation_state"`                // on | off | paused
@@ -170,35 +199,6 @@ func (r *DeviceAlertSignal) Validate() error {
 	if r.Indication != nil {
 		if err := r.Indication.Validate(); err != nil {
 			return fmt.Errorf("Indication: %w", err)
-		}
-	}
-	return nil
-}
-
-type DeviceAlertDerivedFrom struct {
-	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Observation *Reference `json:"observation" bson:"observation"`                 // The Observation having a value causing the alert condition
-	Component   *Coding    `json:"component,omitempty" bson:"component,omitempty"` // The Observation.component having a value causing the alert condition
-	Limit       *Range     `json:"limit,omitempty" bson:"limit,omitempty"`         // The boundaries beyond which a value was detected to cause the alert condition
-}
-
-func (r *DeviceAlertDerivedFrom) Validate() error {
-	if r.Observation == nil {
-		return fmt.Errorf("field 'Observation' is required")
-	}
-	if r.Observation != nil {
-		if err := r.Observation.Validate(); err != nil {
-			return fmt.Errorf("Observation: %w", err)
-		}
-	}
-	if r.Component != nil {
-		if err := r.Component.Validate(); err != nil {
-			return fmt.Errorf("Component: %w", err)
-		}
-	}
-	if r.Limit != nil {
-		if err := r.Limit.Validate(); err != nil {
-			return fmt.Errorf("Limit: %w", err)
 		}
 	}
 	return nil

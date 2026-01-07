@@ -195,6 +195,83 @@ func (r *EvidenceVariable) Validate() error {
 	return nil
 }
 
+type EvidenceVariableDataStorage struct {
+	Id        *string                       `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Datatype  *CodeableConcept              `json:"datatype,omitempty" bson:"datatype,omitempty"`   // Type of data used to express value of the variable
+	Path      *string                       `json:"path,omitempty" bson:"path,omitempty"`           // Where to find the data element in the dataset
+	Delimiter *string                       `json:"delimiter,omitempty" bson:"delimiter,omitempty"` // Character(s) separating values in a string-based list
+	Component []EvidenceVariableDataStorage `json:"component,omitempty" bson:"component,omitempty"`
+}
+
+func (r *EvidenceVariableDataStorage) Validate() error {
+	if r.Datatype != nil {
+		if err := r.Datatype.Validate(); err != nil {
+			return fmt.Errorf("Datatype: %w", err)
+		}
+	}
+	for i, item := range r.Component {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Component[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type EvidenceVariableConstraint struct {
+	Id                    *string          `json:"id,omitempty" bson:"id,omitempty"`                                          // Unique id for inter-element referencing
+	Conditional           *CodeableConcept `json:"conditional,omitempty" bson:"conditional,omitempty"`                        // Condition determining whether this constraint applies
+	MinimumQuantity       *Quantity        `json:"minimumQuantity,omitempty" bson:"minimum_quantity,omitempty"`               // The lowest permissible value of the variable
+	MaximumQuantity       *Quantity        `json:"maximumQuantity,omitempty" bson:"maximum_quantity,omitempty"`               // The highest permissible value of the variable
+	EarliestDateTime      *string          `json:"earliestDateTime,omitempty" bson:"earliest_date_time,omitempty"`            // The earliest permissible value of the variable
+	LatestDateTime        *string          `json:"latestDateTime,omitempty" bson:"latest_date_time,omitempty"`                // The latest permissible value of the variable
+	MinimumStringLength   *int             `json:"minimumStringLength,omitempty" bson:"minimum_string_length,omitempty"`      // The lowest number of characters allowed for a value of the variable
+	MaximumStringLength   *int             `json:"maximumStringLength,omitempty" bson:"maximum_string_length,omitempty"`      // The highest number of characters allowed for a value of the variable
+	Code                  *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`                                      // Rule for acceptable data values
+	Expression            *Expression      `json:"expression,omitempty" bson:"expression,omitempty"`                          // Rule for acceptable data values, as an Expression
+	ExpectedValueSet      *Reference       `json:"expectedValueSet,omitempty" bson:"expected_value_set,omitempty"`            // List of anticipated values used to express value of the variable
+	ExpectedUnitsValueSet *Reference       `json:"expectedUnitsValueSet,omitempty" bson:"expected_units_value_set,omitempty"` // List of anticipated values used to express units for the value of the variable
+	AnyValueAllowed       bool             `json:"anyValueAllowed,omitempty" bson:"any_value_allowed,omitempty"`              // Permissibility of unanticipated value used to express value of the variable
+}
+
+func (r *EvidenceVariableConstraint) Validate() error {
+	if r.Conditional != nil {
+		if err := r.Conditional.Validate(); err != nil {
+			return fmt.Errorf("Conditional: %w", err)
+		}
+	}
+	if r.MinimumQuantity != nil {
+		if err := r.MinimumQuantity.Validate(); err != nil {
+			return fmt.Errorf("MinimumQuantity: %w", err)
+		}
+	}
+	if r.MaximumQuantity != nil {
+		if err := r.MaximumQuantity.Validate(); err != nil {
+			return fmt.Errorf("MaximumQuantity: %w", err)
+		}
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	if r.Expression != nil {
+		if err := r.Expression.Validate(); err != nil {
+			return fmt.Errorf("Expression: %w", err)
+		}
+	}
+	if r.ExpectedValueSet != nil {
+		if err := r.ExpectedValueSet.Validate(); err != nil {
+			return fmt.Errorf("ExpectedValueSet: %w", err)
+		}
+	}
+	if r.ExpectedUnitsValueSet != nil {
+		if err := r.ExpectedUnitsValueSet.Validate(); err != nil {
+			return fmt.Errorf("ExpectedUnitsValueSet: %w", err)
+		}
+	}
+	return nil
+}
+
 type EvidenceVariableRelatesTo struct {
 	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
 	Type             *CodeableConcept `json:"type" bson:"type"`                          // documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with | documents | specification-of | created-with | cite-as | reprint | reprint-of | summarizes
@@ -358,83 +435,6 @@ func (r *EvidenceVariableCategory) Validate() error {
 	if r.ValueReference != nil {
 		if err := r.ValueReference.Validate(); err != nil {
 			return fmt.Errorf("ValueReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type EvidenceVariableDataStorage struct {
-	Id        *string                       `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Datatype  *CodeableConcept              `json:"datatype,omitempty" bson:"datatype,omitempty"`   // Type of data used to express value of the variable
-	Path      *string                       `json:"path,omitempty" bson:"path,omitempty"`           // Where to find the data element in the dataset
-	Delimiter *string                       `json:"delimiter,omitempty" bson:"delimiter,omitempty"` // Character(s) separating values in a string-based list
-	Component []EvidenceVariableDataStorage `json:"component,omitempty" bson:"component,omitempty"`
-}
-
-func (r *EvidenceVariableDataStorage) Validate() error {
-	if r.Datatype != nil {
-		if err := r.Datatype.Validate(); err != nil {
-			return fmt.Errorf("Datatype: %w", err)
-		}
-	}
-	for i, item := range r.Component {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Component[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type EvidenceVariableConstraint struct {
-	Id                    *string          `json:"id,omitempty" bson:"id,omitempty"`                                          // Unique id for inter-element referencing
-	Conditional           *CodeableConcept `json:"conditional,omitempty" bson:"conditional,omitempty"`                        // Condition determining whether this constraint applies
-	MinimumQuantity       *Quantity        `json:"minimumQuantity,omitempty" bson:"minimum_quantity,omitempty"`               // The lowest permissible value of the variable
-	MaximumQuantity       *Quantity        `json:"maximumQuantity,omitempty" bson:"maximum_quantity,omitempty"`               // The highest permissible value of the variable
-	EarliestDateTime      *string          `json:"earliestDateTime,omitempty" bson:"earliest_date_time,omitempty"`            // The earliest permissible value of the variable
-	LatestDateTime        *string          `json:"latestDateTime,omitempty" bson:"latest_date_time,omitempty"`                // The latest permissible value of the variable
-	MinimumStringLength   *int             `json:"minimumStringLength,omitempty" bson:"minimum_string_length,omitempty"`      // The lowest number of characters allowed for a value of the variable
-	MaximumStringLength   *int             `json:"maximumStringLength,omitempty" bson:"maximum_string_length,omitempty"`      // The highest number of characters allowed for a value of the variable
-	Code                  *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`                                      // Rule for acceptable data values
-	Expression            *Expression      `json:"expression,omitempty" bson:"expression,omitempty"`                          // Rule for acceptable data values, as an Expression
-	ExpectedValueSet      *Reference       `json:"expectedValueSet,omitempty" bson:"expected_value_set,omitempty"`            // List of anticipated values used to express value of the variable
-	ExpectedUnitsValueSet *Reference       `json:"expectedUnitsValueSet,omitempty" bson:"expected_units_value_set,omitempty"` // List of anticipated values used to express units for the value of the variable
-	AnyValueAllowed       bool             `json:"anyValueAllowed,omitempty" bson:"any_value_allowed,omitempty"`              // Permissibility of unanticipated value used to express value of the variable
-}
-
-func (r *EvidenceVariableConstraint) Validate() error {
-	if r.Conditional != nil {
-		if err := r.Conditional.Validate(); err != nil {
-			return fmt.Errorf("Conditional: %w", err)
-		}
-	}
-	if r.MinimumQuantity != nil {
-		if err := r.MinimumQuantity.Validate(); err != nil {
-			return fmt.Errorf("MinimumQuantity: %w", err)
-		}
-	}
-	if r.MaximumQuantity != nil {
-		if err := r.MaximumQuantity.Validate(); err != nil {
-			return fmt.Errorf("MaximumQuantity: %w", err)
-		}
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	if r.Expression != nil {
-		if err := r.Expression.Validate(); err != nil {
-			return fmt.Errorf("Expression: %w", err)
-		}
-	}
-	if r.ExpectedValueSet != nil {
-		if err := r.ExpectedValueSet.Validate(); err != nil {
-			return fmt.Errorf("ExpectedValueSet: %w", err)
-		}
-	}
-	if r.ExpectedUnitsValueSet != nil {
-		if err := r.ExpectedUnitsValueSet.Validate(); err != nil {
-			return fmt.Errorf("ExpectedUnitsValueSet: %w", err)
 		}
 	}
 	return nil

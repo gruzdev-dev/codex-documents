@@ -127,63 +127,6 @@ func (r *CapabilityStatement) Validate() error {
 	return nil
 }
 
-type CapabilityStatementMessaging struct {
-	Id               *string                                        `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
-	Endpoint         []CapabilityStatementMessagingEndpoint         `json:"endpoint,omitempty" bson:"endpoint,omitempty"`                  // Where messages should be sent
-	ReliableCache    *int                                           `json:"reliableCache,omitempty" bson:"reliable_cache,omitempty"`       // Reliable Message Cache Length (min)
-	Documentation    *string                                        `json:"documentation,omitempty" bson:"documentation,omitempty"`        // Messaging interface behavior details
-	SupportedMessage []CapabilityStatementMessagingSupportedMessage `json:"supportedMessage,omitempty" bson:"supported_message,omitempty"` // Messages supported by this system
-}
-
-func (r *CapabilityStatementMessaging) Validate() error {
-	for i, item := range r.Endpoint {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Endpoint[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SupportedMessage {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SupportedMessage[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type CapabilityStatementMessagingSupportedMessage struct {
-	Id         *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Mode       string  `json:"mode" bson:"mode"`                 // sender | receiver
-	Definition string  `json:"definition" bson:"definition"`     // Message supported by this system
-}
-
-func (r *CapabilityStatementMessagingSupportedMessage) Validate() error {
-	var emptyString string
-	if r.Mode == emptyString {
-		return fmt.Errorf("field 'Mode' is required")
-	}
-	if r.Definition == emptyString {
-		return fmt.Errorf("field 'Definition' is required")
-	}
-	return nil
-}
-
-type CapabilityStatementDocument struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Mode          string  `json:"mode" bson:"mode"`                                       // producer | consumer
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Description of document support
-	Profile       string  `json:"profile" bson:"profile"`                                 // Constraint on the resources used in the document
-}
-
-func (r *CapabilityStatementDocument) Validate() error {
-	var emptyString string
-	if r.Mode == emptyString {
-		return fmt.Errorf("field 'Mode' is required")
-	}
-	if r.Profile == emptyString {
-		return fmt.Errorf("field 'Profile' is required")
-	}
-	return nil
-}
-
 type CapabilityStatementSoftware struct {
 	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
 	Name        string  `json:"name" bson:"name"`                                    // A name the software is known by
@@ -215,6 +158,87 @@ func (r *CapabilityStatementImplementation) Validate() error {
 		if err := r.Custodian.Validate(); err != nil {
 			return fmt.Errorf("Custodian: %w", err)
 		}
+	}
+	return nil
+}
+
+type CapabilityStatementRestSecurity struct {
+	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Cors        bool              `json:"cors,omitempty" bson:"cors,omitempty"`               // Adds CORS Headers (http://enable-cors.org/)
+	Service     []CodeableConcept `json:"service,omitempty" bson:"service,omitempty"`         // OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates
+	Description *string           `json:"description,omitempty" bson:"description,omitempty"` // General description of how security works
+}
+
+func (r *CapabilityStatementRestSecurity) Validate() error {
+	for i, item := range r.Service {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Service[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type CapabilityStatementRestResourceInteraction struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Code          string  `json:"code" bson:"code"`                                       // read | vread | update | update-conditional | patch | patch-conditional | delete | delete-conditional-single | delete-conditional-multiple | delete-history | delete-history-version | history-instance | history-type | create | create-conditional | search-type
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Anything special about interaction behavior
+}
+
+func (r *CapabilityStatementRestResourceInteraction) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	return nil
+}
+
+type CapabilityStatementRestResourceSearchParam struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Name          string  `json:"name" bson:"name"`                                       // Name for parameter in search url
+	Definition    *string `json:"definition,omitempty" bson:"definition,omitempty"`       // Source of definition for parameter
+	Type          string  `json:"type" bson:"type"`                                       // number | date | string | token | reference | composite | quantity | uri | special | resource
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Server-specific usage
+}
+
+func (r *CapabilityStatementRestResourceSearchParam) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	return nil
+}
+
+type CapabilityStatementRestResourceOperation struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Name          string  `json:"name" bson:"name"`                                       // Name by which the operation/query is invoked
+	Definition    string  `json:"definition" bson:"definition"`                           // The defined operation/query
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Specific details about operation behavior
+}
+
+func (r *CapabilityStatementRestResourceOperation) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	if r.Definition == emptyString {
+		return fmt.Errorf("field 'Definition' is required")
+	}
+	return nil
+}
+
+type CapabilityStatementRestInteraction struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Code          string  `json:"code" bson:"code"`                                       // transaction | batch | search-system | history-system
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Anything special about interaction behavior
+}
+
+func (r *CapabilityStatementRestInteraction) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
 	}
 	return nil
 }
@@ -310,16 +334,24 @@ func (r *CapabilityStatementRestResource) Validate() error {
 	return nil
 }
 
-type CapabilityStatementRestInteraction struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Code          string  `json:"code" bson:"code"`                                       // transaction | batch | search-system | history-system
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Anything special about interaction behavior
+type CapabilityStatementMessaging struct {
+	Id               *string                                        `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
+	Endpoint         []CapabilityStatementMessagingEndpoint         `json:"endpoint,omitempty" bson:"endpoint,omitempty"`                  // Where messages should be sent
+	ReliableCache    *int                                           `json:"reliableCache,omitempty" bson:"reliable_cache,omitempty"`       // Reliable Message Cache Length (min)
+	Documentation    *string                                        `json:"documentation,omitempty" bson:"documentation,omitempty"`        // Messaging interface behavior details
+	SupportedMessage []CapabilityStatementMessagingSupportedMessage `json:"supportedMessage,omitempty" bson:"supported_message,omitempty"` // Messages supported by this system
 }
 
-func (r *CapabilityStatementRestInteraction) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
+func (r *CapabilityStatementMessaging) Validate() error {
+	for i, item := range r.Endpoint {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Endpoint[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SupportedMessage {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SupportedMessage[%d]: %w", i, err)
+		}
 	}
 	return nil
 }
@@ -346,69 +378,37 @@ func (r *CapabilityStatementMessagingEndpoint) Validate() error {
 	return nil
 }
 
-type CapabilityStatementRestSecurity struct {
-	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Cors        bool              `json:"cors,omitempty" bson:"cors,omitempty"`               // Adds CORS Headers (http://enable-cors.org/)
-	Service     []CodeableConcept `json:"service,omitempty" bson:"service,omitempty"`         // OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates
-	Description *string           `json:"description,omitempty" bson:"description,omitempty"` // General description of how security works
+type CapabilityStatementMessagingSupportedMessage struct {
+	Id         *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Mode       string  `json:"mode" bson:"mode"`                 // sender | receiver
+	Definition string  `json:"definition" bson:"definition"`     // Message supported by this system
 }
 
-func (r *CapabilityStatementRestSecurity) Validate() error {
-	for i, item := range r.Service {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Service[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type CapabilityStatementRestResourceInteraction struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Code          string  `json:"code" bson:"code"`                                       // read | vread | update | update-conditional | patch | patch-conditional | delete | delete-conditional-single | delete-conditional-multiple | delete-history | delete-history-version | history-instance | history-type | create | create-conditional | search-type
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Anything special about interaction behavior
-}
-
-func (r *CapabilityStatementRestResourceInteraction) Validate() error {
+func (r *CapabilityStatementMessagingSupportedMessage) Validate() error {
 	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	return nil
-}
-
-type CapabilityStatementRestResourceSearchParam struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Name          string  `json:"name" bson:"name"`                                       // Name for parameter in search url
-	Definition    *string `json:"definition,omitempty" bson:"definition,omitempty"`       // Source of definition for parameter
-	Type          string  `json:"type" bson:"type"`                                       // number | date | string | token | reference | composite | quantity | uri | special | resource
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Server-specific usage
-}
-
-func (r *CapabilityStatementRestResourceSearchParam) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	return nil
-}
-
-type CapabilityStatementRestResourceOperation struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Name          string  `json:"name" bson:"name"`                                       // Name by which the operation/query is invoked
-	Definition    string  `json:"definition" bson:"definition"`                           // The defined operation/query
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Specific details about operation behavior
-}
-
-func (r *CapabilityStatementRestResourceOperation) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
+	if r.Mode == emptyString {
+		return fmt.Errorf("field 'Mode' is required")
 	}
 	if r.Definition == emptyString {
 		return fmt.Errorf("field 'Definition' is required")
+	}
+	return nil
+}
+
+type CapabilityStatementDocument struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Mode          string  `json:"mode" bson:"mode"`                                       // producer | consumer
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Description of document support
+	Profile       string  `json:"profile" bson:"profile"`                                 // Constraint on the resources used in the document
+}
+
+func (r *CapabilityStatementDocument) Validate() error {
+	var emptyString string
+	if r.Mode == emptyString {
+		return fmt.Errorf("field 'Mode' is required")
+	}
+	if r.Profile == emptyString {
+		return fmt.Errorf("field 'Profile' is required")
 	}
 	return nil
 }
