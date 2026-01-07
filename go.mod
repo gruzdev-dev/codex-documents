@@ -3,6 +3,7 @@ module codex-documents
 go 1.25.5
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/gorilla/mux v1.8.1
 	github.com/gruzdev-dev/fhir v0.0.2
 	go.mongodb.org/mongo-driver/v2 v2.4.1

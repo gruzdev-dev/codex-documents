@@ -1,5 +1,7 @@
 package domain
 
+import "slices"
+
 type Identity struct {
 	UserID    string
 	PatientID string
@@ -7,12 +9,7 @@ type Identity struct {
 }
 
 func (i *Identity) HasScope(scope string) bool {
-	for _, s := range i.Scopes {
-		if s == scope {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(i.Scopes, scope)
 }
 
 func (i *Identity) IsPatient(id string) bool {

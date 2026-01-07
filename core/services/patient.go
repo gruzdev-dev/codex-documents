@@ -8,6 +8,7 @@ import (
 	"codex-documents/core/ports"
 	"codex-documents/core/validator"
 	models "github.com/gruzdev-dev/fhir/r5"
+	"codex-documents/pkg/identity"
 )
 
 type PatientService struct {
@@ -34,7 +35,12 @@ func (s *PatientService) Create(ctx context.Context, patient *models.Patient) er
 	return nil
 }
 
-func (s *PatientService) GetPatient(ctx context.Context, id string, user domain.Identity) (*models.Patient, error) {
+func (s *PatientService) GetPatient(ctx context.Context, id string) (*models.Patient, error) {
+	user, ok := identity.FromCtx(ctx)
+	if !ok {
+		return nil, domain.ErrAccessDenied
+	}
+
 	if !user.IsPatient(id) && !user.HasScope("patient/*.read") {
 		return nil, domain.ErrAccessDenied
 	}
@@ -51,7 +57,12 @@ func (s *PatientService) GetPatient(ctx context.Context, id string, user domain.
 	return patient, nil
 }
 
-func (s *PatientService) Update(ctx context.Context, patient *models.Patient, user domain.Identity) error {
+func (s *PatientService) Update(ctx context.Context, patient *models.Patient) error {
+	user, ok := identity.FromCtx(ctx)
+	if !ok {
+		return domain.ErrAccessDenied
+	}
+
 	if patient.Id == nil {
 		return domain.ErrPatientIDRequired
 	}
