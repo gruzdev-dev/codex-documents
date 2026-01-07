@@ -133,26 +133,6 @@ func (r *DetectedIssue) Validate() error {
 	return nil
 }
 
-type DetectedIssueEvidence struct {
-	Id     *string           `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Code   []CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`     // Manifestation
-	Detail []Reference       `json:"detail,omitempty" bson:"detail,omitempty"` // Supporting information
-}
-
-func (r *DetectedIssueEvidence) Validate() error {
-	for i, item := range r.Code {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Code[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Detail {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Detail[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type DetectedIssueMitigation struct {
 	Id     *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
 	Action *CodeableConcept `json:"action" bson:"action"`                     // What mitigation?
@@ -178,6 +158,26 @@ func (r *DetectedIssueMitigation) Validate() error {
 	for i, item := range r.Note {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Note[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type DetectedIssueEvidence struct {
+	Id     *string           `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Code   []CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`     // Manifestation
+	Detail []Reference       `json:"detail,omitempty" bson:"detail,omitempty"` // Supporting information
+}
+
+func (r *DetectedIssueEvidence) Validate() error {
+	for i, item := range r.Code {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Code[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Detail {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Detail[%d]: %w", i, err)
 		}
 	}
 	return nil

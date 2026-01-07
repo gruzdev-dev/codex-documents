@@ -115,134 +115,6 @@ func (r *ImplementationGuide) Validate() error {
 	return nil
 }
 
-type ImplementationGuideGlobal struct {
-	Id      *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Type    string  `json:"type" bson:"type"`                 // Type this profile applies to
-	Profile string  `json:"profile" bson:"profile"`           // Profile that all resources must conform to
-}
-
-func (r *ImplementationGuideGlobal) Validate() error {
-	var emptyString string
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Profile == emptyString {
-		return fmt.Errorf("field 'Profile' is required")
-	}
-	return nil
-}
-
-type ImplementationGuideDefinition struct {
-	Id        *string                                  `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Grouping  []ImplementationGuideDefinitionGrouping  `json:"grouping,omitempty" bson:"grouping,omitempty"`   // Grouping used to present related resources in the IG
-	Resource  []ImplementationGuideDefinitionResource  `json:"resource,omitempty" bson:"resource,omitempty"`   // Resource in the implementation guide
-	Page      *ImplementationGuideDefinitionPage       `json:"page,omitempty" bson:"page,omitempty"`           // Page/Section in the Guide
-	Parameter []ImplementationGuideDefinitionParameter `json:"parameter,omitempty" bson:"parameter,omitempty"` // Defines how IG is built by tools
-	Template  []ImplementationGuideDefinitionTemplate  `json:"template,omitempty" bson:"template,omitempty"`   // A template for building resources
-}
-
-func (r *ImplementationGuideDefinition) Validate() error {
-	for i, item := range r.Grouping {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Grouping[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Resource {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Resource[%d]: %w", i, err)
-		}
-	}
-	if r.Page != nil {
-		if err := r.Page.Validate(); err != nil {
-			return fmt.Errorf("Page: %w", err)
-		}
-	}
-	for i, item := range r.Parameter {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Parameter[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Template {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Template[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ImplementationGuideDefinitionResource struct {
-	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Reference   *Reference `json:"reference" bson:"reference"`                          // Location of the resource
-	FhirVersion []string   `json:"fhirVersion,omitempty" bson:"fhir_version,omitempty"` // Versions this applies to (if different to IG)
-	Name        *string    `json:"name,omitempty" bson:"name,omitempty"`                // Human readable name for the resource
-	Description *string    `json:"description,omitempty" bson:"description,omitempty"`  // Reason why included in guide
-	IsExample   bool       `json:"isExample,omitempty" bson:"is_example,omitempty"`     // Is this an example
-	Profile     []string   `json:"profile,omitempty" bson:"profile,omitempty"`          // Profile(s) this resource is valid against
-	GroupingId  *string    `json:"groupingId,omitempty" bson:"grouping_id,omitempty"`   // Grouping this is part of
-}
-
-func (r *ImplementationGuideDefinitionResource) Validate() error {
-	if r.Reference == nil {
-		return fmt.Errorf("field 'Reference' is required")
-	}
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ImplementationGuideManifestResource struct {
-	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Reference    *Reference `json:"reference" bson:"reference"`                            // Location of the resource
-	IsExample    bool       `json:"isExample,omitempty" bson:"is_example,omitempty"`       // Is this an example
-	Profile      []string   `json:"profile,omitempty" bson:"profile,omitempty"`            // Profile(s) this is an example of
-	RelativePath *string    `json:"relativePath,omitempty" bson:"relative_path,omitempty"` // Relative path for page in IG
-}
-
-func (r *ImplementationGuideManifestResource) Validate() error {
-	if r.Reference == nil {
-		return fmt.Errorf("field 'Reference' is required")
-	}
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ImplementationGuideDependsOn struct {
-	Id        *string `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
-	Uri       string  `json:"uri" bson:"uri"`                                  // Identity of the IG that this depends on
-	PackageId *string `json:"packageId,omitempty" bson:"package_id,omitempty"` // NPM Package name for IG this depends on
-	Version   *string `json:"version,omitempty" bson:"version,omitempty"`      // Version of the IG
-	Reason    *string `json:"reason,omitempty" bson:"reason,omitempty"`        // Why dependency exists
-}
-
-func (r *ImplementationGuideDependsOn) Validate() error {
-	var emptyString string
-	if r.Uri == emptyString {
-		return fmt.Errorf("field 'Uri' is required")
-	}
-	return nil
-}
-
-type ImplementationGuideDefinitionGrouping struct {
-	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Name        string  `json:"name" bson:"name"`                                   // Descriptive name for the package
-	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Human readable text describing the package
-}
-
-func (r *ImplementationGuideDefinitionGrouping) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	return nil
-}
-
 type ImplementationGuideDefinitionPage struct {
 	Id             *string                             `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
 	SourceUrl      *string                             `json:"sourceUrl,omitempty" bson:"source_url,omitempty"`           // Source for page
@@ -339,6 +211,40 @@ func (r *ImplementationGuideManifest) Validate() error {
 	return nil
 }
 
+type ImplementationGuideDefinitionGrouping struct {
+	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Name        string  `json:"name" bson:"name"`                                   // Descriptive name for the package
+	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Human readable text describing the package
+}
+
+func (r *ImplementationGuideDefinitionGrouping) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	return nil
+}
+
+type ImplementationGuideManifestResource struct {
+	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Reference    *Reference `json:"reference" bson:"reference"`                            // Location of the resource
+	IsExample    bool       `json:"isExample,omitempty" bson:"is_example,omitempty"`       // Is this an example
+	Profile      []string   `json:"profile,omitempty" bson:"profile,omitempty"`            // Profile(s) this is an example of
+	RelativePath *string    `json:"relativePath,omitempty" bson:"relative_path,omitempty"` // Relative path for page in IG
+}
+
+func (r *ImplementationGuideManifestResource) Validate() error {
+	if r.Reference == nil {
+		return fmt.Errorf("field 'Reference' is required")
+	}
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
+		}
+	}
+	return nil
+}
+
 type ImplementationGuideManifestPage struct {
 	Id     *string  `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
 	Name   string   `json:"name" bson:"name"`                         // HTML page name
@@ -350,6 +256,100 @@ func (r *ImplementationGuideManifestPage) Validate() error {
 	var emptyString string
 	if r.Name == emptyString {
 		return fmt.Errorf("field 'Name' is required")
+	}
+	return nil
+}
+
+type ImplementationGuideDependsOn struct {
+	Id        *string `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
+	Uri       string  `json:"uri" bson:"uri"`                                  // Identity of the IG that this depends on
+	PackageId *string `json:"packageId,omitempty" bson:"package_id,omitempty"` // NPM Package name for IG this depends on
+	Version   *string `json:"version,omitempty" bson:"version,omitempty"`      // Version of the IG
+	Reason    *string `json:"reason,omitempty" bson:"reason,omitempty"`        // Why dependency exists
+}
+
+func (r *ImplementationGuideDependsOn) Validate() error {
+	var emptyString string
+	if r.Uri == emptyString {
+		return fmt.Errorf("field 'Uri' is required")
+	}
+	return nil
+}
+
+type ImplementationGuideGlobal struct {
+	Id      *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Type    string  `json:"type" bson:"type"`                 // Type this profile applies to
+	Profile string  `json:"profile" bson:"profile"`           // Profile that all resources must conform to
+}
+
+func (r *ImplementationGuideGlobal) Validate() error {
+	var emptyString string
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Profile == emptyString {
+		return fmt.Errorf("field 'Profile' is required")
+	}
+	return nil
+}
+
+type ImplementationGuideDefinition struct {
+	Id        *string                                  `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Grouping  []ImplementationGuideDefinitionGrouping  `json:"grouping,omitempty" bson:"grouping,omitempty"`   // Grouping used to present related resources in the IG
+	Resource  []ImplementationGuideDefinitionResource  `json:"resource,omitempty" bson:"resource,omitempty"`   // Resource in the implementation guide
+	Page      *ImplementationGuideDefinitionPage       `json:"page,omitempty" bson:"page,omitempty"`           // Page/Section in the Guide
+	Parameter []ImplementationGuideDefinitionParameter `json:"parameter,omitempty" bson:"parameter,omitempty"` // Defines how IG is built by tools
+	Template  []ImplementationGuideDefinitionTemplate  `json:"template,omitempty" bson:"template,omitempty"`   // A template for building resources
+}
+
+func (r *ImplementationGuideDefinition) Validate() error {
+	for i, item := range r.Grouping {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Grouping[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Resource {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Resource[%d]: %w", i, err)
+		}
+	}
+	if r.Page != nil {
+		if err := r.Page.Validate(); err != nil {
+			return fmt.Errorf("Page: %w", err)
+		}
+	}
+	for i, item := range r.Parameter {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Parameter[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Template {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Template[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ImplementationGuideDefinitionResource struct {
+	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Reference   *Reference `json:"reference" bson:"reference"`                          // Location of the resource
+	FhirVersion []string   `json:"fhirVersion,omitempty" bson:"fhir_version,omitempty"` // Versions this applies to (if different to IG)
+	Name        *string    `json:"name,omitempty" bson:"name,omitempty"`                // Human readable name for the resource
+	Description *string    `json:"description,omitempty" bson:"description,omitempty"`  // Reason why included in guide
+	IsExample   bool       `json:"isExample,omitempty" bson:"is_example,omitempty"`     // Is this an example
+	Profile     []string   `json:"profile,omitempty" bson:"profile,omitempty"`          // Profile(s) this resource is valid against
+	GroupingId  *string    `json:"groupingId,omitempty" bson:"grouping_id,omitempty"`   // Grouping this is part of
+}
+
+func (r *ImplementationGuideDefinitionResource) Validate() error {
+	if r.Reference == nil {
+		return fmt.Errorf("field 'Reference' is required")
+	}
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
+		}
 	}
 	return nil
 }

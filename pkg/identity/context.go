@@ -1,8 +1,8 @@
 package identity
 
 import (
-	"context"
 	"codex-documents/core/domain"
+	"context"
 )
 
 type ctxKey int

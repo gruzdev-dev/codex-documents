@@ -109,30 +109,6 @@ func (r *OperationDefinition) Validate() error {
 	return nil
 }
 
-type OperationDefinitionParameterReferencedFrom struct {
-	Id       *string `json:"id,omitempty" bson:"id,omitempty"`              // Unique id for inter-element referencing
-	Source   string  `json:"source" bson:"source"`                          // Referencing parameter
-	SourceId *string `json:"sourceId,omitempty" bson:"source_id,omitempty"` // Element id of reference
-}
-
-func (r *OperationDefinitionParameterReferencedFrom) Validate() error {
-	var emptyString string
-	if r.Source == emptyString {
-		return fmt.Errorf("field 'Source' is required")
-	}
-	return nil
-}
-
-type OperationDefinitionOverload struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	ParameterName []string `json:"parameterName,omitempty" bson:"parameter_name,omitempty"` // Name of parameter to include in overload
-	Comment       *string  `json:"comment,omitempty" bson:"comment,omitempty"`              // Comments to go on overload
-}
-
-func (r *OperationDefinitionOverload) Validate() error {
-	return nil
-}
-
 type OperationDefinitionParameter struct {
 	Id             *string                                      `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
 	Name           string                                       `json:"name" bson:"name"`                                          // Name in Parameters.parameter.name or in URL
@@ -196,5 +172,29 @@ func (r *OperationDefinitionParameterBinding) Validate() error {
 	if r.ValueSet == emptyString {
 		return fmt.Errorf("field 'ValueSet' is required")
 	}
+	return nil
+}
+
+type OperationDefinitionParameterReferencedFrom struct {
+	Id       *string `json:"id,omitempty" bson:"id,omitempty"`              // Unique id for inter-element referencing
+	Source   string  `json:"source" bson:"source"`                          // Referencing parameter
+	SourceId *string `json:"sourceId,omitempty" bson:"source_id,omitempty"` // Element id of reference
+}
+
+func (r *OperationDefinitionParameterReferencedFrom) Validate() error {
+	var emptyString string
+	if r.Source == emptyString {
+		return fmt.Errorf("field 'Source' is required")
+	}
+	return nil
+}
+
+type OperationDefinitionOverload struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	ParameterName []string `json:"parameterName,omitempty" bson:"parameter_name,omitempty"` // Name of parameter to include in overload
+	Comment       *string  `json:"comment,omitempty" bson:"comment,omitempty"`              // Comments to go on overload
+}
+
+func (r *OperationDefinitionOverload) Validate() error {
 	return nil
 }

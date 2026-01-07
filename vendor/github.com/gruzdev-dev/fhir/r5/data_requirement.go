@@ -57,6 +57,40 @@ func (r *DataRequirement) Validate() error {
 	return nil
 }
 
+type DataRequirementSort struct {
+	Id        *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Path      string  `json:"path" bson:"path"`                 // The name of the attribute to perform the sort
+	Direction string  `json:"direction" bson:"direction"`       // ascending | descending
+}
+
+func (r *DataRequirementSort) Validate() error {
+	var emptyString string
+	if r.Path == emptyString {
+		return fmt.Errorf("field 'Path' is required")
+	}
+	if r.Direction == emptyString {
+		return fmt.Errorf("field 'Direction' is required")
+	}
+	return nil
+}
+
+type DataRequirementCodeFilter struct {
+	Id          *string  `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Path        *string  `json:"path,omitempty" bson:"path,omitempty"`                // A code-valued attribute to filter on
+	SearchParam *string  `json:"searchParam,omitempty" bson:"search_param,omitempty"` // A coded (token) parameter to search on
+	ValueSet    *string  `json:"valueSet,omitempty" bson:"value_set,omitempty"`       // ValueSet for the filter
+	Code        []Coding `json:"code,omitempty" bson:"code,omitempty"`                // What code is expected
+}
+
+func (r *DataRequirementCodeFilter) Validate() error {
+	for i, item := range r.Code {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Code[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type DataRequirementDateFilter struct {
 	Id            *string   `json:"id,omitempty" bson:"id,omitempty"`                         // Unique id for inter-element referencing
 	Path          *string   `json:"path,omitempty" bson:"path,omitempty"`                     // A date-valued attribute to filter on
@@ -99,40 +133,6 @@ func (r *DataRequirementValueFilter) Validate() error {
 	if r.ValueDuration != nil {
 		if err := r.ValueDuration.Validate(); err != nil {
 			return fmt.Errorf("ValueDuration: %w", err)
-		}
-	}
-	return nil
-}
-
-type DataRequirementSort struct {
-	Id        *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Path      string  `json:"path" bson:"path"`                 // The name of the attribute to perform the sort
-	Direction string  `json:"direction" bson:"direction"`       // ascending | descending
-}
-
-func (r *DataRequirementSort) Validate() error {
-	var emptyString string
-	if r.Path == emptyString {
-		return fmt.Errorf("field 'Path' is required")
-	}
-	if r.Direction == emptyString {
-		return fmt.Errorf("field 'Direction' is required")
-	}
-	return nil
-}
-
-type DataRequirementCodeFilter struct {
-	Id          *string  `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Path        *string  `json:"path,omitempty" bson:"path,omitempty"`                // A code-valued attribute to filter on
-	SearchParam *string  `json:"searchParam,omitempty" bson:"search_param,omitempty"` // A coded (token) parameter to search on
-	ValueSet    *string  `json:"valueSet,omitempty" bson:"value_set,omitempty"`       // ValueSet for the filter
-	Code        []Coding `json:"code,omitempty" bson:"code,omitempty"`                // What code is expected
-}
-
-func (r *DataRequirementCodeFilter) Validate() error {
-	for i, item := range r.Code {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Code[%d]: %w", i, err)
 		}
 	}
 	return nil

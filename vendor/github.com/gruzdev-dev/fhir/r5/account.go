@@ -121,6 +121,24 @@ func (r *Account) Validate() error {
 	return nil
 }
 
+type AccountCoverage struct {
+	Id       *string    `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Coverage *Reference `json:"coverage" bson:"coverage"`                     // The party(s), such as insurances, that may contribute to the payment of this account
+	Priority *int       `json:"priority,omitempty" bson:"priority,omitempty"` // The priority of the coverage in the context of this account
+}
+
+func (r *AccountCoverage) Validate() error {
+	if r.Coverage == nil {
+		return fmt.Errorf("field 'Coverage' is required")
+	}
+	if r.Coverage != nil {
+		if err := r.Coverage.Validate(); err != nil {
+			return fmt.Errorf("Coverage: %w", err)
+		}
+	}
+	return nil
+}
+
 type AccountGuarantor struct {
 	Id             *string    `json:"id,omitempty" bson:"id,omitempty"`                         // Unique id for inter-element referencing
 	Party          *Reference `json:"party,omitempty" bson:"party,omitempty"`                   // Responsible entity
@@ -255,24 +273,6 @@ func (r *AccountBalance) Validate() error {
 	if r.Amount != nil {
 		if err := r.Amount.Validate(); err != nil {
 			return fmt.Errorf("Amount: %w", err)
-		}
-	}
-	return nil
-}
-
-type AccountCoverage struct {
-	Id       *string    `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Coverage *Reference `json:"coverage" bson:"coverage"`                     // The party(s), such as insurances, that may contribute to the payment of this account
-	Priority *int       `json:"priority,omitempty" bson:"priority,omitempty"` // The priority of the coverage in the context of this account
-}
-
-func (r *AccountCoverage) Validate() error {
-	if r.Coverage == nil {
-		return fmt.Errorf("field 'Coverage' is required")
-	}
-	if r.Coverage != nil {
-		if err := r.Coverage.Validate(); err != nil {
-			return fmt.Errorf("Coverage: %w", err)
 		}
 	}
 	return nil

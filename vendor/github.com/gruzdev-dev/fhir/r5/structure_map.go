@@ -104,61 +104,21 @@ func (r *StructureMap) Validate() error {
 	return nil
 }
 
-type StructureMapStructure struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Url           string  `json:"url" bson:"url"`                                         // Canonical reference to structure definition
-	Mode          string  `json:"mode" bson:"mode"`                                       // source | queried | target | produced
-	Alias         *string `json:"alias,omitempty" bson:"alias,omitempty"`                 // Name for type in this map
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation on use of structure
+type StructureMapGroupRuleTarget struct {
+	Id         *string                                `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Context    *string                                `json:"context,omitempty" bson:"context,omitempty"`         // Variable this rule applies to
+	Element    *string                                `json:"element,omitempty" bson:"element,omitempty"`         // Field to create in the context
+	Variable   *string                                `json:"variable,omitempty" bson:"variable,omitempty"`       // Named context for field, if desired, and a field is specified
+	ListMode   []string                               `json:"listMode,omitempty" bson:"list_mode,omitempty"`      // first | share | last | single
+	ListRuleId *string                                `json:"listRuleId,omitempty" bson:"list_rule_id,omitempty"` // Internal rule reference for shared list items
+	Transform  *string                                `json:"transform,omitempty" bson:"transform,omitempty"`     // create | copy +
+	Parameter  []StructureMapGroupRuleTargetParameter `json:"parameter,omitempty" bson:"parameter,omitempty"`     // Parameters to the transform
 }
 
-func (r *StructureMapStructure) Validate() error {
-	var emptyString string
-	if r.Url == emptyString {
-		return fmt.Errorf("field 'Url' is required")
-	}
-	if r.Mode == emptyString {
-		return fmt.Errorf("field 'Mode' is required")
-	}
-	return nil
-}
-
-type StructureMapConst struct {
-	Id    *string `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Name  *string `json:"name,omitempty" bson:"name,omitempty"`   // Constant name
-	Value *string `json:"value,omitempty" bson:"value,omitempty"` // FHIRPath exression - value of the constant
-}
-
-func (r *StructureMapConst) Validate() error {
-	return nil
-}
-
-type StructureMapGroup struct {
-	Id            *string                  `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Name          string                   `json:"name" bson:"name"`                                       // Human-readable label
-	Extends       *string                  `json:"extends,omitempty" bson:"extends,omitempty"`             // Another group that this group adds rules to
-	TypeMode      *string                  `json:"typeMode,omitempty" bson:"type_mode,omitempty"`          // types | type-and-types
-	Documentation *string                  `json:"documentation,omitempty" bson:"documentation,omitempty"` // Additional description/explanation for group
-	Input         []StructureMapGroupInput `json:"input" bson:"input"`                                     // Named instance provided when invoking the map
-	Rule          []StructureMapGroupRule  `json:"rule,omitempty" bson:"rule,omitempty"`                   // Transform Rule from source to target
-}
-
-func (r *StructureMapGroup) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	if len(r.Input) < 1 {
-		return fmt.Errorf("field 'Input' must have at least 1 elements")
-	}
-	for i, item := range r.Input {
+func (r *StructureMapGroupRuleTarget) Validate() error {
+	for i, item := range r.Parameter {
 		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Input[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Rule {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Rule[%d]: %w", i, err)
+			return fmt.Errorf("Parameter[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -215,49 +175,6 @@ func (r *StructureMapGroupRule) Validate() error {
 	for i, item := range r.Dependent {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Dependent[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type StructureMapGroupRuleSource struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Context      string  `json:"context" bson:"context"`                                // Type or variable this rule applies to
-	Min          *int    `json:"min,omitempty" bson:"min,omitempty"`                    // Specified minimum cardinality
-	Max          *string `json:"max,omitempty" bson:"max,omitempty"`                    // Specified maximum cardinality (number or *)
-	Type         *string `json:"type,omitempty" bson:"type,omitempty"`                  // Rule only applies if source has this type
-	DefaultValue *string `json:"defaultValue,omitempty" bson:"default_value,omitempty"` // Default value if no value exists
-	Element      *string `json:"element,omitempty" bson:"element,omitempty"`            // Optional field for this source
-	ListMode     *string `json:"listMode,omitempty" bson:"list_mode,omitempty"`         // first | not_first | last | not_last | only_one
-	Variable     *string `json:"variable,omitempty" bson:"variable,omitempty"`          // Named context for field, if a field is specified
-	Condition    *string `json:"condition,omitempty" bson:"condition,omitempty"`        // FHIRPath expression  - must be true or the rule does not apply
-	Check        *string `json:"check,omitempty" bson:"check,omitempty"`                // FHIRPath expression  - must be true or the mapping engine throws an error instead of completing
-	LogMessage   *string `json:"logMessage,omitempty" bson:"log_message,omitempty"`     // Message to put in log if source exists (FHIRPath)
-}
-
-func (r *StructureMapGroupRuleSource) Validate() error {
-	var emptyString string
-	if r.Context == emptyString {
-		return fmt.Errorf("field 'Context' is required")
-	}
-	return nil
-}
-
-type StructureMapGroupRuleTarget struct {
-	Id         *string                                `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Context    *string                                `json:"context,omitempty" bson:"context,omitempty"`         // Variable this rule applies to
-	Element    *string                                `json:"element,omitempty" bson:"element,omitempty"`         // Field to create in the context
-	Variable   *string                                `json:"variable,omitempty" bson:"variable,omitempty"`       // Named context for field, if desired, and a field is specified
-	ListMode   []string                               `json:"listMode,omitempty" bson:"list_mode,omitempty"`      // first | share | last | single
-	ListRuleId *string                                `json:"listRuleId,omitempty" bson:"list_rule_id,omitempty"` // Internal rule reference for shared list items
-	Transform  *string                                `json:"transform,omitempty" bson:"transform,omitempty"`     // create | copy +
-	Parameter  []StructureMapGroupRuleTargetParameter `json:"parameter,omitempty" bson:"parameter,omitempty"`     // Parameters to the transform
-}
-
-func (r *StructureMapGroupRuleTarget) Validate() error {
-	for i, item := range r.Parameter {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Parameter[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -321,6 +238,89 @@ func (r *StructureMapGroupRuleDependent) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Parameter[%d]: %w", i, err)
 		}
+	}
+	return nil
+}
+
+type StructureMapStructure struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Url           string  `json:"url" bson:"url"`                                         // Canonical reference to structure definition
+	Mode          string  `json:"mode" bson:"mode"`                                       // source | queried | target | produced
+	Alias         *string `json:"alias,omitempty" bson:"alias,omitempty"`                 // Name for type in this map
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation on use of structure
+}
+
+func (r *StructureMapStructure) Validate() error {
+	var emptyString string
+	if r.Url == emptyString {
+		return fmt.Errorf("field 'Url' is required")
+	}
+	if r.Mode == emptyString {
+		return fmt.Errorf("field 'Mode' is required")
+	}
+	return nil
+}
+
+type StructureMapConst struct {
+	Id    *string `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Name  *string `json:"name,omitempty" bson:"name,omitempty"`   // Constant name
+	Value *string `json:"value,omitempty" bson:"value,omitempty"` // FHIRPath exression - value of the constant
+}
+
+func (r *StructureMapConst) Validate() error {
+	return nil
+}
+
+type StructureMapGroup struct {
+	Id            *string                  `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Name          string                   `json:"name" bson:"name"`                                       // Human-readable label
+	Extends       *string                  `json:"extends,omitempty" bson:"extends,omitempty"`             // Another group that this group adds rules to
+	TypeMode      *string                  `json:"typeMode,omitempty" bson:"type_mode,omitempty"`          // types | type-and-types
+	Documentation *string                  `json:"documentation,omitempty" bson:"documentation,omitempty"` // Additional description/explanation for group
+	Input         []StructureMapGroupInput `json:"input" bson:"input"`                                     // Named instance provided when invoking the map
+	Rule          []StructureMapGroupRule  `json:"rule,omitempty" bson:"rule,omitempty"`                   // Transform Rule from source to target
+}
+
+func (r *StructureMapGroup) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	if len(r.Input) < 1 {
+		return fmt.Errorf("field 'Input' must have at least 1 elements")
+	}
+	for i, item := range r.Input {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Input[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Rule {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Rule[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type StructureMapGroupRuleSource struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Context      string  `json:"context" bson:"context"`                                // Type or variable this rule applies to
+	Min          *int    `json:"min,omitempty" bson:"min,omitempty"`                    // Specified minimum cardinality
+	Max          *string `json:"max,omitempty" bson:"max,omitempty"`                    // Specified maximum cardinality (number or *)
+	Type         *string `json:"type,omitempty" bson:"type,omitempty"`                  // Rule only applies if source has this type
+	DefaultValue *string `json:"defaultValue,omitempty" bson:"default_value,omitempty"` // Default value if no value exists
+	Element      *string `json:"element,omitempty" bson:"element,omitempty"`            // Optional field for this source
+	ListMode     *string `json:"listMode,omitempty" bson:"list_mode,omitempty"`         // first | not_first | last | not_last | only_one
+	Variable     *string `json:"variable,omitempty" bson:"variable,omitempty"`          // Named context for field, if a field is specified
+	Condition    *string `json:"condition,omitempty" bson:"condition,omitempty"`        // FHIRPath expression  - must be true or the rule does not apply
+	Check        *string `json:"check,omitempty" bson:"check,omitempty"`                // FHIRPath expression  - must be true or the mapping engine throws an error instead of completing
+	LogMessage   *string `json:"logMessage,omitempty" bson:"log_message,omitempty"`     // Message to put in log if source exists (FHIRPath)
+}
+
+func (r *StructureMapGroupRuleSource) Validate() error {
+	var emptyString string
+	if r.Context == emptyString {
+		return fmt.Errorf("field 'Context' is required")
 	}
 	return nil
 }

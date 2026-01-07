@@ -166,29 +166,6 @@ func (r *MedicationAdministration) Validate() error {
 	return nil
 }
 
-type MedicationAdministrationPerformer struct {
-	Id       *string            `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept   `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
-	Actor    *CodeableReference `json:"actor" bson:"actor"`                           // Who or what performed the medication administration
-}
-
-func (r *MedicationAdministrationPerformer) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
-		}
-	}
-	return nil
-}
-
 type MedicationAdministrationDosage struct {
 	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
 	Text         *string          `json:"text,omitempty" bson:"text,omitempty"`                  // Free text dosage instructions e.g. SIG
@@ -229,6 +206,29 @@ func (r *MedicationAdministrationDosage) Validate() error {
 	if r.RateQuantity != nil {
 		if err := r.RateQuantity.Validate(); err != nil {
 			return fmt.Errorf("RateQuantity: %w", err)
+		}
+	}
+	return nil
+}
+
+type MedicationAdministrationPerformer struct {
+	Id       *string            `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept   `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
+	Actor    *CodeableReference `json:"actor" bson:"actor"`                           // Who or what performed the medication administration
+}
+
+func (r *MedicationAdministrationPerformer) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
 		}
 	}
 	return nil

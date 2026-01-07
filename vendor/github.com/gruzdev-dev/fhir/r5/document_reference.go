@@ -155,6 +155,54 @@ func (r *DocumentReference) Validate() error {
 	return nil
 }
 
+type DocumentReferenceContent struct {
+	Id         *string                           `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
+	Attachment *Attachment                       `json:"attachment" bson:"attachment"`               // Where to access the document
+	Profile    []DocumentReferenceContentProfile `json:"profile,omitempty" bson:"profile,omitempty"` // Content profile rules for the document
+}
+
+func (r *DocumentReferenceContent) Validate() error {
+	if r.Attachment == nil {
+		return fmt.Errorf("field 'Attachment' is required")
+	}
+	if r.Attachment != nil {
+		if err := r.Attachment.Validate(); err != nil {
+			return fmt.Errorf("Attachment: %w", err)
+		}
+	}
+	for i, item := range r.Profile {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Profile[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type DocumentReferenceContentProfile struct {
+	Id             *string `json:"id,omitempty" bson:"id,omitempty"`      // Unique id for inter-element referencing
+	ValueCoding    *Coding `json:"valueCoding" bson:"value_coding"`       // Code|uri|canonical
+	ValueUri       *string `json:"valueUri" bson:"value_uri"`             // Code|uri|canonical
+	ValueCanonical *string `json:"valueCanonical" bson:"value_canonical"` // Code|uri|canonical
+}
+
+func (r *DocumentReferenceContentProfile) Validate() error {
+	if r.ValueCoding == nil {
+		return fmt.Errorf("field 'ValueCoding' is required")
+	}
+	if r.ValueCoding != nil {
+		if err := r.ValueCoding.Validate(); err != nil {
+			return fmt.Errorf("ValueCoding: %w", err)
+		}
+	}
+	if r.ValueUri == nil {
+		return fmt.Errorf("field 'ValueUri' is required")
+	}
+	if r.ValueCanonical == nil {
+		return fmt.Errorf("field 'ValueCanonical' is required")
+	}
+	return nil
+}
+
 type DocumentReferenceAttester struct {
 	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
 	Mode  *CodeableConcept `json:"mode" bson:"mode"`                       // personal | professional | legal | official
@@ -201,54 +249,6 @@ func (r *DocumentReferenceRelatesTo) Validate() error {
 		if err := r.Target.Validate(); err != nil {
 			return fmt.Errorf("Target: %w", err)
 		}
-	}
-	return nil
-}
-
-type DocumentReferenceContent struct {
-	Id         *string                           `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
-	Attachment *Attachment                       `json:"attachment" bson:"attachment"`               // Where to access the document
-	Profile    []DocumentReferenceContentProfile `json:"profile,omitempty" bson:"profile,omitempty"` // Content profile rules for the document
-}
-
-func (r *DocumentReferenceContent) Validate() error {
-	if r.Attachment == nil {
-		return fmt.Errorf("field 'Attachment' is required")
-	}
-	if r.Attachment != nil {
-		if err := r.Attachment.Validate(); err != nil {
-			return fmt.Errorf("Attachment: %w", err)
-		}
-	}
-	for i, item := range r.Profile {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Profile[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type DocumentReferenceContentProfile struct {
-	Id             *string `json:"id,omitempty" bson:"id,omitempty"`      // Unique id for inter-element referencing
-	ValueCoding    *Coding `json:"valueCoding" bson:"value_coding"`       // Code|uri|canonical
-	ValueUri       *string `json:"valueUri" bson:"value_uri"`             // Code|uri|canonical
-	ValueCanonical *string `json:"valueCanonical" bson:"value_canonical"` // Code|uri|canonical
-}
-
-func (r *DocumentReferenceContentProfile) Validate() error {
-	if r.ValueCoding == nil {
-		return fmt.Errorf("field 'ValueCoding' is required")
-	}
-	if r.ValueCoding != nil {
-		if err := r.ValueCoding.Validate(); err != nil {
-			return fmt.Errorf("ValueCoding: %w", err)
-		}
-	}
-	if r.ValueUri == nil {
-		return fmt.Errorf("field 'ValueUri' is required")
-	}
-	if r.ValueCanonical == nil {
-		return fmt.Errorf("field 'ValueCanonical' is required")
 	}
 	return nil
 }

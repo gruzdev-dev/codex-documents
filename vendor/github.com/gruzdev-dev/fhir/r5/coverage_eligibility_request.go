@@ -122,36 +122,6 @@ func (r *CoverageEligibilityRequest) Validate() error {
 	return nil
 }
 
-type CoverageEligibilityRequestEvent struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
-	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
-	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
-	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
-}
-
-func (r *CoverageEligibilityRequestEvent) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.WhenDateTime == nil {
-		return fmt.Errorf("field 'WhenDateTime' is required")
-	}
-	if r.WhenPeriod == nil {
-		return fmt.Errorf("field 'WhenPeriod' is required")
-	}
-	if r.WhenPeriod != nil {
-		if err := r.WhenPeriod.Validate(); err != nil {
-			return fmt.Errorf("WhenPeriod: %w", err)
-		}
-	}
-	return nil
-}
-
 type CoverageEligibilityRequestSupportingInfo struct {
 	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Sequence     int        `json:"sequence" bson:"sequence"`                               // Information instance identifier
@@ -271,6 +241,36 @@ func (r *CoverageEligibilityRequestItemDiagnosis) Validate() error {
 	if r.DiagnosisReference != nil {
 		if err := r.DiagnosisReference.Validate(); err != nil {
 			return fmt.Errorf("DiagnosisReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type CoverageEligibilityRequestEvent struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
+	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
+	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
+	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
+}
+
+func (r *CoverageEligibilityRequestEvent) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.WhenDateTime == nil {
+		return fmt.Errorf("field 'WhenDateTime' is required")
+	}
+	if r.WhenPeriod == nil {
+		return fmt.Errorf("field 'WhenPeriod' is required")
+	}
+	if r.WhenPeriod != nil {
+		if err := r.WhenPeriod.Validate(); err != nil {
+			return fmt.Errorf("WhenPeriod: %w", err)
 		}
 	}
 	return nil

@@ -89,35 +89,6 @@ func (r *NutritionProduct) Validate() error {
 	return nil
 }
 
-type NutritionProductNutrient struct {
-	Id             *string            `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
-	Item           *CodeableReference `json:"item" bson:"item"`                                          // The (relevant) nutrients in the product
-	AmountRatio    *Ratio             `json:"amountRatio,omitempty" bson:"amount_ratio,omitempty"`       // The amount of nutrient present in the product
-	AmountQuantity *Quantity          `json:"amountQuantity,omitempty" bson:"amount_quantity,omitempty"` // The amount of nutrient present in the product
-}
-
-func (r *NutritionProductNutrient) Validate() error {
-	if r.Item == nil {
-		return fmt.Errorf("field 'Item' is required")
-	}
-	if r.Item != nil {
-		if err := r.Item.Validate(); err != nil {
-			return fmt.Errorf("Item: %w", err)
-		}
-	}
-	if r.AmountRatio != nil {
-		if err := r.AmountRatio.Validate(); err != nil {
-			return fmt.Errorf("AmountRatio: %w", err)
-		}
-	}
-	if r.AmountQuantity != nil {
-		if err := r.AmountQuantity.Validate(); err != nil {
-			return fmt.Errorf("AmountQuantity: %w", err)
-		}
-	}
-	return nil
-}
-
 type NutritionProductIngredient struct {
 	Id             *string            `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
 	Item           *CodeableReference `json:"item" bson:"item"`                                          // The ingredient contained in the product
@@ -229,6 +200,35 @@ func (r *NutritionProductInstance) Validate() error {
 	if r.BiologicalSourceEvent != nil {
 		if err := r.BiologicalSourceEvent.Validate(); err != nil {
 			return fmt.Errorf("BiologicalSourceEvent: %w", err)
+		}
+	}
+	return nil
+}
+
+type NutritionProductNutrient struct {
+	Id             *string            `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
+	Item           *CodeableReference `json:"item" bson:"item"`                                          // The (relevant) nutrients in the product
+	AmountRatio    *Ratio             `json:"amountRatio,omitempty" bson:"amount_ratio,omitempty"`       // The amount of nutrient present in the product
+	AmountQuantity *Quantity          `json:"amountQuantity,omitempty" bson:"amount_quantity,omitempty"` // The amount of nutrient present in the product
+}
+
+func (r *NutritionProductNutrient) Validate() error {
+	if r.Item == nil {
+		return fmt.Errorf("field 'Item' is required")
+	}
+	if r.Item != nil {
+		if err := r.Item.Validate(); err != nil {
+			return fmt.Errorf("Item: %w", err)
+		}
+	}
+	if r.AmountRatio != nil {
+		if err := r.AmountRatio.Validate(); err != nil {
+			return fmt.Errorf("AmountRatio: %w", err)
+		}
+	}
+	if r.AmountQuantity != nil {
+		if err := r.AmountQuantity.Validate(); err != nil {
+			return fmt.Errorf("AmountQuantity: %w", err)
 		}
 	}
 	return nil

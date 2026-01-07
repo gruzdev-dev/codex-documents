@@ -126,6 +126,28 @@ func (r *Consent) Validate() error {
 	return nil
 }
 
+type ConsentProvisionData struct {
+	Id        *string    `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Meaning   string     `json:"meaning" bson:"meaning"`           // instance | related | dependents | authoredby
+	Reference *Reference `json:"reference" bson:"reference"`       // The actual data reference
+}
+
+func (r *ConsentProvisionData) Validate() error {
+	var emptyString string
+	if r.Meaning == emptyString {
+		return fmt.Errorf("field 'Meaning' is required")
+	}
+	if r.Reference == nil {
+		return fmt.Errorf("field 'Reference' is required")
+	}
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
+		}
+	}
+	return nil
+}
+
 type ConsentPolicyBasis struct {
 	Id        *string    `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	Reference *Reference `json:"reference,omitempty" bson:"reference,omitempty"` // Reference backing policy resource
@@ -260,28 +282,6 @@ func (r *ConsentProvisionActor) Validate() error {
 		if err := r.Role.Validate(); err != nil {
 			return fmt.Errorf("Role: %w", err)
 		}
-	}
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ConsentProvisionData struct {
-	Id        *string    `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Meaning   string     `json:"meaning" bson:"meaning"`           // instance | related | dependents | authoredby
-	Reference *Reference `json:"reference" bson:"reference"`       // The actual data reference
-}
-
-func (r *ConsentProvisionData) Validate() error {
-	var emptyString string
-	if r.Meaning == emptyString {
-		return fmt.Errorf("field 'Meaning' is required")
-	}
-	if r.Reference == nil {
-		return fmt.Errorf("field 'Reference' is required")
 	}
 	if r.Reference != nil {
 		if err := r.Reference.Validate(); err != nil {

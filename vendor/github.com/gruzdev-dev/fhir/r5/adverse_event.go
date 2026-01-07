@@ -159,29 +159,6 @@ func (r *AdverseEvent) Validate() error {
 	return nil
 }
 
-type AdverseEventParticipant struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of involvement
-	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who was involved in the adverse event or the potential adverse event
-}
-
-func (r *AdverseEventParticipant) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
-		}
-	}
-	return nil
-}
-
 type AdverseEventSuspectEntity struct {
 	Id                 *string                             `json:"id,omitempty" bson:"id,omitempty"`                                   // Unique id for inter-element referencing
 	Instance           *CodeableReference                  `json:"instance" bson:"instance"`                                           // Refers to the specific entity that caused the adverse event
@@ -233,6 +210,29 @@ func (r *AdverseEventSuspectEntityCausality) Validate() error {
 	if r.Author != nil {
 		if err := r.Author.Validate(); err != nil {
 			return fmt.Errorf("Author: %w", err)
+		}
+	}
+	return nil
+}
+
+type AdverseEventParticipant struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of involvement
+	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who was involved in the adverse event or the potential adverse event
+}
+
+func (r *AdverseEventParticipant) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
 		}
 	}
 	return nil

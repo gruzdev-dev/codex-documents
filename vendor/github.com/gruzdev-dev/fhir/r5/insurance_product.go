@@ -98,30 +98,6 @@ func (r *InsuranceProduct) Validate() error {
 	return nil
 }
 
-type InsuranceProductCoverageBenefit struct {
-	Id          *string                                `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Type        *CodeableConcept                       `json:"type" bson:"type"`                                   // Classification of benefit provided
-	Requirement *string                                `json:"requirement,omitempty" bson:"requirement,omitempty"` // Referral requirements
-	Limit       []InsuranceProductCoverageBenefitLimit `json:"limit,omitempty" bson:"limit,omitempty"`             // Limits on the provided benefits
-}
-
-func (r *InsuranceProductCoverageBenefit) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	for i, item := range r.Limit {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Limit[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type InsuranceProductCoverageBenefitLimit struct {
 	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
 	Value *Quantity        `json:"value,omitempty" bson:"value,omitempty"` // Maximum value allowed
@@ -195,6 +171,30 @@ func (r *InsuranceProductCoverage) Validate() error {
 	for i, item := range r.Benefit {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Benefit[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type InsuranceProductCoverageBenefit struct {
+	Id          *string                                `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Type        *CodeableConcept                       `json:"type" bson:"type"`                                   // Classification of benefit provided
+	Requirement *string                                `json:"requirement,omitempty" bson:"requirement,omitempty"` // Referral requirements
+	Limit       []InsuranceProductCoverageBenefitLimit `json:"limit,omitempty" bson:"limit,omitempty"`             // Limits on the provided benefits
+}
+
+func (r *InsuranceProductCoverageBenefit) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.Limit {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Limit[%d]: %w", i, err)
 		}
 	}
 	return nil

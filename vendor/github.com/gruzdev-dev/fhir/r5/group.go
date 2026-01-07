@@ -99,6 +99,36 @@ func (r *Group) Validate() error {
 	return nil
 }
 
+type GroupMember struct {
+	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Entity      *Reference        `json:"entity" bson:"entity"`                               // Reference to the group member
+	Involvement []CodeableConcept `json:"involvement,omitempty" bson:"involvement,omitempty"` // Code that describes how user is part of the group
+	Period      *Period           `json:"period,omitempty" bson:"period,omitempty"`           // Period member belonged to the group
+	Inactive    bool              `json:"inactive,omitempty" bson:"inactive,omitempty"`       // If member is no longer in group
+}
+
+func (r *GroupMember) Validate() error {
+	if r.Entity == nil {
+		return fmt.Errorf("field 'Entity' is required")
+	}
+	if r.Entity != nil {
+		if err := r.Entity.Validate(); err != nil {
+			return fmt.Errorf("Entity: %w", err)
+		}
+	}
+	for i, item := range r.Involvement {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Involvement[%d]: %w", i, err)
+		}
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
+		}
+	}
+	return nil
+}
+
 type GroupCharacteristic struct {
 	Id                   *string           `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
 	Code                 *CodeableConcept  `json:"code" bson:"code"`                                                       // Kind of characteristic
@@ -221,36 +251,6 @@ func (r *GroupCharacteristic) Validate() error {
 	for i, item := range r.Timing {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Timing[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type GroupMember struct {
-	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Entity      *Reference        `json:"entity" bson:"entity"`                               // Reference to the group member
-	Involvement []CodeableConcept `json:"involvement,omitempty" bson:"involvement,omitempty"` // Code that describes how user is part of the group
-	Period      *Period           `json:"period,omitempty" bson:"period,omitempty"`           // Period member belonged to the group
-	Inactive    bool              `json:"inactive,omitempty" bson:"inactive,omitempty"`       // If member is no longer in group
-}
-
-func (r *GroupMember) Validate() error {
-	if r.Entity == nil {
-		return fmt.Errorf("field 'Entity' is required")
-	}
-	if r.Entity != nil {
-		if err := r.Entity.Validate(); err != nil {
-			return fmt.Errorf("Entity: %w", err)
-		}
-	}
-	for i, item := range r.Involvement {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Involvement[%d]: %w", i, err)
-		}
-	}
-	if r.Period != nil {
-		if err := r.Period.Validate(); err != nil {
-			return fmt.Errorf("Period: %w", err)
 		}
 	}
 	return nil

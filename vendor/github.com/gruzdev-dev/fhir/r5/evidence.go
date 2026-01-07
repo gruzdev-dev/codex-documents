@@ -146,6 +146,96 @@ func (r *Evidence) Validate() error {
 	return nil
 }
 
+type EvidenceStatisticModelCharacteristic struct {
+	Id                   *string                                        `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
+	Code                 *CodeableConcept                               `json:"code" bson:"code"`                                                       // Model specification
+	ValueQuantity        *Quantity                                      `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"`                // The specific value (when paired with code)
+	ValueRange           *Range                                         `json:"valueRange,omitempty" bson:"value_range,omitempty"`                      // The specific value (when paired with code)
+	ValueCodeableConcept *CodeableConcept                               `json:"valueCodeableConcept,omitempty" bson:"value_codeable_concept,omitempty"` // The specific value (when paired with code)
+	Intended             bool                                           `json:"intended,omitempty" bson:"intended,omitempty"`                           // The plan for analysis
+	Applied              bool                                           `json:"applied,omitempty" bson:"applied,omitempty"`                             // This model characteristic is part of the analysis that was applied, whether or not the analysis followed the plan
+	Variable             []EvidenceStatisticModelCharacteristicVariable `json:"variable,omitempty" bson:"variable,omitempty"`                           // A variable adjusted for in the adjusted analysis
+	Attribute            []EvidenceStatisticAttributeEstimate           `json:"attribute,omitempty" bson:"attribute,omitempty"`                         // An attribute of the model characteristic
+}
+
+func (r *EvidenceStatisticModelCharacteristic) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	if r.ValueQuantity != nil {
+		if err := r.ValueQuantity.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity: %w", err)
+		}
+	}
+	if r.ValueRange != nil {
+		if err := r.ValueRange.Validate(); err != nil {
+			return fmt.Errorf("ValueRange: %w", err)
+		}
+	}
+	if r.ValueCodeableConcept != nil {
+		if err := r.ValueCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("ValueCodeableConcept: %w", err)
+		}
+	}
+	for i, item := range r.Variable {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Variable[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Attribute {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Attribute[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type EvidenceStatisticModelCharacteristicVariable struct {
+	Id                 *string           `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	VariableDefinition *Reference        `json:"variableDefinition" bson:"variable_definition"`           // Description and definition of the variable
+	Handling           *CodeableConcept  `json:"handling,omitempty" bson:"handling,omitempty"`            // boolean | continuous | dichotomous | ordinal | polychotomous | time-to-event | not-specified
+	ValueCategory      []CodeableConcept `json:"valueCategory,omitempty" bson:"value_category,omitempty"` // Qualitative label used for grouping values of a dichotomous, ordinal, or polychotomous variable
+	ValueQuantity      []Quantity        `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"` // Quantitative label used for grouping values of a dichotomous, ordinal, or polychotomous variable
+	ValueRange         []Range           `json:"valueRange,omitempty" bson:"value_range,omitempty"`       // Range of quantitative labels used for grouping values of a dichotomous, ordinal, or polychotomous variable
+}
+
+func (r *EvidenceStatisticModelCharacteristicVariable) Validate() error {
+	if r.VariableDefinition == nil {
+		return fmt.Errorf("field 'VariableDefinition' is required")
+	}
+	if r.VariableDefinition != nil {
+		if err := r.VariableDefinition.Validate(); err != nil {
+			return fmt.Errorf("VariableDefinition: %w", err)
+		}
+	}
+	if r.Handling != nil {
+		if err := r.Handling.Validate(); err != nil {
+			return fmt.Errorf("Handling: %w", err)
+		}
+	}
+	for i, item := range r.ValueCategory {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ValueCategory[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.ValueQuantity {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.ValueRange {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ValueRange[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type EvidenceCertainty struct {
 	Id           *string             `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
 	Description  *string             `json:"description,omitempty" bson:"description,omitempty"`   // Textual description of certainty
@@ -252,50 +342,41 @@ func (r *EvidenceStatisticSampleSize) Validate() error {
 	return nil
 }
 
-type EvidenceStatisticModelCharacteristic struct {
-	Id                   *string                                        `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
-	Code                 *CodeableConcept                               `json:"code" bson:"code"`                                                       // Model specification
-	ValueQuantity        *Quantity                                      `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"`                // The specific value (when paired with code)
-	ValueRange           *Range                                         `json:"valueRange,omitempty" bson:"value_range,omitempty"`                      // The specific value (when paired with code)
-	ValueCodeableConcept *CodeableConcept                               `json:"valueCodeableConcept,omitempty" bson:"value_codeable_concept,omitempty"` // The specific value (when paired with code)
-	Intended             bool                                           `json:"intended,omitempty" bson:"intended,omitempty"`                           // The plan for analysis
-	Applied              bool                                           `json:"applied,omitempty" bson:"applied,omitempty"`                             // This model characteristic is part of the analysis that was applied, whether or not the analysis followed the plan
-	Variable             []EvidenceStatisticModelCharacteristicVariable `json:"variable,omitempty" bson:"variable,omitempty"`                           // A variable adjusted for in the adjusted analysis
-	Attribute            []EvidenceStatisticAttributeEstimate           `json:"attribute,omitempty" bson:"attribute,omitempty"`                         // An attribute of the model characteristic
+type EvidenceStatisticAttributeEstimate struct {
+	Id                *string                              `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
+	Description       *string                              `json:"description,omitempty" bson:"description,omitempty"`              // Textual description of the attribute estimate
+	Note              []Annotation                         `json:"note,omitempty" bson:"note,omitempty"`                            // Footnote or explanatory note about the estimate
+	Type              *CodeableConcept                     `json:"type,omitempty" bson:"type,omitempty"`                            // The type of attribute estimate, e.g., confidence interval or p value
+	Quantity          *Quantity                            `json:"quantity,omitempty" bson:"quantity,omitempty"`                    // The singular quantity of the attribute estimate, for attribute estimates represented as single values, which may include a unit of measure
+	Level             *float64                             `json:"level,omitempty" bson:"level,omitempty"`                          // Level of confidence interval, e.g., 0.95 for 95% confidence interval
+	Range             *Range                               `json:"range,omitempty" bson:"range,omitempty"`                          // Lower and upper bound values of the attribute estimate
+	AttributeEstimate []EvidenceStatisticAttributeEstimate `json:"attributeEstimate,omitempty" bson:"attribute_estimate,omitempty"` // A nested attribute estimate; which is the attribute estimate of an attribute estimate
 }
 
-func (r *EvidenceStatisticModelCharacteristic) Validate() error {
-	if r.Code == nil {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	if r.ValueQuantity != nil {
-		if err := r.ValueQuantity.Validate(); err != nil {
-			return fmt.Errorf("ValueQuantity: %w", err)
-		}
-	}
-	if r.ValueRange != nil {
-		if err := r.ValueRange.Validate(); err != nil {
-			return fmt.Errorf("ValueRange: %w", err)
-		}
-	}
-	if r.ValueCodeableConcept != nil {
-		if err := r.ValueCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("ValueCodeableConcept: %w", err)
-		}
-	}
-	for i, item := range r.Variable {
+func (r *EvidenceStatisticAttributeEstimate) Validate() error {
+	for i, item := range r.Note {
 		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Variable[%d]: %w", i, err)
+			return fmt.Errorf("Note[%d]: %w", i, err)
 		}
 	}
-	for i, item := range r.Attribute {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.Range != nil {
+		if err := r.Range.Validate(); err != nil {
+			return fmt.Errorf("Range: %w", err)
+		}
+	}
+	for i, item := range r.AttributeEstimate {
 		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Attribute[%d]: %w", i, err)
+			return fmt.Errorf("AttributeEstimate[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -388,87 +469,6 @@ func (r *EvidenceVariableDefinition) Validate() error {
 	if r.DirectnessMatch != nil {
 		if err := r.DirectnessMatch.Validate(); err != nil {
 			return fmt.Errorf("DirectnessMatch: %w", err)
-		}
-	}
-	return nil
-}
-
-type EvidenceStatisticAttributeEstimate struct {
-	Id                *string                              `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
-	Description       *string                              `json:"description,omitempty" bson:"description,omitempty"`              // Textual description of the attribute estimate
-	Note              []Annotation                         `json:"note,omitempty" bson:"note,omitempty"`                            // Footnote or explanatory note about the estimate
-	Type              *CodeableConcept                     `json:"type,omitempty" bson:"type,omitempty"`                            // The type of attribute estimate, e.g., confidence interval or p value
-	Quantity          *Quantity                            `json:"quantity,omitempty" bson:"quantity,omitempty"`                    // The singular quantity of the attribute estimate, for attribute estimates represented as single values, which may include a unit of measure
-	Level             *float64                             `json:"level,omitempty" bson:"level,omitempty"`                          // Level of confidence interval, e.g., 0.95 for 95% confidence interval
-	Range             *Range                               `json:"range,omitempty" bson:"range,omitempty"`                          // Lower and upper bound values of the attribute estimate
-	AttributeEstimate []EvidenceStatisticAttributeEstimate `json:"attributeEstimate,omitempty" bson:"attribute_estimate,omitempty"` // A nested attribute estimate; which is the attribute estimate of an attribute estimate
-}
-
-func (r *EvidenceStatisticAttributeEstimate) Validate() error {
-	for i, item := range r.Note {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Note[%d]: %w", i, err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.Range != nil {
-		if err := r.Range.Validate(); err != nil {
-			return fmt.Errorf("Range: %w", err)
-		}
-	}
-	for i, item := range r.AttributeEstimate {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("AttributeEstimate[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type EvidenceStatisticModelCharacteristicVariable struct {
-	Id                 *string           `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	VariableDefinition *Reference        `json:"variableDefinition" bson:"variable_definition"`           // Description and definition of the variable
-	Handling           *CodeableConcept  `json:"handling,omitempty" bson:"handling,omitempty"`            // boolean | continuous | dichotomous | ordinal | polychotomous | time-to-event | not-specified
-	ValueCategory      []CodeableConcept `json:"valueCategory,omitempty" bson:"value_category,omitempty"` // Qualitative label used for grouping values of a dichotomous, ordinal, or polychotomous variable
-	ValueQuantity      []Quantity        `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"` // Quantitative label used for grouping values of a dichotomous, ordinal, or polychotomous variable
-	ValueRange         []Range           `json:"valueRange,omitempty" bson:"value_range,omitempty"`       // Range of quantitative labels used for grouping values of a dichotomous, ordinal, or polychotomous variable
-}
-
-func (r *EvidenceStatisticModelCharacteristicVariable) Validate() error {
-	if r.VariableDefinition == nil {
-		return fmt.Errorf("field 'VariableDefinition' is required")
-	}
-	if r.VariableDefinition != nil {
-		if err := r.VariableDefinition.Validate(); err != nil {
-			return fmt.Errorf("VariableDefinition: %w", err)
-		}
-	}
-	if r.Handling != nil {
-		if err := r.Handling.Validate(); err != nil {
-			return fmt.Errorf("Handling: %w", err)
-		}
-	}
-	for i, item := range r.ValueCategory {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("ValueCategory[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.ValueQuantity {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("ValueQuantity[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.ValueRange {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("ValueRange[%d]: %w", i, err)
 		}
 	}
 	return nil

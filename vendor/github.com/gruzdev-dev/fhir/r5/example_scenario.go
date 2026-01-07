@@ -94,26 +94,6 @@ func (r *ExampleScenario) Validate() error {
 	return nil
 }
 
-type ExampleScenarioActor struct {
-	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Key         string  `json:"key" bson:"key"`                                     // ID or acronym of the actor
-	Type        *string `json:"type,omitempty" bson:"type,omitempty"`               // person | system | collective | other
-	Title       string  `json:"title" bson:"title"`                                 // Label for actor when rendering
-	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Details about actor
-	Definition  *string `json:"definition,omitempty" bson:"definition,omitempty"`   // Formal definition of actor
-}
-
-func (r *ExampleScenarioActor) Validate() error {
-	var emptyString string
-	if r.Key == emptyString {
-		return fmt.Errorf("field 'Key' is required")
-	}
-	if r.Title == emptyString {
-		return fmt.Errorf("field 'Title' is required")
-	}
-	return nil
-}
-
 type ExampleScenarioInstance struct {
 	Id                        *string                                    `json:"id,omitempty" bson:"id,omitempty"`                                                 // Unique id for inter-element referencing
 	Key                       string                                     `json:"key" bson:"key"`                                                                   // ID or acronym of the instance
@@ -157,77 +137,6 @@ func (r *ExampleScenarioInstance) Validate() error {
 	for i, item := range r.ContainedInstance {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("ContainedInstance[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExampleScenarioProcess struct {
-	Id             *string                      `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
-	Title          string                       `json:"title" bson:"title"`                                        // Label for procss
-	Description    *string                      `json:"description,omitempty" bson:"description,omitempty"`        // Human-friendly description of the process
-	PreConditions  *string                      `json:"preConditions,omitempty" bson:"pre_conditions,omitempty"`   // Status before process starts
-	PostConditions *string                      `json:"postConditions,omitempty" bson:"post_conditions,omitempty"` // Status after successful completion
-	Step           []ExampleScenarioProcessStep `json:"step,omitempty" bson:"step,omitempty"`                      // Event within of the process
-}
-
-func (r *ExampleScenarioProcess) Validate() error {
-	var emptyString string
-	if r.Title == emptyString {
-		return fmt.Errorf("field 'Title' is required")
-	}
-	for i, item := range r.Step {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Step[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExampleScenarioProcessStep struct {
-	Id          *string                                 `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Number      *string                                 `json:"number,omitempty" bson:"number,omitempty"`           // Sequential number of the step
-	Process     *ExampleScenarioProcess                 `json:"process,omitempty" bson:"process,omitempty"`         // Step is nested process
-	Workflow    *string                                 `json:"workflow,omitempty" bson:"workflow,omitempty"`       // Step is nested workflow
-	Operation   *ExampleScenarioProcessStepOperation    `json:"operation,omitempty" bson:"operation,omitempty"`     // Step is simple action
-	Alternative []ExampleScenarioProcessStepAlternative `json:"alternative,omitempty" bson:"alternative,omitempty"` // Alternate non-typical step action
-	Pause       bool                                    `json:"pause,omitempty" bson:"pause,omitempty"`             // Pause in the flow?
-}
-
-func (r *ExampleScenarioProcessStep) Validate() error {
-	if r.Process != nil {
-		if err := r.Process.Validate(); err != nil {
-			return fmt.Errorf("Process: %w", err)
-		}
-	}
-	if r.Operation != nil {
-		if err := r.Operation.Validate(); err != nil {
-			return fmt.Errorf("Operation: %w", err)
-		}
-	}
-	for i, item := range r.Alternative {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Alternative[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExampleScenarioProcessStepAlternative struct {
-	Id          *string                      `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Title       string                       `json:"title" bson:"title"`                                 // Label for alternative
-	Description *string                      `json:"description,omitempty" bson:"description,omitempty"` // Human-readable description of option
-	Step        []ExampleScenarioProcessStep `json:"step,omitempty" bson:"step,omitempty"`               // Alternative action(s)
-}
-
-func (r *ExampleScenarioProcessStepAlternative) Validate() error {
-	var emptyString string
-	if r.Title == emptyString {
-		return fmt.Errorf("field 'Title' is required")
-	}
-	for i, item := range r.Step {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Step[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -302,6 +211,97 @@ func (r *ExampleScenarioProcessStepOperation) Validate() error {
 	if r.Response != nil {
 		if err := r.Response.Validate(); err != nil {
 			return fmt.Errorf("Response: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExampleScenarioProcessStepAlternative struct {
+	Id          *string                      `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Title       string                       `json:"title" bson:"title"`                                 // Label for alternative
+	Description *string                      `json:"description,omitempty" bson:"description,omitempty"` // Human-readable description of option
+	Step        []ExampleScenarioProcessStep `json:"step,omitempty" bson:"step,omitempty"`               // Alternative action(s)
+}
+
+func (r *ExampleScenarioProcessStepAlternative) Validate() error {
+	var emptyString string
+	if r.Title == emptyString {
+		return fmt.Errorf("field 'Title' is required")
+	}
+	for i, item := range r.Step {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Step[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExampleScenarioActor struct {
+	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Key         string  `json:"key" bson:"key"`                                     // ID or acronym of the actor
+	Type        *string `json:"type,omitempty" bson:"type,omitempty"`               // person | system | collective | other
+	Title       string  `json:"title" bson:"title"`                                 // Label for actor when rendering
+	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Details about actor
+	Definition  *string `json:"definition,omitempty" bson:"definition,omitempty"`   // Formal definition of actor
+}
+
+func (r *ExampleScenarioActor) Validate() error {
+	var emptyString string
+	if r.Key == emptyString {
+		return fmt.Errorf("field 'Key' is required")
+	}
+	if r.Title == emptyString {
+		return fmt.Errorf("field 'Title' is required")
+	}
+	return nil
+}
+
+type ExampleScenarioProcess struct {
+	Id             *string                      `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
+	Title          string                       `json:"title" bson:"title"`                                        // Label for procss
+	Description    *string                      `json:"description,omitempty" bson:"description,omitempty"`        // Human-friendly description of the process
+	PreConditions  *string                      `json:"preConditions,omitempty" bson:"pre_conditions,omitempty"`   // Status before process starts
+	PostConditions *string                      `json:"postConditions,omitempty" bson:"post_conditions,omitempty"` // Status after successful completion
+	Step           []ExampleScenarioProcessStep `json:"step,omitempty" bson:"step,omitempty"`                      // Event within of the process
+}
+
+func (r *ExampleScenarioProcess) Validate() error {
+	var emptyString string
+	if r.Title == emptyString {
+		return fmt.Errorf("field 'Title' is required")
+	}
+	for i, item := range r.Step {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Step[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExampleScenarioProcessStep struct {
+	Id          *string                                 `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Number      *string                                 `json:"number,omitempty" bson:"number,omitempty"`           // Sequential number of the step
+	Process     *ExampleScenarioProcess                 `json:"process,omitempty" bson:"process,omitempty"`         // Step is nested process
+	Workflow    *string                                 `json:"workflow,omitempty" bson:"workflow,omitempty"`       // Step is nested workflow
+	Operation   *ExampleScenarioProcessStepOperation    `json:"operation,omitempty" bson:"operation,omitempty"`     // Step is simple action
+	Alternative []ExampleScenarioProcessStepAlternative `json:"alternative,omitempty" bson:"alternative,omitempty"` // Alternate non-typical step action
+	Pause       bool                                    `json:"pause,omitempty" bson:"pause,omitempty"`             // Pause in the flow?
+}
+
+func (r *ExampleScenarioProcessStep) Validate() error {
+	if r.Process != nil {
+		if err := r.Process.Validate(); err != nil {
+			return fmt.Errorf("Process: %w", err)
+		}
+	}
+	if r.Operation != nil {
+		if err := r.Operation.Validate(); err != nil {
+			return fmt.Errorf("Operation: %w", err)
+		}
+	}
+	for i, item := range r.Alternative {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Alternative[%d]: %w", i, err)
 		}
 	}
 	return nil

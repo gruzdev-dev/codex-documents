@@ -133,44 +133,76 @@ func (r *SubstanceDefinition) Validate() error {
 	return nil
 }
 
-type SubstanceDefinitionProperty struct {
-	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
-	Type                 *CodeableConcept `json:"type" bson:"type"`                                                       // A code expressing the type of property
-	ValueCodeableConcept *CodeableConcept `json:"valueCodeableConcept,omitempty" bson:"value_codeable_concept,omitempty"` // A value for the property
-	ValueQuantity        *Quantity        `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"`                // A value for the property
-	ValueRange           *Range           `json:"valueRange,omitempty" bson:"value_range,omitempty"`                      // A value for the property
-	ValueDate            *string          `json:"valueDate,omitempty" bson:"value_date,omitempty"`                        // A value for the property
-	ValueBoolean         *bool            `json:"valueBoolean,omitempty" bson:"value_boolean,omitempty"`                  // A value for the property
-	ValueAttachment      *Attachment      `json:"valueAttachment,omitempty" bson:"value_attachment,omitempty"`            // A value for the property
+type SubstanceDefinitionMolecularWeight struct {
+	Id     *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Method *CodeableConcept `json:"method,omitempty" bson:"method,omitempty"` // The method by which the weight was determined
+	Type   *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`     // Type of molecular weight e.g. exact, average, weight average
+	Amount *Quantity        `json:"amount" bson:"amount"`                     // Used to capture quantitative values for a variety of elements
 }
 
-func (r *SubstanceDefinitionProperty) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
+func (r *SubstanceDefinitionMolecularWeight) Validate() error {
+	if r.Method != nil {
+		if err := r.Method.Validate(); err != nil {
+			return fmt.Errorf("Method: %w", err)
+		}
 	}
 	if r.Type != nil {
 		if err := r.Type.Validate(); err != nil {
 			return fmt.Errorf("Type: %w", err)
 		}
 	}
-	if r.ValueCodeableConcept != nil {
-		if err := r.ValueCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("ValueCodeableConcept: %w", err)
+	if r.Amount == nil {
+		return fmt.Errorf("field 'Amount' is required")
+	}
+	if r.Amount != nil {
+		if err := r.Amount.Validate(); err != nil {
+			return fmt.Errorf("Amount: %w", err)
 		}
 	}
-	if r.ValueQuantity != nil {
-		if err := r.ValueQuantity.Validate(); err != nil {
-			return fmt.Errorf("ValueQuantity: %w", err)
+	return nil
+}
+
+type SubstanceDefinitionStructure struct {
+	Id                       *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                                // Unique id for inter-element referencing
+	Stereochemistry          *CodeableConcept                             `json:"stereochemistry,omitempty" bson:"stereochemistry,omitempty"`                      // Stereochemistry type
+	OpticalActivity          *CodeableConcept                             `json:"opticalActivity,omitempty" bson:"optical_activity,omitempty"`                     // Optical activity type
+	MolecularFormula         *string                                      `json:"molecularFormula,omitempty" bson:"molecular_formula,omitempty"`                   // An expression which states the number and type of atoms present in a molecule of a substance
+	MolecularFormulaByMoiety *string                                      `json:"molecularFormulaByMoiety,omitempty" bson:"molecular_formula_by_moiety,omitempty"` // Specified per moiety according to the Hill system
+	MolecularWeight          *SubstanceDefinitionMolecularWeight          `json:"molecularWeight,omitempty" bson:"molecular_weight,omitempty"`                     // The molecular weight or weight range
+	Technique                []CodeableConcept                            `json:"technique,omitempty" bson:"technique,omitempty"`                                  // The method used to find the structure e.g. X-ray, NMR
+	SourceDocument           []Reference                                  `json:"sourceDocument,omitempty" bson:"source_document,omitempty"`                       // Source of information for the structure
+	Representation           []SubstanceDefinitionStructureRepresentation `json:"representation,omitempty" bson:"representation,omitempty"`                        // A depiction of the structure of the substance
+}
+
+func (r *SubstanceDefinitionStructure) Validate() error {
+	if r.Stereochemistry != nil {
+		if err := r.Stereochemistry.Validate(); err != nil {
+			return fmt.Errorf("Stereochemistry: %w", err)
 		}
 	}
-	if r.ValueRange != nil {
-		if err := r.ValueRange.Validate(); err != nil {
-			return fmt.Errorf("ValueRange: %w", err)
+	if r.OpticalActivity != nil {
+		if err := r.OpticalActivity.Validate(); err != nil {
+			return fmt.Errorf("OpticalActivity: %w", err)
 		}
 	}
-	if r.ValueAttachment != nil {
-		if err := r.ValueAttachment.Validate(); err != nil {
-			return fmt.Errorf("ValueAttachment: %w", err)
+	if r.MolecularWeight != nil {
+		if err := r.MolecularWeight.Validate(); err != nil {
+			return fmt.Errorf("MolecularWeight: %w", err)
+		}
+	}
+	for i, item := range r.Technique {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Technique[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SourceDocument {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SourceDocument[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Representation {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Representation[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -198,74 +230,6 @@ func (r *SubstanceDefinitionStructureRepresentation) Validate() error {
 	if r.Document != nil {
 		if err := r.Document.Validate(); err != nil {
 			return fmt.Errorf("Document: %w", err)
-		}
-	}
-	return nil
-}
-
-type SubstanceDefinitionName struct {
-	Id           *string                           `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Name         string                            `json:"name" bson:"name"`                                     // The actual name
-	Type         *CodeableConcept                  `json:"type,omitempty" bson:"type,omitempty"`                 // Name type e.g. 'systematic',  'scientific, 'brand'
-	Status       *CodeableConcept                  `json:"status,omitempty" bson:"status,omitempty"`             // The status of the name e.g. 'current', 'proposed'
-	Preferred    bool                              `json:"preferred,omitempty" bson:"preferred,omitempty"`       // If this is the preferred name for this substance
-	Language     []CodeableConcept                 `json:"language,omitempty" bson:"language,omitempty"`         // Human language that the name is written in
-	Domain       []CodeableConcept                 `json:"domain,omitempty" bson:"domain,omitempty"`             // The use context of this name e.g. as an active ingredient or as a food colour additive
-	Jurisdiction []CodeableConcept                 `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"` // The jurisdiction where this name applies
-	Synonym      []SubstanceDefinitionName         `json:"synonym,omitempty" bson:"synonym,omitempty"`           // A synonym of this particular name, by which the substance is also known
-	Translation  []SubstanceDefinitionName         `json:"translation,omitempty" bson:"translation,omitempty"`   // A translation for this name into another human language
-	Official     []SubstanceDefinitionNameOfficial `json:"official,omitempty" bson:"official,omitempty"`         // Details of the official nature of this name
-	Source       []Reference                       `json:"source,omitempty" bson:"source,omitempty"`             // Supporting literature
-}
-
-func (r *SubstanceDefinitionName) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Status != nil {
-		if err := r.Status.Validate(); err != nil {
-			return fmt.Errorf("Status: %w", err)
-		}
-	}
-	for i, item := range r.Language {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Language[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Domain {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Domain[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Jurisdiction {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Jurisdiction[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Synonym {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Synonym[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Translation {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Translation[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Official {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Official[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Source {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Source[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -370,76 +334,28 @@ func (r *SubstanceDefinitionSourceMaterial) Validate() error {
 	return nil
 }
 
-type SubstanceDefinitionMolecularWeight struct {
-	Id     *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Method *CodeableConcept `json:"method,omitempty" bson:"method,omitempty"` // The method by which the weight was determined
-	Type   *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`     // Type of molecular weight e.g. exact, average, weight average
-	Amount *Quantity        `json:"amount" bson:"amount"`                     // Used to capture quantitative values for a variety of elements
+type SubstanceDefinitionCharacterization struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Technique   *CodeableConcept `json:"technique,omitempty" bson:"technique,omitempty"`     // The method used to find the characterization e.g. HPLC
+	Form        *CodeableConcept `json:"form,omitempty" bson:"form,omitempty"`               // Describes the nature of the chemical entity and explains, for instance, whether this is a base or a salt form
+	Description *string          `json:"description,omitempty" bson:"description,omitempty"` // The description or justification in support of the interpretation of the data file
+	File        []Attachment     `json:"file,omitempty" bson:"file,omitempty"`               // The data produced by the analytical instrument or a pictorial representation of that data. Examples: a JCAMP, JDX, or ADX file, or a chromatogram or spectrum analysis
 }
 
-func (r *SubstanceDefinitionMolecularWeight) Validate() error {
-	if r.Method != nil {
-		if err := r.Method.Validate(); err != nil {
-			return fmt.Errorf("Method: %w", err)
+func (r *SubstanceDefinitionCharacterization) Validate() error {
+	if r.Technique != nil {
+		if err := r.Technique.Validate(); err != nil {
+			return fmt.Errorf("Technique: %w", err)
 		}
 	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
+	if r.Form != nil {
+		if err := r.Form.Validate(); err != nil {
+			return fmt.Errorf("Form: %w", err)
 		}
 	}
-	if r.Amount == nil {
-		return fmt.Errorf("field 'Amount' is required")
-	}
-	if r.Amount != nil {
-		if err := r.Amount.Validate(); err != nil {
-			return fmt.Errorf("Amount: %w", err)
-		}
-	}
-	return nil
-}
-
-type SubstanceDefinitionStructure struct {
-	Id                       *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                                // Unique id for inter-element referencing
-	Stereochemistry          *CodeableConcept                             `json:"stereochemistry,omitempty" bson:"stereochemistry,omitempty"`                      // Stereochemistry type
-	OpticalActivity          *CodeableConcept                             `json:"opticalActivity,omitempty" bson:"optical_activity,omitempty"`                     // Optical activity type
-	MolecularFormula         *string                                      `json:"molecularFormula,omitempty" bson:"molecular_formula,omitempty"`                   // An expression which states the number and type of atoms present in a molecule of a substance
-	MolecularFormulaByMoiety *string                                      `json:"molecularFormulaByMoiety,omitempty" bson:"molecular_formula_by_moiety,omitempty"` // Specified per moiety according to the Hill system
-	MolecularWeight          *SubstanceDefinitionMolecularWeight          `json:"molecularWeight,omitempty" bson:"molecular_weight,omitempty"`                     // The molecular weight or weight range
-	Technique                []CodeableConcept                            `json:"technique,omitempty" bson:"technique,omitempty"`                                  // The method used to find the structure e.g. X-ray, NMR
-	SourceDocument           []Reference                                  `json:"sourceDocument,omitempty" bson:"source_document,omitempty"`                       // Source of information for the structure
-	Representation           []SubstanceDefinitionStructureRepresentation `json:"representation,omitempty" bson:"representation,omitempty"`                        // A depiction of the structure of the substance
-}
-
-func (r *SubstanceDefinitionStructure) Validate() error {
-	if r.Stereochemistry != nil {
-		if err := r.Stereochemistry.Validate(); err != nil {
-			return fmt.Errorf("Stereochemistry: %w", err)
-		}
-	}
-	if r.OpticalActivity != nil {
-		if err := r.OpticalActivity.Validate(); err != nil {
-			return fmt.Errorf("OpticalActivity: %w", err)
-		}
-	}
-	if r.MolecularWeight != nil {
-		if err := r.MolecularWeight.Validate(); err != nil {
-			return fmt.Errorf("MolecularWeight: %w", err)
-		}
-	}
-	for i, item := range r.Technique {
+	for i, item := range r.File {
 		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Technique[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SourceDocument {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SourceDocument[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Representation {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Representation[%d]: %w", i, err)
+			return fmt.Errorf("File[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -468,6 +384,74 @@ func (r *SubstanceDefinitionCode) Validate() error {
 	for i, item := range r.Note {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Note[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Source {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Source[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type SubstanceDefinitionName struct {
+	Id           *string                           `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Name         string                            `json:"name" bson:"name"`                                     // The actual name
+	Type         *CodeableConcept                  `json:"type,omitempty" bson:"type,omitempty"`                 // Name type e.g. 'systematic',  'scientific, 'brand'
+	Status       *CodeableConcept                  `json:"status,omitempty" bson:"status,omitempty"`             // The status of the name e.g. 'current', 'proposed'
+	Preferred    bool                              `json:"preferred,omitempty" bson:"preferred,omitempty"`       // If this is the preferred name for this substance
+	Language     []CodeableConcept                 `json:"language,omitempty" bson:"language,omitempty"`         // Human language that the name is written in
+	Domain       []CodeableConcept                 `json:"domain,omitempty" bson:"domain,omitempty"`             // The use context of this name e.g. as an active ingredient or as a food colour additive
+	Jurisdiction []CodeableConcept                 `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"` // The jurisdiction where this name applies
+	Synonym      []SubstanceDefinitionName         `json:"synonym,omitempty" bson:"synonym,omitempty"`           // A synonym of this particular name, by which the substance is also known
+	Translation  []SubstanceDefinitionName         `json:"translation,omitempty" bson:"translation,omitempty"`   // A translation for this name into another human language
+	Official     []SubstanceDefinitionNameOfficial `json:"official,omitempty" bson:"official,omitempty"`         // Details of the official nature of this name
+	Source       []Reference                       `json:"source,omitempty" bson:"source,omitempty"`             // Supporting literature
+}
+
+func (r *SubstanceDefinitionName) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Status != nil {
+		if err := r.Status.Validate(); err != nil {
+			return fmt.Errorf("Status: %w", err)
+		}
+	}
+	for i, item := range r.Language {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Language[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Domain {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Domain[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Jurisdiction {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Jurisdiction[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Synonym {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Synonym[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Translation {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Translation[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Official {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Official[%d]: %w", i, err)
 		}
 	}
 	for i, item := range r.Source {
@@ -546,28 +530,44 @@ func (r *SubstanceDefinitionMoiety) Validate() error {
 	return nil
 }
 
-type SubstanceDefinitionCharacterization struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Technique   *CodeableConcept `json:"technique,omitempty" bson:"technique,omitempty"`     // The method used to find the characterization e.g. HPLC
-	Form        *CodeableConcept `json:"form,omitempty" bson:"form,omitempty"`               // Describes the nature of the chemical entity and explains, for instance, whether this is a base or a salt form
-	Description *string          `json:"description,omitempty" bson:"description,omitempty"` // The description or justification in support of the interpretation of the data file
-	File        []Attachment     `json:"file,omitempty" bson:"file,omitempty"`               // The data produced by the analytical instrument or a pictorial representation of that data. Examples: a JCAMP, JDX, or ADX file, or a chromatogram or spectrum analysis
+type SubstanceDefinitionProperty struct {
+	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
+	Type                 *CodeableConcept `json:"type" bson:"type"`                                                       // A code expressing the type of property
+	ValueCodeableConcept *CodeableConcept `json:"valueCodeableConcept,omitempty" bson:"value_codeable_concept,omitempty"` // A value for the property
+	ValueQuantity        *Quantity        `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"`                // A value for the property
+	ValueRange           *Range           `json:"valueRange,omitempty" bson:"value_range,omitempty"`                      // A value for the property
+	ValueDate            *string          `json:"valueDate,omitempty" bson:"value_date,omitempty"`                        // A value for the property
+	ValueBoolean         *bool            `json:"valueBoolean,omitempty" bson:"value_boolean,omitempty"`                  // A value for the property
+	ValueAttachment      *Attachment      `json:"valueAttachment,omitempty" bson:"value_attachment,omitempty"`            // A value for the property
 }
 
-func (r *SubstanceDefinitionCharacterization) Validate() error {
-	if r.Technique != nil {
-		if err := r.Technique.Validate(); err != nil {
-			return fmt.Errorf("Technique: %w", err)
+func (r *SubstanceDefinitionProperty) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
 		}
 	}
-	if r.Form != nil {
-		if err := r.Form.Validate(); err != nil {
-			return fmt.Errorf("Form: %w", err)
+	if r.ValueCodeableConcept != nil {
+		if err := r.ValueCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("ValueCodeableConcept: %w", err)
 		}
 	}
-	for i, item := range r.File {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("File[%d]: %w", i, err)
+	if r.ValueQuantity != nil {
+		if err := r.ValueQuantity.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity: %w", err)
+		}
+	}
+	if r.ValueRange != nil {
+		if err := r.ValueRange.Validate(); err != nil {
+			return fmt.Errorf("ValueRange: %w", err)
+		}
+	}
+	if r.ValueAttachment != nil {
+		if err := r.ValueAttachment.Validate(); err != nil {
+			return fmt.Errorf("ValueAttachment: %w", err)
 		}
 	}
 	return nil

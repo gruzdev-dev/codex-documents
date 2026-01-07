@@ -20,7 +20,7 @@ func NewAuthMiddleware(secret string) *AuthMiddleware {
 func (m *AuthMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
-		
+
 		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
 			next.ServeHTTP(w, r)
 			return

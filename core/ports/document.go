@@ -2,8 +2,8 @@ package ports
 
 import (
 	"codex-documents/core/domain"
-	models "github.com/gruzdev-dev/fhir/r5"
 	"context"
+	models "github.com/gruzdev-dev/fhir/r5"
 )
 
 type DocumentRepository interface {

@@ -127,20 +127,6 @@ func (r *TerminologyCapabilities) Validate() error {
 	return nil
 }
 
-type TerminologyCapabilitiesImplementation struct {
-	Id          *string `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
-	Description string  `json:"description" bson:"description"`     // Describes this specific instance
-	Url         *string `json:"url,omitempty" bson:"url,omitempty"` // Base URL for the implementation
-}
-
-func (r *TerminologyCapabilitiesImplementation) Validate() error {
-	var emptyString string
-	if r.Description == emptyString {
-		return fmt.Errorf("field 'Description' is required")
-	}
-	return nil
-}
-
 type TerminologyCapabilitiesCodeSystem struct {
 	Id          *string                                    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Uri         *string                                    `json:"uri,omitempty" bson:"uri,omitempty"`                 // Canonical identifier for the code system, represented as a URI (no version portion)
@@ -160,6 +146,64 @@ func (r *TerminologyCapabilitiesCodeSystem) Validate() error {
 	if r.Content == emptyString {
 		return fmt.Errorf("field 'Content' is required")
 	}
+	return nil
+}
+
+type TerminologyCapabilitiesCodeSystemVersionFilter struct {
+	Id   *string  `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Code string   `json:"code" bson:"code"`                 // Code of the property supported
+	Op   []string `json:"op" bson:"op"`                     // Operations supported for the property
+}
+
+func (r *TerminologyCapabilitiesCodeSystemVersionFilter) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if len(r.Op) < 1 {
+		return fmt.Errorf("field 'Op' must have at least 1 elements")
+	}
+	return nil
+}
+
+type TerminologyCapabilitiesExpansion struct {
+	Id           *string                                     `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Hierarchical bool                                        `json:"hierarchical,omitempty" bson:"hierarchical,omitempty"` // Whether the server can return nested value sets
+	Paging       bool                                        `json:"paging,omitempty" bson:"paging,omitempty"`             // Whether the server supports paging on expansion
+	Incomplete   bool                                        `json:"incomplete,omitempty" bson:"incomplete,omitempty"`     // Allow request for incomplete expansions?
+	Parameter    []TerminologyCapabilitiesExpansionParameter `json:"parameter,omitempty" bson:"parameter,omitempty"`       // Supported expansion parameter
+	TextFilter   *string                                     `json:"textFilter,omitempty" bson:"text_filter,omitempty"`    // Documentation about text searching works
+}
+
+func (r *TerminologyCapabilitiesExpansion) Validate() error {
+	for i, item := range r.Parameter {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Parameter[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type TerminologyCapabilitiesExpansionParameter struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Name          string  `json:"name" bson:"name"`                                       // Name of the supported expansion parameter
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Description of support for parameter
+}
+
+func (r *TerminologyCapabilitiesExpansionParameter) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	return nil
+}
+
+type TerminologyCapabilitiesValidateCode struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Translations bool    `json:"translations" bson:"translations"` // Whether translations are validated
+}
+
+func (r *TerminologyCapabilitiesValidateCode) Validate() error {
 	return nil
 }
 
@@ -183,56 +227,12 @@ func (r *TerminologyCapabilitiesCodeSystemVersion) Validate() error {
 	return nil
 }
 
-type TerminologyCapabilitiesCodeSystemVersionFilter struct {
-	Id   *string  `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Code string   `json:"code" bson:"code"`                 // Code of the property supported
-	Op   []string `json:"op" bson:"op"`                     // Operations supported for the property
-}
-
-func (r *TerminologyCapabilitiesCodeSystemVersionFilter) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if len(r.Op) < 1 {
-		return fmt.Errorf("field 'Op' must have at least 1 elements")
-	}
-	return nil
-}
-
 type TerminologyCapabilitiesSupplements struct {
 	Id      *string `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
 	Globals *string `json:"globals,omitempty" bson:"globals,omitempty"` // not-supported | explicit | implicit
 }
 
 func (r *TerminologyCapabilitiesSupplements) Validate() error {
-	return nil
-}
-
-type TerminologyCapabilitiesExpansion struct {
-	Id           *string                                     `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Hierarchical bool                                        `json:"hierarchical,omitempty" bson:"hierarchical,omitempty"` // Whether the server can return nested value sets
-	Paging       bool                                        `json:"paging,omitempty" bson:"paging,omitempty"`             // Whether the server supports paging on expansion
-	Incomplete   bool                                        `json:"incomplete,omitempty" bson:"incomplete,omitempty"`     // Allow request for incomplete expansions?
-	Parameter    []TerminologyCapabilitiesExpansionParameter `json:"parameter,omitempty" bson:"parameter,omitempty"`       // Supported expansion parameter
-	TextFilter   *string                                     `json:"textFilter,omitempty" bson:"text_filter,omitempty"`    // Documentation about text searching works
-}
-
-func (r *TerminologyCapabilitiesExpansion) Validate() error {
-	for i, item := range r.Parameter {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Parameter[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type TerminologyCapabilitiesValidateCode struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Translations bool    `json:"translations" bson:"translations"` // Whether translations are validated
-}
-
-func (r *TerminologyCapabilitiesValidateCode) Validate() error {
 	return nil
 }
 
@@ -259,16 +259,16 @@ func (r *TerminologyCapabilitiesSoftware) Validate() error {
 	return nil
 }
 
-type TerminologyCapabilitiesExpansionParameter struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Name          string  `json:"name" bson:"name"`                                       // Name of the supported expansion parameter
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Description of support for parameter
+type TerminologyCapabilitiesImplementation struct {
+	Id          *string `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
+	Description string  `json:"description" bson:"description"`     // Describes this specific instance
+	Url         *string `json:"url,omitempty" bson:"url,omitempty"` // Base URL for the implementation
 }
 
-func (r *TerminologyCapabilitiesExpansionParameter) Validate() error {
+func (r *TerminologyCapabilitiesImplementation) Validate() error {
 	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
+	if r.Description == emptyString {
+		return fmt.Errorf("field 'Description' is required")
 	}
 	return nil
 }

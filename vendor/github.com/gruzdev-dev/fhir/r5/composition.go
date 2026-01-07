@@ -141,69 +141,6 @@ func (r *Composition) Validate() error {
 	return nil
 }
 
-type CompositionSection struct {
-	Id          *string              `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Title       *string              `json:"title,omitempty" bson:"title,omitempty"`              // Label for section (e.g. for ToC)
-	Code        *CodeableConcept     `json:"code,omitempty" bson:"code,omitempty"`                // Classification of section (recommended)
-	Author      []Reference          `json:"author,omitempty" bson:"author,omitempty"`            // Who and/or what authored the section, when the section is authored by someone other than the composition.author
-	Focus       *Reference           `json:"focus,omitempty" bson:"focus,omitempty"`              // Who/what the section is about, when it is not about the subject of composition
-	Text        *Narrative           `json:"text,omitempty" bson:"text,omitempty"`                // Text summary of the section, for human interpretation
-	Note        []Annotation         `json:"note,omitempty" bson:"note,omitempty"`                // Information about the section contents that is not represented by any of the section entries
-	OrderedBy   *CodeableConcept     `json:"orderedBy,omitempty" bson:"ordered_by,omitempty"`     // Order of section entries
-	Entry       []Reference          `json:"entry,omitempty" bson:"entry,omitempty"`              // A reference to data that supports this section
-	EmptyReason *CodeableConcept     `json:"emptyReason,omitempty" bson:"empty_reason,omitempty"` // Why the section is empty
-	Section     []CompositionSection `json:"section,omitempty" bson:"section,omitempty"`          // Nested Section
-}
-
-func (r *CompositionSection) Validate() error {
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	for i, item := range r.Author {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Author[%d]: %w", i, err)
-		}
-	}
-	if r.Focus != nil {
-		if err := r.Focus.Validate(); err != nil {
-			return fmt.Errorf("Focus: %w", err)
-		}
-	}
-	if r.Text != nil {
-		if err := r.Text.Validate(); err != nil {
-			return fmt.Errorf("Text: %w", err)
-		}
-	}
-	for i, item := range r.Note {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Note[%d]: %w", i, err)
-		}
-	}
-	if r.OrderedBy != nil {
-		if err := r.OrderedBy.Validate(); err != nil {
-			return fmt.Errorf("OrderedBy: %w", err)
-		}
-	}
-	for i, item := range r.Entry {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Entry[%d]: %w", i, err)
-		}
-	}
-	if r.EmptyReason != nil {
-		if err := r.EmptyReason.Validate(); err != nil {
-			return fmt.Errorf("EmptyReason: %w", err)
-		}
-	}
-	for i, item := range r.Section {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Section[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type CompositionParticipant struct {
 	Id       *string           `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
 	Type     []CodeableConcept `json:"type" bson:"type"`                 // AUT | AUTHEN | CST | LA | RCT | SBJ
@@ -328,6 +265,69 @@ func (r *CompositionEvent) Validate() error {
 	for i, item := range r.Detail {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Detail[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type CompositionSection struct {
+	Id          *string              `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Title       *string              `json:"title,omitempty" bson:"title,omitempty"`              // Label for section (e.g. for ToC)
+	Code        *CodeableConcept     `json:"code,omitempty" bson:"code,omitempty"`                // Classification of section (recommended)
+	Author      []Reference          `json:"author,omitempty" bson:"author,omitempty"`            // Who and/or what authored the section, when the section is authored by someone other than the composition.author
+	Focus       *Reference           `json:"focus,omitempty" bson:"focus,omitempty"`              // Who/what the section is about, when it is not about the subject of composition
+	Text        *Narrative           `json:"text,omitempty" bson:"text,omitempty"`                // Text summary of the section, for human interpretation
+	Note        []Annotation         `json:"note,omitempty" bson:"note,omitempty"`                // Information about the section contents that is not represented by any of the section entries
+	OrderedBy   *CodeableConcept     `json:"orderedBy,omitempty" bson:"ordered_by,omitempty"`     // Order of section entries
+	Entry       []Reference          `json:"entry,omitempty" bson:"entry,omitempty"`              // A reference to data that supports this section
+	EmptyReason *CodeableConcept     `json:"emptyReason,omitempty" bson:"empty_reason,omitempty"` // Why the section is empty
+	Section     []CompositionSection `json:"section,omitempty" bson:"section,omitempty"`          // Nested Section
+}
+
+func (r *CompositionSection) Validate() error {
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	for i, item := range r.Author {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Author[%d]: %w", i, err)
+		}
+	}
+	if r.Focus != nil {
+		if err := r.Focus.Validate(); err != nil {
+			return fmt.Errorf("Focus: %w", err)
+		}
+	}
+	if r.Text != nil {
+		if err := r.Text.Validate(); err != nil {
+			return fmt.Errorf("Text: %w", err)
+		}
+	}
+	for i, item := range r.Note {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Note[%d]: %w", i, err)
+		}
+	}
+	if r.OrderedBy != nil {
+		if err := r.OrderedBy.Validate(); err != nil {
+			return fmt.Errorf("OrderedBy: %w", err)
+		}
+	}
+	for i, item := range r.Entry {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Entry[%d]: %w", i, err)
+		}
+	}
+	if r.EmptyReason != nil {
+		if err := r.EmptyReason.Validate(); err != nil {
+			return fmt.Errorf("EmptyReason: %w", err)
+		}
+	}
+	for i, item := range r.Section {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Section[%d]: %w", i, err)
 		}
 	}
 	return nil

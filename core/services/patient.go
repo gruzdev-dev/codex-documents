@@ -7,8 +7,8 @@ import (
 	"codex-documents/core/domain"
 	"codex-documents/core/ports"
 	"codex-documents/core/validator"
-	models "github.com/gruzdev-dev/fhir/r5"
 	"codex-documents/pkg/identity"
+	models "github.com/gruzdev-dev/fhir/r5"
 )
 
 type PatientService struct {
@@ -49,7 +49,7 @@ func (s *PatientService) GetPatient(ctx context.Context, id string) (*models.Pat
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}
-	
+
 	if patient == nil {
 		return nil, domain.ErrPatientNotFound
 	}
@@ -79,7 +79,7 @@ func (s *PatientService) Update(ctx context.Context, patient *models.Patient) er
 	if err != nil {
 		return fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}
-	
+
 	if existing == nil {
 		return domain.ErrPatientNotFound
 	}

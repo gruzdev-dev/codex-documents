@@ -186,29 +186,6 @@ func (r *MedicinalProductDefinition) Validate() error {
 	return nil
 }
 
-type MedicinalProductDefinitionCrossReference struct {
-	Id      *string            `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Product *CodeableReference `json:"product" bson:"product"`               // Reference to another product, e.g. for linking authorised to investigational product
-	Type    *CodeableConcept   `json:"type,omitempty" bson:"type,omitempty"` // The type of relationship, for instance branded to generic or virtual to actual product
-}
-
-func (r *MedicinalProductDefinitionCrossReference) Validate() error {
-	if r.Product == nil {
-		return fmt.Errorf("field 'Product' is required")
-	}
-	if r.Product != nil {
-		if err := r.Product.Validate(); err != nil {
-			return fmt.Errorf("Product: %w", err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	return nil
-}
-
 type MedicinalProductDefinitionOperation struct {
 	Id                       *string            `json:"id,omitempty" bson:"id,omitempty"`                                              // Unique id for inter-element referencing
 	Type                     *CodeableReference `json:"type,omitempty" bson:"type,omitempty"`                                          // The type of manufacturing operation e.g. manufacturing itself, re-packaging
@@ -286,6 +263,29 @@ func (r *MedicinalProductDefinitionCharacteristic) Validate() error {
 	return nil
 }
 
+type MedicinalProductDefinitionContact struct {
+	Id      *string          `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Type    *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"` // Allows the contact to be classified, for example QPPV, Pharmacovigilance Enquiry Information
+	Contact *Reference       `json:"contact" bson:"contact"`               // A product specific contact, person (in a role), or an organization
+}
+
+func (r *MedicinalProductDefinitionContact) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Contact == nil {
+		return fmt.Errorf("field 'Contact' is required")
+	}
+	if r.Contact != nil {
+		if err := r.Contact.Validate(); err != nil {
+			return fmt.Errorf("Contact: %w", err)
+		}
+	}
+	return nil
+}
+
 type MedicinalProductDefinitionName struct {
 	Id          *string                               `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
 	ProductName string                                `json:"productName" bson:"product_name"`        // The full product name
@@ -312,29 +312,6 @@ func (r *MedicinalProductDefinitionName) Validate() error {
 	for i, item := range r.Usage {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Usage[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type MedicinalProductDefinitionContact struct {
-	Id      *string          `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Type    *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"` // Allows the contact to be classified, for example QPPV, Pharmacovigilance Enquiry Information
-	Contact *Reference       `json:"contact" bson:"contact"`               // A product specific contact, person (in a role), or an organization
-}
-
-func (r *MedicinalProductDefinitionContact) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Contact == nil {
-		return fmt.Errorf("field 'Contact' is required")
-	}
-	if r.Contact != nil {
-		if err := r.Contact.Validate(); err != nil {
-			return fmt.Errorf("Contact: %w", err)
 		}
 	}
 	return nil
@@ -389,6 +366,29 @@ func (r *MedicinalProductDefinitionNameUsage) Validate() error {
 	if r.Language != nil {
 		if err := r.Language.Validate(); err != nil {
 			return fmt.Errorf("Language: %w", err)
+		}
+	}
+	return nil
+}
+
+type MedicinalProductDefinitionCrossReference struct {
+	Id      *string            `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Product *CodeableReference `json:"product" bson:"product"`               // Reference to another product, e.g. for linking authorised to investigational product
+	Type    *CodeableConcept   `json:"type,omitempty" bson:"type,omitempty"` // The type of relationship, for instance branded to generic or virtual to actual product
+}
+
+func (r *MedicinalProductDefinitionCrossReference) Validate() error {
+	if r.Product == nil {
+		return fmt.Errorf("field 'Product' is required")
+	}
+	if r.Product != nil {
+		if err := r.Product.Validate(); err != nil {
+			return fmt.Errorf("Product: %w", err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
 		}
 	}
 	return nil

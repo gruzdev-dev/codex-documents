@@ -84,6 +84,57 @@ func (r *Ingredient) Validate() error {
 	return nil
 }
 
+type IngredientSubstanceStrengthReferenceStrength struct {
+	Id                 *string            `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
+	Substance          *CodeableReference `json:"substance" bson:"substance"`                                    // Relevant reference substance
+	StrengthRatio      *Ratio             `json:"strengthRatio" bson:"strength_ratio"`                           // Strength expressed in terms of a reference substance
+	StrengthRatioRange *RatioRange        `json:"strengthRatioRange" bson:"strength_ratio_range"`                // Strength expressed in terms of a reference substance
+	StrengthQuantity   *Quantity          `json:"strengthQuantity" bson:"strength_quantity"`                     // Strength expressed in terms of a reference substance
+	MeasurementPoint   *string            `json:"measurementPoint,omitempty" bson:"measurement_point,omitempty"` // When strength is measured at a particular point or distance
+	Country            []CodeableConcept  `json:"country,omitempty" bson:"country,omitempty"`                    // Where the strength range applies
+}
+
+func (r *IngredientSubstanceStrengthReferenceStrength) Validate() error {
+	if r.Substance == nil {
+		return fmt.Errorf("field 'Substance' is required")
+	}
+	if r.Substance != nil {
+		if err := r.Substance.Validate(); err != nil {
+			return fmt.Errorf("Substance: %w", err)
+		}
+	}
+	if r.StrengthRatio == nil {
+		return fmt.Errorf("field 'StrengthRatio' is required")
+	}
+	if r.StrengthRatio != nil {
+		if err := r.StrengthRatio.Validate(); err != nil {
+			return fmt.Errorf("StrengthRatio: %w", err)
+		}
+	}
+	if r.StrengthRatioRange == nil {
+		return fmt.Errorf("field 'StrengthRatioRange' is required")
+	}
+	if r.StrengthRatioRange != nil {
+		if err := r.StrengthRatioRange.Validate(); err != nil {
+			return fmt.Errorf("StrengthRatioRange: %w", err)
+		}
+	}
+	if r.StrengthQuantity == nil {
+		return fmt.Errorf("field 'StrengthQuantity' is required")
+	}
+	if r.StrengthQuantity != nil {
+		if err := r.StrengthQuantity.Validate(); err != nil {
+			return fmt.Errorf("StrengthQuantity: %w", err)
+		}
+	}
+	for i, item := range r.Country {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Country[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type IngredientManufacturer struct {
 	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
 	Role         *string    `json:"role,omitempty" bson:"role,omitempty"` // allowed | possible | actual
@@ -197,57 +248,6 @@ func (r *IngredientSubstanceStrength) Validate() error {
 	for i, item := range r.ReferenceStrength {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("ReferenceStrength[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type IngredientSubstanceStrengthReferenceStrength struct {
-	Id                 *string            `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
-	Substance          *CodeableReference `json:"substance" bson:"substance"`                                    // Relevant reference substance
-	StrengthRatio      *Ratio             `json:"strengthRatio" bson:"strength_ratio"`                           // Strength expressed in terms of a reference substance
-	StrengthRatioRange *RatioRange        `json:"strengthRatioRange" bson:"strength_ratio_range"`                // Strength expressed in terms of a reference substance
-	StrengthQuantity   *Quantity          `json:"strengthQuantity" bson:"strength_quantity"`                     // Strength expressed in terms of a reference substance
-	MeasurementPoint   *string            `json:"measurementPoint,omitempty" bson:"measurement_point,omitempty"` // When strength is measured at a particular point or distance
-	Country            []CodeableConcept  `json:"country,omitempty" bson:"country,omitempty"`                    // Where the strength range applies
-}
-
-func (r *IngredientSubstanceStrengthReferenceStrength) Validate() error {
-	if r.Substance == nil {
-		return fmt.Errorf("field 'Substance' is required")
-	}
-	if r.Substance != nil {
-		if err := r.Substance.Validate(); err != nil {
-			return fmt.Errorf("Substance: %w", err)
-		}
-	}
-	if r.StrengthRatio == nil {
-		return fmt.Errorf("field 'StrengthRatio' is required")
-	}
-	if r.StrengthRatio != nil {
-		if err := r.StrengthRatio.Validate(); err != nil {
-			return fmt.Errorf("StrengthRatio: %w", err)
-		}
-	}
-	if r.StrengthRatioRange == nil {
-		return fmt.Errorf("field 'StrengthRatioRange' is required")
-	}
-	if r.StrengthRatioRange != nil {
-		if err := r.StrengthRatioRange.Validate(); err != nil {
-			return fmt.Errorf("StrengthRatioRange: %w", err)
-		}
-	}
-	if r.StrengthQuantity == nil {
-		return fmt.Errorf("field 'StrengthQuantity' is required")
-	}
-	if r.StrengthQuantity != nil {
-		if err := r.StrengthQuantity.Validate(); err != nil {
-			return fmt.Errorf("StrengthQuantity: %w", err)
-		}
-	}
-	for i, item := range r.Country {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Country[%d]: %w", i, err)
 		}
 	}
 	return nil

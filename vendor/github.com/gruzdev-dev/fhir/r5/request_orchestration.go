@@ -271,22 +271,6 @@ func (r *RequestOrchestrationActionCondition) Validate() error {
 	return nil
 }
 
-type RequestOrchestrationActionInput struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
-	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
-	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
-}
-
-func (r *RequestOrchestrationActionInput) Validate() error {
-	if r.Requirement != nil {
-		if err := r.Requirement.Validate(); err != nil {
-			return fmt.Errorf("Requirement: %w", err)
-		}
-	}
-	return nil
-}
-
 type RequestOrchestrationActionOutput struct {
 	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
 	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
@@ -298,21 +282,6 @@ func (r *RequestOrchestrationActionOutput) Validate() error {
 	if r.Requirement != nil {
 		if err := r.Requirement.Validate(); err != nil {
 			return fmt.Errorf("Requirement: %w", err)
-		}
-	}
-	return nil
-}
-
-type RequestOrchestrationActionDynamicValue struct {
-	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Path       *string     `json:"path,omitempty" bson:"path,omitempty"`             // The path to the element to be set dynamically
-	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // An expression that provides the dynamic value for the customization
-}
-
-func (r *RequestOrchestrationActionDynamicValue) Validate() error {
-	if r.Expression != nil {
-		if err := r.Expression.Validate(); err != nil {
-			return fmt.Errorf("Expression: %w", err)
 		}
 	}
 	return nil
@@ -343,6 +312,37 @@ func (r *RequestOrchestrationActionRelatedAction) Validate() error {
 	if r.OffsetRange != nil {
 		if err := r.OffsetRange.Validate(); err != nil {
 			return fmt.Errorf("OffsetRange: %w", err)
+		}
+	}
+	return nil
+}
+
+type RequestOrchestrationActionDynamicValue struct {
+	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Path       *string     `json:"path,omitempty" bson:"path,omitempty"`             // The path to the element to be set dynamically
+	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // An expression that provides the dynamic value for the customization
+}
+
+func (r *RequestOrchestrationActionDynamicValue) Validate() error {
+	if r.Expression != nil {
+		if err := r.Expression.Validate(); err != nil {
+			return fmt.Errorf("Expression: %w", err)
+		}
+	}
+	return nil
+}
+
+type RequestOrchestrationActionInput struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
+	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
+	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
+}
+
+func (r *RequestOrchestrationActionInput) Validate() error {
+	if r.Requirement != nil {
+		if err := r.Requirement.Validate(); err != nil {
+			return fmt.Errorf("Requirement: %w", err)
 		}
 	}
 	return nil

@@ -112,115 +112,6 @@ func (r *AuditEvent) Validate() error {
 	return nil
 }
 
-type AuditEventEntityDetail struct {
-	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Type                 *CodeableConcept `json:"type" bson:"type"`                                   // The name of the extra detail property
-	ValueQuantity        *Quantity        `json:"valueQuantity" bson:"value_quantity"`                // Property value
-	ValueCodeableConcept *CodeableConcept `json:"valueCodeableConcept" bson:"value_codeable_concept"` // Property value
-	ValueString          *string          `json:"valueString" bson:"value_string"`                    // Property value
-	ValueBoolean         *bool            `json:"valueBoolean" bson:"value_boolean"`                  // Property value
-	ValueInteger         *int             `json:"valueInteger" bson:"value_integer"`                  // Property value
-	ValueRange           *Range           `json:"valueRange" bson:"value_range"`                      // Property value
-	ValueRatio           *Ratio           `json:"valueRatio" bson:"value_ratio"`                      // Property value
-	ValueTime            *string          `json:"valueTime" bson:"value_time"`                        // Property value
-	ValueDateTime        *string          `json:"valueDateTime" bson:"value_date_time"`               // Property value
-	ValuePeriod          *Period          `json:"valuePeriod" bson:"value_period"`                    // Property value
-	ValueBase64Binary    *string          `json:"valueBase64Binary" bson:"value_base64_binary"`       // Property value
-}
-
-func (r *AuditEventEntityDetail) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.ValueQuantity == nil {
-		return fmt.Errorf("field 'ValueQuantity' is required")
-	}
-	if r.ValueQuantity != nil {
-		if err := r.ValueQuantity.Validate(); err != nil {
-			return fmt.Errorf("ValueQuantity: %w", err)
-		}
-	}
-	if r.ValueCodeableConcept == nil {
-		return fmt.Errorf("field 'ValueCodeableConcept' is required")
-	}
-	if r.ValueCodeableConcept != nil {
-		if err := r.ValueCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("ValueCodeableConcept: %w", err)
-		}
-	}
-	if r.ValueString == nil {
-		return fmt.Errorf("field 'ValueString' is required")
-	}
-	if r.ValueBoolean == nil {
-		return fmt.Errorf("field 'ValueBoolean' is required")
-	}
-	if r.ValueInteger == nil {
-		return fmt.Errorf("field 'ValueInteger' is required")
-	}
-	if r.ValueRange == nil {
-		return fmt.Errorf("field 'ValueRange' is required")
-	}
-	if r.ValueRange != nil {
-		if err := r.ValueRange.Validate(); err != nil {
-			return fmt.Errorf("ValueRange: %w", err)
-		}
-	}
-	if r.ValueRatio == nil {
-		return fmt.Errorf("field 'ValueRatio' is required")
-	}
-	if r.ValueRatio != nil {
-		if err := r.ValueRatio.Validate(); err != nil {
-			return fmt.Errorf("ValueRatio: %w", err)
-		}
-	}
-	if r.ValueTime == nil {
-		return fmt.Errorf("field 'ValueTime' is required")
-	}
-	if r.ValueDateTime == nil {
-		return fmt.Errorf("field 'ValueDateTime' is required")
-	}
-	if r.ValuePeriod == nil {
-		return fmt.Errorf("field 'ValuePeriod' is required")
-	}
-	if r.ValuePeriod != nil {
-		if err := r.ValuePeriod.Validate(); err != nil {
-			return fmt.Errorf("ValuePeriod: %w", err)
-		}
-	}
-	if r.ValueBase64Binary == nil {
-		return fmt.Errorf("field 'ValueBase64Binary' is required")
-	}
-	return nil
-}
-
-type AuditEventOutcome struct {
-	Id     *string           `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Code   *Coding           `json:"code" bson:"code"`                         // Whether the event succeeded or failed
-	Detail []CodeableConcept `json:"detail,omitempty" bson:"detail,omitempty"` // Additional outcome detail
-}
-
-func (r *AuditEventOutcome) Validate() error {
-	if r.Code == nil {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	for i, item := range r.Detail {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Detail[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type AuditEventAgent struct {
 	Id               *string           `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
 	Type             *CodeableConcept  `json:"type,omitempty" bson:"type,omitempty"`                          // How agent participated
@@ -336,6 +227,115 @@ func (r *AuditEventEntity) Validate() error {
 	for i, item := range r.Agent {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Agent[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type AuditEventEntityDetail struct {
+	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Type                 *CodeableConcept `json:"type" bson:"type"`                                   // The name of the extra detail property
+	ValueQuantity        *Quantity        `json:"valueQuantity" bson:"value_quantity"`                // Property value
+	ValueCodeableConcept *CodeableConcept `json:"valueCodeableConcept" bson:"value_codeable_concept"` // Property value
+	ValueString          *string          `json:"valueString" bson:"value_string"`                    // Property value
+	ValueBoolean         *bool            `json:"valueBoolean" bson:"value_boolean"`                  // Property value
+	ValueInteger         *int             `json:"valueInteger" bson:"value_integer"`                  // Property value
+	ValueRange           *Range           `json:"valueRange" bson:"value_range"`                      // Property value
+	ValueRatio           *Ratio           `json:"valueRatio" bson:"value_ratio"`                      // Property value
+	ValueTime            *string          `json:"valueTime" bson:"value_time"`                        // Property value
+	ValueDateTime        *string          `json:"valueDateTime" bson:"value_date_time"`               // Property value
+	ValuePeriod          *Period          `json:"valuePeriod" bson:"value_period"`                    // Property value
+	ValueBase64Binary    *string          `json:"valueBase64Binary" bson:"value_base64_binary"`       // Property value
+}
+
+func (r *AuditEventEntityDetail) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.ValueQuantity == nil {
+		return fmt.Errorf("field 'ValueQuantity' is required")
+	}
+	if r.ValueQuantity != nil {
+		if err := r.ValueQuantity.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity: %w", err)
+		}
+	}
+	if r.ValueCodeableConcept == nil {
+		return fmt.Errorf("field 'ValueCodeableConcept' is required")
+	}
+	if r.ValueCodeableConcept != nil {
+		if err := r.ValueCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("ValueCodeableConcept: %w", err)
+		}
+	}
+	if r.ValueString == nil {
+		return fmt.Errorf("field 'ValueString' is required")
+	}
+	if r.ValueBoolean == nil {
+		return fmt.Errorf("field 'ValueBoolean' is required")
+	}
+	if r.ValueInteger == nil {
+		return fmt.Errorf("field 'ValueInteger' is required")
+	}
+	if r.ValueRange == nil {
+		return fmt.Errorf("field 'ValueRange' is required")
+	}
+	if r.ValueRange != nil {
+		if err := r.ValueRange.Validate(); err != nil {
+			return fmt.Errorf("ValueRange: %w", err)
+		}
+	}
+	if r.ValueRatio == nil {
+		return fmt.Errorf("field 'ValueRatio' is required")
+	}
+	if r.ValueRatio != nil {
+		if err := r.ValueRatio.Validate(); err != nil {
+			return fmt.Errorf("ValueRatio: %w", err)
+		}
+	}
+	if r.ValueTime == nil {
+		return fmt.Errorf("field 'ValueTime' is required")
+	}
+	if r.ValueDateTime == nil {
+		return fmt.Errorf("field 'ValueDateTime' is required")
+	}
+	if r.ValuePeriod == nil {
+		return fmt.Errorf("field 'ValuePeriod' is required")
+	}
+	if r.ValuePeriod != nil {
+		if err := r.ValuePeriod.Validate(); err != nil {
+			return fmt.Errorf("ValuePeriod: %w", err)
+		}
+	}
+	if r.ValueBase64Binary == nil {
+		return fmt.Errorf("field 'ValueBase64Binary' is required")
+	}
+	return nil
+}
+
+type AuditEventOutcome struct {
+	Id     *string           `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Code   *Coding           `json:"code" bson:"code"`                         // Whether the event succeeded or failed
+	Detail []CodeableConcept `json:"detail,omitempty" bson:"detail,omitempty"` // Additional outcome detail
+}
+
+func (r *AuditEventOutcome) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	for i, item := range r.Detail {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Detail[%d]: %w", i, err)
 		}
 	}
 	return nil

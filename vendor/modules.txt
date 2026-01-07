@@ -7,7 +7,7 @@ github.com/golang/snappy
 # github.com/gorilla/mux v1.8.1
 ## explicit; go 1.20
 github.com/gorilla/mux
-# github.com/gruzdev-dev/fhir v0.0.2
+# github.com/gruzdev-dev/fhir v0.0.3
 ## explicit; go 1.25.5
 github.com/gruzdev-dev/fhir/r5
 # github.com/klauspost/compress v1.16.7

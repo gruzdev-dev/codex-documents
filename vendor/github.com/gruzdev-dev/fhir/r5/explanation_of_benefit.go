@@ -308,6 +308,256 @@ func (r *ExplanationOfBenefit) Validate() error {
 	return nil
 }
 
+type ExplanationOfBenefitPayee struct {
+	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Type  *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`   // Category of recipient
+	Party *Reference       `json:"party,omitempty" bson:"party,omitempty"` // Recipient reference
+}
+
+func (r *ExplanationOfBenefitPayee) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Party != nil {
+		if err := r.Party.Validate(); err != nil {
+			return fmt.Errorf("Party: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitProcedure struct {
+	Id                       *string           `json:"id,omitempty" bson:"id,omitempty"`                           // Unique id for inter-element referencing
+	Sequence                 int               `json:"sequence" bson:"sequence"`                                   // Procedure instance identifier
+	Type                     []CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                       // Category of Procedure
+	Date                     *string           `json:"date,omitempty" bson:"date,omitempty"`                       // When the procedure was performed
+	ProcedureCodeableConcept *CodeableConcept  `json:"procedureCodeableConcept" bson:"procedure_codeable_concept"` // Specific clinical procedure
+	ProcedureReference       *Reference        `json:"procedureReference" bson:"procedure_reference"`              // Specific clinical procedure
+	Udi                      []Reference       `json:"udi,omitempty" bson:"udi,omitempty"`                         // Unique device identifier
+}
+
+func (r *ExplanationOfBenefitProcedure) Validate() error {
+	if r.Sequence == 0 {
+		return fmt.Errorf("field 'Sequence' is required")
+	}
+	for i, item := range r.Type {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Type[%d]: %w", i, err)
+		}
+	}
+	if r.ProcedureCodeableConcept == nil {
+		return fmt.Errorf("field 'ProcedureCodeableConcept' is required")
+	}
+	if r.ProcedureCodeableConcept != nil {
+		if err := r.ProcedureCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("ProcedureCodeableConcept: %w", err)
+		}
+	}
+	if r.ProcedureReference == nil {
+		return fmt.Errorf("field 'ProcedureReference' is required")
+	}
+	if r.ProcedureReference != nil {
+		if err := r.ProcedureReference.Validate(); err != nil {
+			return fmt.Errorf("ProcedureReference: %w", err)
+		}
+	}
+	for i, item := range r.Udi {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Udi[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitAccident struct {
+	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
+	Date              *string          `json:"date,omitempty" bson:"date,omitempty"`                            // When the incident occurred
+	Type              *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                            // The nature of the accident
+	LocationAddress   *Address         `json:"locationAddress,omitempty" bson:"location_address,omitempty"`     // Where the event occurred
+	LocationReference *Reference       `json:"locationReference,omitempty" bson:"location_reference,omitempty"` // Where the event occurred
+}
+
+func (r *ExplanationOfBenefitAccident) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.LocationAddress != nil {
+		if err := r.LocationAddress.Validate(); err != nil {
+			return fmt.Errorf("LocationAddress: %w", err)
+		}
+	}
+	if r.LocationReference != nil {
+		if err := r.LocationReference.Validate(); err != nil {
+			return fmt.Errorf("LocationReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitItemBodySite struct {
+	Id      *string             `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
+	Site    []CodeableReference `json:"site" bson:"site"`                            // Location
+	SubSite []CodeableConcept   `json:"subSite,omitempty" bson:"sub_site,omitempty"` // Sub-location
+}
+
+func (r *ExplanationOfBenefitItemBodySite) Validate() error {
+	if len(r.Site) < 1 {
+		return fmt.Errorf("field 'Site' must have at least 1 elements")
+	}
+	for i, item := range r.Site {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Site[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SubSite {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SubSite[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitItemReviewOutcome struct {
+	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`                         // Unique id for inter-element referencing
+	Decision      *CodeableConcept  `json:"decision,omitempty" bson:"decision,omitempty"`             // Result of the adjudication
+	Reason        []CodeableConcept `json:"reason,omitempty" bson:"reason,omitempty"`                 // Reason for result of the adjudication
+	PreAuthRef    *string           `json:"preAuthRef,omitempty" bson:"pre_auth_ref,omitempty"`       // Preauthorization reference
+	PreAuthPeriod *Period           `json:"preAuthPeriod,omitempty" bson:"pre_auth_period,omitempty"` // Preauthorization reference effective period
+}
+
+func (r *ExplanationOfBenefitItemReviewOutcome) Validate() error {
+	if r.Decision != nil {
+		if err := r.Decision.Validate(); err != nil {
+			return fmt.Errorf("Decision: %w", err)
+		}
+	}
+	for i, item := range r.Reason {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Reason[%d]: %w", i, err)
+		}
+	}
+	if r.PreAuthPeriod != nil {
+		if err := r.PreAuthPeriod.Validate(); err != nil {
+			return fmt.Errorf("PreAuthPeriod: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitItemDetail struct {
+	Id                  *string                                   `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
+	Sequence            int                                       `json:"sequence" bson:"sequence"`                                              // Product or service provided
+	TraceNumber         []Identifier                              `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
+	Revenue             *CodeableConcept                          `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
+	Category            *CodeableConcept                          `json:"category,omitempty" bson:"category,omitempty"`                          // Benefit classification
+	ProductOrService    *CodeableConcept                          `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
+	ProductOrServiceEnd *CodeableConcept                          `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
+	Modifier            []CodeableConcept                         `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
+	ProgramCode         []CodeableConcept                         `json:"programCode,omitempty" bson:"program_code,omitempty"`                   // Program the product or service is provided under
+	PatientPaid         *Money                                    `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                   // Paid by the patient
+	Quantity            *Quantity                                 `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
+	UnitPrice           *Money                                    `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
+	Factor              *float64                                  `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
+	Tax                 *Money                                    `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
+	Net                 *Money                                    `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
+	Udi                 []Reference                               `json:"udi,omitempty" bson:"udi,omitempty"`                                    // Unique device identifier
+	NoteNumber          []int                                     `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
+	ReviewOutcome       *ExplanationOfBenefitItemReviewOutcome    `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Detail level adjudication results
+	Adjudication        []ExplanationOfBenefitItemAdjudication    `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Detail level adjudication details
+	SubDetail           []ExplanationOfBenefitItemDetailSubDetail `json:"subDetail,omitempty" bson:"sub_detail,omitempty"`                       // Additional items
+}
+
+func (r *ExplanationOfBenefitItemDetail) Validate() error {
+	if r.Sequence == 0 {
+		return fmt.Errorf("field 'Sequence' is required")
+	}
+	for i, item := range r.TraceNumber {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
+		}
+	}
+	if r.Revenue != nil {
+		if err := r.Revenue.Validate(); err != nil {
+			return fmt.Errorf("Revenue: %w", err)
+		}
+	}
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
+		}
+	}
+	if r.ProductOrService != nil {
+		if err := r.ProductOrService.Validate(); err != nil {
+			return fmt.Errorf("ProductOrService: %w", err)
+		}
+	}
+	if r.ProductOrServiceEnd != nil {
+		if err := r.ProductOrServiceEnd.Validate(); err != nil {
+			return fmt.Errorf("ProductOrServiceEnd: %w", err)
+		}
+	}
+	for i, item := range r.Modifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Modifier[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.ProgramCode {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ProgramCode[%d]: %w", i, err)
+		}
+	}
+	if r.PatientPaid != nil {
+		if err := r.PatientPaid.Validate(); err != nil {
+			return fmt.Errorf("PatientPaid: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.UnitPrice != nil {
+		if err := r.UnitPrice.Validate(); err != nil {
+			return fmt.Errorf("UnitPrice: %w", err)
+		}
+	}
+	if r.Tax != nil {
+		if err := r.Tax.Validate(); err != nil {
+			return fmt.Errorf("Tax: %w", err)
+		}
+	}
+	if r.Net != nil {
+		if err := r.Net.Validate(); err != nil {
+			return fmt.Errorf("Net: %w", err)
+		}
+	}
+	for i, item := range r.Udi {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Udi[%d]: %w", i, err)
+		}
+	}
+	if r.ReviewOutcome != nil {
+		if err := r.ReviewOutcome.Validate(); err != nil {
+			return fmt.Errorf("ReviewOutcome: %w", err)
+		}
+	}
+	for i, item := range r.Adjudication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Adjudication[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SubDetail {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SubDetail[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type ExplanationOfBenefitTotal struct {
 	Id       *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
 	Category *CodeableConcept `json:"category" bson:"category"`         // Type of adjudication information
@@ -329,115 +579,6 @@ func (r *ExplanationOfBenefitTotal) Validate() error {
 	if r.Amount != nil {
 		if err := r.Amount.Validate(); err != nil {
 			return fmt.Errorf("Amount: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitPayment struct {
-	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
-	Type             *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                          // Partial or complete payment
-	Adjustment       *Money           `json:"adjustment,omitempty" bson:"adjustment,omitempty"`              // Payment adjustment for non-claim issues
-	AdjustmentReason *CodeableConcept `json:"adjustmentReason,omitempty" bson:"adjustment_reason,omitempty"` // Explanation for the variance
-	Date             *string          `json:"date,omitempty" bson:"date,omitempty"`                          // Expected date of payment
-	Amount           *Money           `json:"amount,omitempty" bson:"amount,omitempty"`                      // Payable amount after adjustment
-	Identifier       *Identifier      `json:"identifier,omitempty" bson:"identifier,omitempty"`              // Business identifier for the payment
-}
-
-func (r *ExplanationOfBenefitPayment) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Adjustment != nil {
-		if err := r.Adjustment.Validate(); err != nil {
-			return fmt.Errorf("Adjustment: %w", err)
-		}
-	}
-	if r.AdjustmentReason != nil {
-		if err := r.AdjustmentReason.Validate(); err != nil {
-			return fmt.Errorf("AdjustmentReason: %w", err)
-		}
-	}
-	if r.Amount != nil {
-		if err := r.Amount.Validate(); err != nil {
-			return fmt.Errorf("Amount: %w", err)
-		}
-	}
-	if r.Identifier != nil {
-		if err := r.Identifier.Validate(); err != nil {
-			return fmt.Errorf("Identifier: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitBenefitBalance struct {
-	Id          *string                                       `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Category    *CodeableConcept                              `json:"category" bson:"category"`                           // Benefit classification
-	Excluded    bool                                          `json:"excluded,omitempty" bson:"excluded,omitempty"`       // Excluded from the plan
-	Name        *string                                       `json:"name,omitempty" bson:"name,omitempty"`               // Short name for the benefit
-	Description *string                                       `json:"description,omitempty" bson:"description,omitempty"` // Description of the benefit or services covered
-	Network     *CodeableConcept                              `json:"network,omitempty" bson:"network,omitempty"`         // In or out of network
-	Unit        *CodeableConcept                              `json:"unit,omitempty" bson:"unit,omitempty"`               // Individual or family
-	Term        *CodeableConcept                              `json:"term,omitempty" bson:"term,omitempty"`               // Annual or lifetime
-	Financial   []ExplanationOfBenefitBenefitBalanceFinancial `json:"financial,omitempty" bson:"financial,omitempty"`     // Benefit Summary
-}
-
-func (r *ExplanationOfBenefitBenefitBalance) Validate() error {
-	if r.Category == nil {
-		return fmt.Errorf("field 'Category' is required")
-	}
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
-		}
-	}
-	if r.Network != nil {
-		if err := r.Network.Validate(); err != nil {
-			return fmt.Errorf("Network: %w", err)
-		}
-	}
-	if r.Unit != nil {
-		if err := r.Unit.Validate(); err != nil {
-			return fmt.Errorf("Unit: %w", err)
-		}
-	}
-	if r.Term != nil {
-		if err := r.Term.Validate(); err != nil {
-			return fmt.Errorf("Term: %w", err)
-		}
-	}
-	for i, item := range r.Financial {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Financial[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitRelated struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Claim        *Reference       `json:"claim,omitempty" bson:"claim,omitempty"`               // Reference to the related claim
-	Relationship *CodeableConcept `json:"relationship,omitempty" bson:"relationship,omitempty"` // How the reference claim is related
-	Reference    *Identifier      `json:"reference,omitempty" bson:"reference,omitempty"`       // File or case reference
-}
-
-func (r *ExplanationOfBenefitRelated) Validate() error {
-	if r.Claim != nil {
-		if err := r.Claim.Validate(); err != nil {
-			return fmt.Errorf("Claim: %w", err)
-		}
-	}
-	if r.Relationship != nil {
-		if err := r.Relationship.Validate(); err != nil {
-			return fmt.Errorf("Relationship: %w", err)
-		}
-	}
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
 		}
 	}
 	return nil
@@ -468,229 +609,6 @@ func (r *ExplanationOfBenefitEvent) Validate() error {
 	if r.WhenPeriod != nil {
 		if err := r.WhenPeriod.Validate(); err != nil {
 			return fmt.Errorf("WhenPeriod: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitDiagnosis struct {
-	Id                       *string           `json:"id,omitempty" bson:"id,omitempty"`                           // Unique id for inter-element referencing
-	Sequence                 int               `json:"sequence" bson:"sequence"`                                   // Diagnosis instance identifier
-	DiagnosisCodeableConcept *CodeableConcept  `json:"diagnosisCodeableConcept" bson:"diagnosis_codeable_concept"` // Nature of illness or problem
-	DiagnosisReference       *Reference        `json:"diagnosisReference" bson:"diagnosis_reference"`              // Nature of illness or problem
-	Type                     []CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                       // Timing or nature of the diagnosis
-	OnAdmission              *CodeableConcept  `json:"onAdmission,omitempty" bson:"on_admission,omitempty"`        // Present on admission
-}
-
-func (r *ExplanationOfBenefitDiagnosis) Validate() error {
-	if r.Sequence == 0 {
-		return fmt.Errorf("field 'Sequence' is required")
-	}
-	if r.DiagnosisCodeableConcept == nil {
-		return fmt.Errorf("field 'DiagnosisCodeableConcept' is required")
-	}
-	if r.DiagnosisCodeableConcept != nil {
-		if err := r.DiagnosisCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("DiagnosisCodeableConcept: %w", err)
-		}
-	}
-	if r.DiagnosisReference == nil {
-		return fmt.Errorf("field 'DiagnosisReference' is required")
-	}
-	if r.DiagnosisReference != nil {
-		if err := r.DiagnosisReference.Validate(); err != nil {
-			return fmt.Errorf("DiagnosisReference: %w", err)
-		}
-	}
-	for i, item := range r.Type {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Type[%d]: %w", i, err)
-		}
-	}
-	if r.OnAdmission != nil {
-		if err := r.OnAdmission.Validate(); err != nil {
-			return fmt.Errorf("OnAdmission: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitItemBodySite struct {
-	Id      *string             `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
-	Site    []CodeableReference `json:"site" bson:"site"`                            // Location
-	SubSite []CodeableConcept   `json:"subSite,omitempty" bson:"sub_site,omitempty"` // Sub-location
-}
-
-func (r *ExplanationOfBenefitItemBodySite) Validate() error {
-	if len(r.Site) < 1 {
-		return fmt.Errorf("field 'Site' must have at least 1 elements")
-	}
-	for i, item := range r.Site {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Site[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SubSite {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SubSite[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitAddItemBodySite struct {
-	Id      *string             `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
-	Site    []CodeableReference `json:"site" bson:"site"`                            // Location
-	SubSite []CodeableConcept   `json:"subSite,omitempty" bson:"sub_site,omitempty"` // Sub-location
-}
-
-func (r *ExplanationOfBenefitAddItemBodySite) Validate() error {
-	if len(r.Site) < 1 {
-		return fmt.Errorf("field 'Site' must have at least 1 elements")
-	}
-	for i, item := range r.Site {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Site[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SubSite {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SubSite[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitAddItemDetailSubDetail struct {
-	Id                  *string                                `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
-	TraceNumber         []Identifier                           `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
-	Revenue             *CodeableConcept                       `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
-	ProductOrService    *CodeableConcept                       `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
-	ProductOrServiceEnd *CodeableConcept                       `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
-	Modifier            []CodeableConcept                      `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
-	PatientPaid         *Money                                 `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                   // Paid by the patient
-	Quantity            *Quantity                              `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
-	UnitPrice           *Money                                 `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
-	Factor              *float64                               `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
-	Tax                 *Money                                 `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
-	Net                 *Money                                 `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
-	NoteNumber          []int                                  `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
-	ReviewOutcome       *ExplanationOfBenefitItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Additem subdetail level adjudication results
-	Adjudication        []ExplanationOfBenefitItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Added items adjudication
-}
-
-func (r *ExplanationOfBenefitAddItemDetailSubDetail) Validate() error {
-	for i, item := range r.TraceNumber {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
-		}
-	}
-	if r.Revenue != nil {
-		if err := r.Revenue.Validate(); err != nil {
-			return fmt.Errorf("Revenue: %w", err)
-		}
-	}
-	if r.ProductOrService != nil {
-		if err := r.ProductOrService.Validate(); err != nil {
-			return fmt.Errorf("ProductOrService: %w", err)
-		}
-	}
-	if r.ProductOrServiceEnd != nil {
-		if err := r.ProductOrServiceEnd.Validate(); err != nil {
-			return fmt.Errorf("ProductOrServiceEnd: %w", err)
-		}
-	}
-	for i, item := range r.Modifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Modifier[%d]: %w", i, err)
-		}
-	}
-	if r.PatientPaid != nil {
-		if err := r.PatientPaid.Validate(); err != nil {
-			return fmt.Errorf("PatientPaid: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.UnitPrice != nil {
-		if err := r.UnitPrice.Validate(); err != nil {
-			return fmt.Errorf("UnitPrice: %w", err)
-		}
-	}
-	if r.Tax != nil {
-		if err := r.Tax.Validate(); err != nil {
-			return fmt.Errorf("Tax: %w", err)
-		}
-	}
-	if r.Net != nil {
-		if err := r.Net.Validate(); err != nil {
-			return fmt.Errorf("Net: %w", err)
-		}
-	}
-	if r.ReviewOutcome != nil {
-		if err := r.ReviewOutcome.Validate(); err != nil {
-			return fmt.Errorf("ReviewOutcome: %w", err)
-		}
-	}
-	for i, item := range r.Adjudication {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Adjudication[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitPayee struct {
-	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Type  *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`   // Category of recipient
-	Party *Reference       `json:"party,omitempty" bson:"party,omitempty"` // Recipient reference
-}
-
-func (r *ExplanationOfBenefitPayee) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Party != nil {
-		if err := r.Party.Validate(); err != nil {
-			return fmt.Errorf("Party: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitCareTeam struct {
-	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Sequence  int              `json:"sequence" bson:"sequence"`                       // Order of care team
-	Provider  *Reference       `json:"provider" bson:"provider"`                       // Practitioner or organization
-	Role      *CodeableConcept `json:"role,omitempty" bson:"role,omitempty"`           // Function within the team
-	Specialty *CodeableConcept `json:"specialty,omitempty" bson:"specialty,omitempty"` // Practitioner or provider specialization
-}
-
-func (r *ExplanationOfBenefitCareTeam) Validate() error {
-	if r.Sequence == 0 {
-		return fmt.Errorf("field 'Sequence' is required")
-	}
-	if r.Provider == nil {
-		return fmt.Errorf("field 'Provider' is required")
-	}
-	if r.Provider != nil {
-		if err := r.Provider.Validate(); err != nil {
-			return fmt.Errorf("Provider: %w", err)
-		}
-	}
-	if r.Role != nil {
-		if err := r.Role.Validate(); err != nil {
-			return fmt.Errorf("Role: %w", err)
-		}
-	}
-	if r.Specialty != nil {
-		if err := r.Specialty.Validate(); err != nil {
-			return fmt.Errorf("Specialty: %w", err)
 		}
 	}
 	return nil
@@ -977,44 +895,620 @@ func (r *ExplanationOfBenefitSupportingInfo) Validate() error {
 	return nil
 }
 
-type ExplanationOfBenefitProcedure struct {
-	Id                       *string           `json:"id,omitempty" bson:"id,omitempty"`                           // Unique id for inter-element referencing
-	Sequence                 int               `json:"sequence" bson:"sequence"`                                   // Procedure instance identifier
-	Type                     []CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                       // Category of Procedure
-	Date                     *string           `json:"date,omitempty" bson:"date,omitempty"`                       // When the procedure was performed
-	ProcedureCodeableConcept *CodeableConcept  `json:"procedureCodeableConcept" bson:"procedure_codeable_concept"` // Specific clinical procedure
-	ProcedureReference       *Reference        `json:"procedureReference" bson:"procedure_reference"`              // Specific clinical procedure
-	Udi                      []Reference       `json:"udi,omitempty" bson:"udi,omitempty"`                         // Unique device identifier
+type ExplanationOfBenefitInsurance struct {
+	Id         *string    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Focal      bool       `json:"focal" bson:"focal"`                                 // Coverage to be used for adjudication
+	Coverage   *Reference `json:"coverage" bson:"coverage"`                           // Insurance information
+	PreAuthRef []string   `json:"preAuthRef,omitempty" bson:"pre_auth_ref,omitempty"` // Prior authorization reference number
 }
 
-func (r *ExplanationOfBenefitProcedure) Validate() error {
+func (r *ExplanationOfBenefitInsurance) Validate() error {
+	if r.Coverage == nil {
+		return fmt.Errorf("field 'Coverage' is required")
+	}
+	if r.Coverage != nil {
+		if err := r.Coverage.Validate(); err != nil {
+			return fmt.Errorf("Coverage: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitItemAdjudication struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Category     *CodeableConcept `json:"category" bson:"category"`                              // Type of adjudication information
+	Reason       *CodeableConcept `json:"reason,omitempty" bson:"reason,omitempty"`              // Explanation of adjudication outcome
+	Amount       *Money           `json:"amount,omitempty" bson:"amount,omitempty"`              // Monetary amount
+	Quantity     *Quantity        `json:"quantity,omitempty" bson:"quantity,omitempty"`          // Non-monitary value
+	DecisionDate *string          `json:"decisionDate,omitempty" bson:"decision_date,omitempty"` // When was adjudication performed
+}
+
+func (r *ExplanationOfBenefitItemAdjudication) Validate() error {
+	if r.Category == nil {
+		return fmt.Errorf("field 'Category' is required")
+	}
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
+		}
+	}
+	if r.Reason != nil {
+		if err := r.Reason.Validate(); err != nil {
+			return fmt.Errorf("Reason: %w", err)
+		}
+	}
+	if r.Amount != nil {
+		if err := r.Amount.Validate(); err != nil {
+			return fmt.Errorf("Amount: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitItemDetailSubDetail struct {
+	Id                  *string                                `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
+	Sequence            int                                    `json:"sequence" bson:"sequence"`                                              // Product or service provided
+	TraceNumber         []Identifier                           `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
+	Revenue             *CodeableConcept                       `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
+	Category            *CodeableConcept                       `json:"category,omitempty" bson:"category,omitempty"`                          // Benefit classification
+	ProductOrService    *CodeableConcept                       `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
+	ProductOrServiceEnd *CodeableConcept                       `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
+	Modifier            []CodeableConcept                      `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
+	ProgramCode         []CodeableConcept                      `json:"programCode,omitempty" bson:"program_code,omitempty"`                   // Program the product or service is provided under
+	PatientPaid         *Money                                 `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                   // Paid by the patient
+	Quantity            *Quantity                              `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
+	UnitPrice           *Money                                 `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
+	Factor              *float64                               `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
+	Tax                 *Money                                 `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
+	Net                 *Money                                 `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
+	Udi                 []Reference                            `json:"udi,omitempty" bson:"udi,omitempty"`                                    // Unique device identifier
+	NoteNumber          []int                                  `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
+	ReviewOutcome       *ExplanationOfBenefitItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Subdetail level adjudication results
+	Adjudication        []ExplanationOfBenefitItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Subdetail level adjudication details
+}
+
+func (r *ExplanationOfBenefitItemDetailSubDetail) Validate() error {
 	if r.Sequence == 0 {
 		return fmt.Errorf("field 'Sequence' is required")
+	}
+	for i, item := range r.TraceNumber {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
+		}
+	}
+	if r.Revenue != nil {
+		if err := r.Revenue.Validate(); err != nil {
+			return fmt.Errorf("Revenue: %w", err)
+		}
+	}
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
+		}
+	}
+	if r.ProductOrService != nil {
+		if err := r.ProductOrService.Validate(); err != nil {
+			return fmt.Errorf("ProductOrService: %w", err)
+		}
+	}
+	if r.ProductOrServiceEnd != nil {
+		if err := r.ProductOrServiceEnd.Validate(); err != nil {
+			return fmt.Errorf("ProductOrServiceEnd: %w", err)
+		}
+	}
+	for i, item := range r.Modifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Modifier[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.ProgramCode {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ProgramCode[%d]: %w", i, err)
+		}
+	}
+	if r.PatientPaid != nil {
+		if err := r.PatientPaid.Validate(); err != nil {
+			return fmt.Errorf("PatientPaid: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.UnitPrice != nil {
+		if err := r.UnitPrice.Validate(); err != nil {
+			return fmt.Errorf("UnitPrice: %w", err)
+		}
+	}
+	if r.Tax != nil {
+		if err := r.Tax.Validate(); err != nil {
+			return fmt.Errorf("Tax: %w", err)
+		}
+	}
+	if r.Net != nil {
+		if err := r.Net.Validate(); err != nil {
+			return fmt.Errorf("Net: %w", err)
+		}
+	}
+	for i, item := range r.Udi {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Udi[%d]: %w", i, err)
+		}
+	}
+	if r.ReviewOutcome != nil {
+		if err := r.ReviewOutcome.Validate(); err != nil {
+			return fmt.Errorf("ReviewOutcome: %w", err)
+		}
+	}
+	for i, item := range r.Adjudication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Adjudication[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitAddItemBodySite struct {
+	Id      *string             `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
+	Site    []CodeableReference `json:"site" bson:"site"`                            // Location
+	SubSite []CodeableConcept   `json:"subSite,omitempty" bson:"sub_site,omitempty"` // Sub-location
+}
+
+func (r *ExplanationOfBenefitAddItemBodySite) Validate() error {
+	if len(r.Site) < 1 {
+		return fmt.Errorf("field 'Site' must have at least 1 elements")
+	}
+	for i, item := range r.Site {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Site[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SubSite {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SubSite[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitAddItemDetail struct {
+	Id                  *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
+	TraceNumber         []Identifier                                 `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
+	Revenue             *CodeableConcept                             `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
+	ProductOrService    *CodeableConcept                             `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
+	ProductOrServiceEnd *CodeableConcept                             `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
+	Modifier            []CodeableConcept                            `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
+	PatientPaid         *Money                                       `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                   // Paid by the patient
+	Quantity            *Quantity                                    `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
+	UnitPrice           *Money                                       `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
+	Factor              *float64                                     `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
+	Tax                 *Money                                       `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
+	Net                 *Money                                       `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
+	NoteNumber          []int                                        `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
+	ReviewOutcome       *ExplanationOfBenefitItemReviewOutcome       `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Additem detail level adjudication results
+	Adjudication        []ExplanationOfBenefitItemAdjudication       `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Added items adjudication
+	SubDetail           []ExplanationOfBenefitAddItemDetailSubDetail `json:"subDetail,omitempty" bson:"sub_detail,omitempty"`                       // Insurer added line items
+}
+
+func (r *ExplanationOfBenefitAddItemDetail) Validate() error {
+	for i, item := range r.TraceNumber {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
+		}
+	}
+	if r.Revenue != nil {
+		if err := r.Revenue.Validate(); err != nil {
+			return fmt.Errorf("Revenue: %w", err)
+		}
+	}
+	if r.ProductOrService != nil {
+		if err := r.ProductOrService.Validate(); err != nil {
+			return fmt.Errorf("ProductOrService: %w", err)
+		}
+	}
+	if r.ProductOrServiceEnd != nil {
+		if err := r.ProductOrServiceEnd.Validate(); err != nil {
+			return fmt.Errorf("ProductOrServiceEnd: %w", err)
+		}
+	}
+	for i, item := range r.Modifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Modifier[%d]: %w", i, err)
+		}
+	}
+	if r.PatientPaid != nil {
+		if err := r.PatientPaid.Validate(); err != nil {
+			return fmt.Errorf("PatientPaid: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.UnitPrice != nil {
+		if err := r.UnitPrice.Validate(); err != nil {
+			return fmt.Errorf("UnitPrice: %w", err)
+		}
+	}
+	if r.Tax != nil {
+		if err := r.Tax.Validate(); err != nil {
+			return fmt.Errorf("Tax: %w", err)
+		}
+	}
+	if r.Net != nil {
+		if err := r.Net.Validate(); err != nil {
+			return fmt.Errorf("Net: %w", err)
+		}
+	}
+	if r.ReviewOutcome != nil {
+		if err := r.ReviewOutcome.Validate(); err != nil {
+			return fmt.Errorf("ReviewOutcome: %w", err)
+		}
+	}
+	for i, item := range r.Adjudication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Adjudication[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SubDetail {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SubDetail[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitPayment struct {
+	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
+	Type             *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                          // Partial or complete payment
+	Adjustment       *Money           `json:"adjustment,omitempty" bson:"adjustment,omitempty"`              // Payment adjustment for non-claim issues
+	AdjustmentReason *CodeableConcept `json:"adjustmentReason,omitempty" bson:"adjustment_reason,omitempty"` // Explanation for the variance
+	Date             *string          `json:"date,omitempty" bson:"date,omitempty"`                          // Expected date of payment
+	Amount           *Money           `json:"amount,omitempty" bson:"amount,omitempty"`                      // Payable amount after adjustment
+	Identifier       *Identifier      `json:"identifier,omitempty" bson:"identifier,omitempty"`              // Business identifier for the payment
+}
+
+func (r *ExplanationOfBenefitPayment) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Adjustment != nil {
+		if err := r.Adjustment.Validate(); err != nil {
+			return fmt.Errorf("Adjustment: %w", err)
+		}
+	}
+	if r.AdjustmentReason != nil {
+		if err := r.AdjustmentReason.Validate(); err != nil {
+			return fmt.Errorf("AdjustmentReason: %w", err)
+		}
+	}
+	if r.Amount != nil {
+		if err := r.Amount.Validate(); err != nil {
+			return fmt.Errorf("Amount: %w", err)
+		}
+	}
+	if r.Identifier != nil {
+		if err := r.Identifier.Validate(); err != nil {
+			return fmt.Errorf("Identifier: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitCareTeam struct {
+	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Sequence  int              `json:"sequence" bson:"sequence"`                       // Order of care team
+	Provider  *Reference       `json:"provider" bson:"provider"`                       // Practitioner or organization
+	Role      *CodeableConcept `json:"role,omitempty" bson:"role,omitempty"`           // Function within the team
+	Specialty *CodeableConcept `json:"specialty,omitempty" bson:"specialty,omitempty"` // Practitioner or provider specialization
+}
+
+func (r *ExplanationOfBenefitCareTeam) Validate() error {
+	if r.Sequence == 0 {
+		return fmt.Errorf("field 'Sequence' is required")
+	}
+	if r.Provider == nil {
+		return fmt.Errorf("field 'Provider' is required")
+	}
+	if r.Provider != nil {
+		if err := r.Provider.Validate(); err != nil {
+			return fmt.Errorf("Provider: %w", err)
+		}
+	}
+	if r.Role != nil {
+		if err := r.Role.Validate(); err != nil {
+			return fmt.Errorf("Role: %w", err)
+		}
+	}
+	if r.Specialty != nil {
+		if err := r.Specialty.Validate(); err != nil {
+			return fmt.Errorf("Specialty: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitDiagnosis struct {
+	Id                       *string           `json:"id,omitempty" bson:"id,omitempty"`                           // Unique id for inter-element referencing
+	Sequence                 int               `json:"sequence" bson:"sequence"`                                   // Diagnosis instance identifier
+	DiagnosisCodeableConcept *CodeableConcept  `json:"diagnosisCodeableConcept" bson:"diagnosis_codeable_concept"` // Nature of illness or problem
+	DiagnosisReference       *Reference        `json:"diagnosisReference" bson:"diagnosis_reference"`              // Nature of illness or problem
+	Type                     []CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                       // Timing or nature of the diagnosis
+	OnAdmission              *CodeableConcept  `json:"onAdmission,omitempty" bson:"on_admission,omitempty"`        // Present on admission
+}
+
+func (r *ExplanationOfBenefitDiagnosis) Validate() error {
+	if r.Sequence == 0 {
+		return fmt.Errorf("field 'Sequence' is required")
+	}
+	if r.DiagnosisCodeableConcept == nil {
+		return fmt.Errorf("field 'DiagnosisCodeableConcept' is required")
+	}
+	if r.DiagnosisCodeableConcept != nil {
+		if err := r.DiagnosisCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("DiagnosisCodeableConcept: %w", err)
+		}
+	}
+	if r.DiagnosisReference == nil {
+		return fmt.Errorf("field 'DiagnosisReference' is required")
+	}
+	if r.DiagnosisReference != nil {
+		if err := r.DiagnosisReference.Validate(); err != nil {
+			return fmt.Errorf("DiagnosisReference: %w", err)
+		}
 	}
 	for i, item := range r.Type {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Type[%d]: %w", i, err)
 		}
 	}
-	if r.ProcedureCodeableConcept == nil {
-		return fmt.Errorf("field 'ProcedureCodeableConcept' is required")
-	}
-	if r.ProcedureCodeableConcept != nil {
-		if err := r.ProcedureCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("ProcedureCodeableConcept: %w", err)
+	if r.OnAdmission != nil {
+		if err := r.OnAdmission.Validate(); err != nil {
+			return fmt.Errorf("OnAdmission: %w", err)
 		}
 	}
-	if r.ProcedureReference == nil {
-		return fmt.Errorf("field 'ProcedureReference' is required")
-	}
-	if r.ProcedureReference != nil {
-		if err := r.ProcedureReference.Validate(); err != nil {
-			return fmt.Errorf("ProcedureReference: %w", err)
-		}
-	}
-	for i, item := range r.Udi {
+	return nil
+}
+
+type ExplanationOfBenefitAddItem struct {
+	Id                      *string                                `json:"id,omitempty" bson:"id,omitempty"`                                             // Unique id for inter-element referencing
+	ItemSequence            []int                                  `json:"itemSequence,omitempty" bson:"item_sequence,omitempty"`                        // Item sequence number
+	DetailSequence          []int                                  `json:"detailSequence,omitempty" bson:"detail_sequence,omitempty"`                    // Detail sequence number
+	SubDetailSequence       []int                                  `json:"subDetailSequence,omitempty" bson:"sub_detail_sequence,omitempty"`             // Subdetail sequence number
+	TraceNumber             []Identifier                           `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                          // Number for tracking
+	Subject                 *Reference                             `json:"subject,omitempty" bson:"subject,omitempty"`                                   // The recipient of the products and services
+	InformationSequence     []int                                  `json:"informationSequence,omitempty" bson:"information_sequence,omitempty"`          // Applicable exception and supporting information
+	Provider                []Reference                            `json:"provider,omitempty" bson:"provider,omitempty"`                                 // Authorized providers
+	Revenue                 *CodeableConcept                       `json:"revenue,omitempty" bson:"revenue,omitempty"`                                   // Revenue or cost center code
+	Category                *CodeableConcept                       `json:"category,omitempty" bson:"category,omitempty"`                                 // Benefit classification
+	ProductOrService        *CodeableConcept                       `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`               // Billing, service, product, or drug code
+	ProductOrServiceEnd     *CodeableConcept                       `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"`        // End of a range of codes
+	Request                 []Reference                            `json:"request,omitempty" bson:"request,omitempty"`                                   // Request or Referral for Service
+	Modifier                []CodeableConcept                      `json:"modifier,omitempty" bson:"modifier,omitempty"`                                 // Service/Product billing modifiers
+	ProgramCode             []CodeableConcept                      `json:"programCode,omitempty" bson:"program_code,omitempty"`                          // Program the product or service is provided under
+	ServicedDate            *string                                `json:"servicedDate,omitempty" bson:"serviced_date,omitempty"`                        // Date or dates of service or product delivery
+	ServicedPeriod          *Period                                `json:"servicedPeriod,omitempty" bson:"serviced_period,omitempty"`                    // Date or dates of service or product delivery
+	LocationCodeableConcept *CodeableConcept                       `json:"locationCodeableConcept,omitempty" bson:"location_codeable_concept,omitempty"` // Place of service or where product was supplied
+	LocationAddress         *Address                               `json:"locationAddress,omitempty" bson:"location_address,omitempty"`                  // Place of service or where product was supplied
+	LocationReference       *Reference                             `json:"locationReference,omitempty" bson:"location_reference,omitempty"`              // Place of service or where product was supplied
+	PatientPaid             *Money                                 `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                          // Paid by the patient
+	Quantity                *Quantity                              `json:"quantity,omitempty" bson:"quantity,omitempty"`                                 // Count of products or services
+	UnitPrice               *Money                                 `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                              // Fee, charge or cost per item
+	Factor                  *float64                               `json:"factor,omitempty" bson:"factor,omitempty"`                                     // Price scaling factor
+	Tax                     *Money                                 `json:"tax,omitempty" bson:"tax,omitempty"`                                           // Total tax
+	Net                     *Money                                 `json:"net,omitempty" bson:"net,omitempty"`                                           // Total item cost
+	BodySite                []ExplanationOfBenefitAddItemBodySite  `json:"bodySite,omitempty" bson:"body_site,omitempty"`                                // Anatomical location
+	NoteNumber              []int                                  `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                            // Applicable note numbers
+	ReviewOutcome           *ExplanationOfBenefitItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`                      // Additem level adjudication results
+	Adjudication            []ExplanationOfBenefitItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                         // Added items adjudication
+	Detail                  []ExplanationOfBenefitAddItemDetail    `json:"detail,omitempty" bson:"detail,omitempty"`                                     // Insurer added line items
+}
+
+func (r *ExplanationOfBenefitAddItem) Validate() error {
+	for i, item := range r.TraceNumber {
 		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Udi[%d]: %w", i, err)
+			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
+		}
+	}
+	if r.Subject != nil {
+		if err := r.Subject.Validate(); err != nil {
+			return fmt.Errorf("Subject: %w", err)
+		}
+	}
+	for i, item := range r.Provider {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Provider[%d]: %w", i, err)
+		}
+	}
+	if r.Revenue != nil {
+		if err := r.Revenue.Validate(); err != nil {
+			return fmt.Errorf("Revenue: %w", err)
+		}
+	}
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
+		}
+	}
+	if r.ProductOrService != nil {
+		if err := r.ProductOrService.Validate(); err != nil {
+			return fmt.Errorf("ProductOrService: %w", err)
+		}
+	}
+	if r.ProductOrServiceEnd != nil {
+		if err := r.ProductOrServiceEnd.Validate(); err != nil {
+			return fmt.Errorf("ProductOrServiceEnd: %w", err)
+		}
+	}
+	for i, item := range r.Request {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Request[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Modifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Modifier[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.ProgramCode {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ProgramCode[%d]: %w", i, err)
+		}
+	}
+	if r.ServicedPeriod != nil {
+		if err := r.ServicedPeriod.Validate(); err != nil {
+			return fmt.Errorf("ServicedPeriod: %w", err)
+		}
+	}
+	if r.LocationCodeableConcept != nil {
+		if err := r.LocationCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("LocationCodeableConcept: %w", err)
+		}
+	}
+	if r.LocationAddress != nil {
+		if err := r.LocationAddress.Validate(); err != nil {
+			return fmt.Errorf("LocationAddress: %w", err)
+		}
+	}
+	if r.LocationReference != nil {
+		if err := r.LocationReference.Validate(); err != nil {
+			return fmt.Errorf("LocationReference: %w", err)
+		}
+	}
+	if r.PatientPaid != nil {
+		if err := r.PatientPaid.Validate(); err != nil {
+			return fmt.Errorf("PatientPaid: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.UnitPrice != nil {
+		if err := r.UnitPrice.Validate(); err != nil {
+			return fmt.Errorf("UnitPrice: %w", err)
+		}
+	}
+	if r.Tax != nil {
+		if err := r.Tax.Validate(); err != nil {
+			return fmt.Errorf("Tax: %w", err)
+		}
+	}
+	if r.Net != nil {
+		if err := r.Net.Validate(); err != nil {
+			return fmt.Errorf("Net: %w", err)
+		}
+	}
+	for i, item := range r.BodySite {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("BodySite[%d]: %w", i, err)
+		}
+	}
+	if r.ReviewOutcome != nil {
+		if err := r.ReviewOutcome.Validate(); err != nil {
+			return fmt.Errorf("ReviewOutcome: %w", err)
+		}
+	}
+	for i, item := range r.Adjudication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Adjudication[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Detail {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Detail[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitAddItemDetailSubDetail struct {
+	Id                  *string                                `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
+	TraceNumber         []Identifier                           `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
+	Revenue             *CodeableConcept                       `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
+	ProductOrService    *CodeableConcept                       `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
+	ProductOrServiceEnd *CodeableConcept                       `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
+	Modifier            []CodeableConcept                      `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
+	PatientPaid         *Money                                 `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                   // Paid by the patient
+	Quantity            *Quantity                              `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
+	UnitPrice           *Money                                 `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
+	Factor              *float64                               `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
+	Tax                 *Money                                 `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
+	Net                 *Money                                 `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
+	NoteNumber          []int                                  `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
+	ReviewOutcome       *ExplanationOfBenefitItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Additem subdetail level adjudication results
+	Adjudication        []ExplanationOfBenefitItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Added items adjudication
+}
+
+func (r *ExplanationOfBenefitAddItemDetailSubDetail) Validate() error {
+	for i, item := range r.TraceNumber {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
+		}
+	}
+	if r.Revenue != nil {
+		if err := r.Revenue.Validate(); err != nil {
+			return fmt.Errorf("Revenue: %w", err)
+		}
+	}
+	if r.ProductOrService != nil {
+		if err := r.ProductOrService.Validate(); err != nil {
+			return fmt.Errorf("ProductOrService: %w", err)
+		}
+	}
+	if r.ProductOrServiceEnd != nil {
+		if err := r.ProductOrServiceEnd.Validate(); err != nil {
+			return fmt.Errorf("ProductOrServiceEnd: %w", err)
+		}
+	}
+	for i, item := range r.Modifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Modifier[%d]: %w", i, err)
+		}
+	}
+	if r.PatientPaid != nil {
+		if err := r.PatientPaid.Validate(); err != nil {
+			return fmt.Errorf("PatientPaid: %w", err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	if r.UnitPrice != nil {
+		if err := r.UnitPrice.Validate(); err != nil {
+			return fmt.Errorf("UnitPrice: %w", err)
+		}
+	}
+	if r.Tax != nil {
+		if err := r.Tax.Validate(); err != nil {
+			return fmt.Errorf("Tax: %w", err)
+		}
+	}
+	if r.Net != nil {
+		if err := r.Net.Validate(); err != nil {
+			return fmt.Errorf("Net: %w", err)
+		}
+	}
+	if r.ReviewOutcome != nil {
+		if err := r.ReviewOutcome.Validate(); err != nil {
+			return fmt.Errorf("ReviewOutcome: %w", err)
+		}
+	}
+	for i, item := range r.Adjudication {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Adjudication[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -1183,159 +1677,6 @@ func (r *ExplanationOfBenefitItem) Validate() error {
 	return nil
 }
 
-type ExplanationOfBenefitAddItem struct {
-	Id                      *string                                `json:"id,omitempty" bson:"id,omitempty"`                                             // Unique id for inter-element referencing
-	ItemSequence            []int                                  `json:"itemSequence,omitempty" bson:"item_sequence,omitempty"`                        // Item sequence number
-	DetailSequence          []int                                  `json:"detailSequence,omitempty" bson:"detail_sequence,omitempty"`                    // Detail sequence number
-	SubDetailSequence       []int                                  `json:"subDetailSequence,omitempty" bson:"sub_detail_sequence,omitempty"`             // Subdetail sequence number
-	TraceNumber             []Identifier                           `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                          // Number for tracking
-	Subject                 *Reference                             `json:"subject,omitempty" bson:"subject,omitempty"`                                   // The recipient of the products and services
-	InformationSequence     []int                                  `json:"informationSequence,omitempty" bson:"information_sequence,omitempty"`          // Applicable exception and supporting information
-	Provider                []Reference                            `json:"provider,omitempty" bson:"provider,omitempty"`                                 // Authorized providers
-	Revenue                 *CodeableConcept                       `json:"revenue,omitempty" bson:"revenue,omitempty"`                                   // Revenue or cost center code
-	Category                *CodeableConcept                       `json:"category,omitempty" bson:"category,omitempty"`                                 // Benefit classification
-	ProductOrService        *CodeableConcept                       `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`               // Billing, service, product, or drug code
-	ProductOrServiceEnd     *CodeableConcept                       `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"`        // End of a range of codes
-	Request                 []Reference                            `json:"request,omitempty" bson:"request,omitempty"`                                   // Request or Referral for Service
-	Modifier                []CodeableConcept                      `json:"modifier,omitempty" bson:"modifier,omitempty"`                                 // Service/Product billing modifiers
-	ProgramCode             []CodeableConcept                      `json:"programCode,omitempty" bson:"program_code,omitempty"`                          // Program the product or service is provided under
-	ServicedDate            *string                                `json:"servicedDate,omitempty" bson:"serviced_date,omitempty"`                        // Date or dates of service or product delivery
-	ServicedPeriod          *Period                                `json:"servicedPeriod,omitempty" bson:"serviced_period,omitempty"`                    // Date or dates of service or product delivery
-	LocationCodeableConcept *CodeableConcept                       `json:"locationCodeableConcept,omitempty" bson:"location_codeable_concept,omitempty"` // Place of service or where product was supplied
-	LocationAddress         *Address                               `json:"locationAddress,omitempty" bson:"location_address,omitempty"`                  // Place of service or where product was supplied
-	LocationReference       *Reference                             `json:"locationReference,omitempty" bson:"location_reference,omitempty"`              // Place of service or where product was supplied
-	PatientPaid             *Money                                 `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                          // Paid by the patient
-	Quantity                *Quantity                              `json:"quantity,omitempty" bson:"quantity,omitempty"`                                 // Count of products or services
-	UnitPrice               *Money                                 `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                              // Fee, charge or cost per item
-	Factor                  *float64                               `json:"factor,omitempty" bson:"factor,omitempty"`                                     // Price scaling factor
-	Tax                     *Money                                 `json:"tax,omitempty" bson:"tax,omitempty"`                                           // Total tax
-	Net                     *Money                                 `json:"net,omitempty" bson:"net,omitempty"`                                           // Total item cost
-	BodySite                []ExplanationOfBenefitAddItemBodySite  `json:"bodySite,omitempty" bson:"body_site,omitempty"`                                // Anatomical location
-	NoteNumber              []int                                  `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                            // Applicable note numbers
-	ReviewOutcome           *ExplanationOfBenefitItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`                      // Additem level adjudication results
-	Adjudication            []ExplanationOfBenefitItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                         // Added items adjudication
-	Detail                  []ExplanationOfBenefitAddItemDetail    `json:"detail,omitempty" bson:"detail,omitempty"`                                     // Insurer added line items
-}
-
-func (r *ExplanationOfBenefitAddItem) Validate() error {
-	for i, item := range r.TraceNumber {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
-		}
-	}
-	if r.Subject != nil {
-		if err := r.Subject.Validate(); err != nil {
-			return fmt.Errorf("Subject: %w", err)
-		}
-	}
-	for i, item := range r.Provider {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Provider[%d]: %w", i, err)
-		}
-	}
-	if r.Revenue != nil {
-		if err := r.Revenue.Validate(); err != nil {
-			return fmt.Errorf("Revenue: %w", err)
-		}
-	}
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
-		}
-	}
-	if r.ProductOrService != nil {
-		if err := r.ProductOrService.Validate(); err != nil {
-			return fmt.Errorf("ProductOrService: %w", err)
-		}
-	}
-	if r.ProductOrServiceEnd != nil {
-		if err := r.ProductOrServiceEnd.Validate(); err != nil {
-			return fmt.Errorf("ProductOrServiceEnd: %w", err)
-		}
-	}
-	for i, item := range r.Request {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Request[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Modifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Modifier[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.ProgramCode {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("ProgramCode[%d]: %w", i, err)
-		}
-	}
-	if r.ServicedPeriod != nil {
-		if err := r.ServicedPeriod.Validate(); err != nil {
-			return fmt.Errorf("ServicedPeriod: %w", err)
-		}
-	}
-	if r.LocationCodeableConcept != nil {
-		if err := r.LocationCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("LocationCodeableConcept: %w", err)
-		}
-	}
-	if r.LocationAddress != nil {
-		if err := r.LocationAddress.Validate(); err != nil {
-			return fmt.Errorf("LocationAddress: %w", err)
-		}
-	}
-	if r.LocationReference != nil {
-		if err := r.LocationReference.Validate(); err != nil {
-			return fmt.Errorf("LocationReference: %w", err)
-		}
-	}
-	if r.PatientPaid != nil {
-		if err := r.PatientPaid.Validate(); err != nil {
-			return fmt.Errorf("PatientPaid: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.UnitPrice != nil {
-		if err := r.UnitPrice.Validate(); err != nil {
-			return fmt.Errorf("UnitPrice: %w", err)
-		}
-	}
-	if r.Tax != nil {
-		if err := r.Tax.Validate(); err != nil {
-			return fmt.Errorf("Tax: %w", err)
-		}
-	}
-	if r.Net != nil {
-		if err := r.Net.Validate(); err != nil {
-			return fmt.Errorf("Net: %w", err)
-		}
-	}
-	for i, item := range r.BodySite {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("BodySite[%d]: %w", i, err)
-		}
-	}
-	if r.ReviewOutcome != nil {
-		if err := r.ReviewOutcome.Validate(); err != nil {
-			return fmt.Errorf("ReviewOutcome: %w", err)
-		}
-	}
-	for i, item := range r.Adjudication {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Adjudication[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Detail {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Detail[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type ExplanationOfBenefitProcessNote struct {
 	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
 	Class    *CodeableConcept `json:"class,omitempty" bson:"class,omitempty"`       // Business kind of note
@@ -1359,6 +1700,50 @@ func (r *ExplanationOfBenefitProcessNote) Validate() error {
 	if r.Language != nil {
 		if err := r.Language.Validate(); err != nil {
 			return fmt.Errorf("Language: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExplanationOfBenefitBenefitBalance struct {
+	Id          *string                                       `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Category    *CodeableConcept                              `json:"category" bson:"category"`                           // Benefit classification
+	Excluded    bool                                          `json:"excluded,omitempty" bson:"excluded,omitempty"`       // Excluded from the plan
+	Name        *string                                       `json:"name,omitempty" bson:"name,omitempty"`               // Short name for the benefit
+	Description *string                                       `json:"description,omitempty" bson:"description,omitempty"` // Description of the benefit or services covered
+	Network     *CodeableConcept                              `json:"network,omitempty" bson:"network,omitempty"`         // In or out of network
+	Unit        *CodeableConcept                              `json:"unit,omitempty" bson:"unit,omitempty"`               // Individual or family
+	Term        *CodeableConcept                              `json:"term,omitempty" bson:"term,omitempty"`               // Annual or lifetime
+	Financial   []ExplanationOfBenefitBenefitBalanceFinancial `json:"financial,omitempty" bson:"financial,omitempty"`     // Benefit Summary
+}
+
+func (r *ExplanationOfBenefitBenefitBalance) Validate() error {
+	if r.Category == nil {
+		return fmt.Errorf("field 'Category' is required")
+	}
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
+		}
+	}
+	if r.Network != nil {
+		if err := r.Network.Validate(); err != nil {
+			return fmt.Errorf("Network: %w", err)
+		}
+	}
+	if r.Unit != nil {
+		if err := r.Unit.Validate(); err != nil {
+			return fmt.Errorf("Unit: %w", err)
+		}
+	}
+	if r.Term != nil {
+		if err := r.Term.Validate(); err != nil {
+			return fmt.Errorf("Term: %w", err)
+		}
+	}
+	for i, item := range r.Financial {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Financial[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -1396,412 +1781,27 @@ func (r *ExplanationOfBenefitBenefitBalanceFinancial) Validate() error {
 	return nil
 }
 
-type ExplanationOfBenefitAccident struct {
-	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
-	Date              *string          `json:"date,omitempty" bson:"date,omitempty"`                            // When the incident occurred
-	Type              *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                            // The nature of the accident
-	LocationAddress   *Address         `json:"locationAddress,omitempty" bson:"location_address,omitempty"`     // Where the event occurred
-	LocationReference *Reference       `json:"locationReference,omitempty" bson:"location_reference,omitempty"` // Where the event occurred
+type ExplanationOfBenefitRelated struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Claim        *Reference       `json:"claim,omitempty" bson:"claim,omitempty"`               // Reference to the related claim
+	Relationship *CodeableConcept `json:"relationship,omitempty" bson:"relationship,omitempty"` // How the reference claim is related
+	Reference    *Identifier      `json:"reference,omitempty" bson:"reference,omitempty"`       // File or case reference
 }
 
-func (r *ExplanationOfBenefitAccident) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
+func (r *ExplanationOfBenefitRelated) Validate() error {
+	if r.Claim != nil {
+		if err := r.Claim.Validate(); err != nil {
+			return fmt.Errorf("Claim: %w", err)
 		}
 	}
-	if r.LocationAddress != nil {
-		if err := r.LocationAddress.Validate(); err != nil {
-			return fmt.Errorf("LocationAddress: %w", err)
+	if r.Relationship != nil {
+		if err := r.Relationship.Validate(); err != nil {
+			return fmt.Errorf("Relationship: %w", err)
 		}
 	}
-	if r.LocationReference != nil {
-		if err := r.LocationReference.Validate(); err != nil {
-			return fmt.Errorf("LocationReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitItemDetail struct {
-	Id                  *string                                   `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
-	Sequence            int                                       `json:"sequence" bson:"sequence"`                                              // Product or service provided
-	TraceNumber         []Identifier                              `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
-	Revenue             *CodeableConcept                          `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
-	Category            *CodeableConcept                          `json:"category,omitempty" bson:"category,omitempty"`                          // Benefit classification
-	ProductOrService    *CodeableConcept                          `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
-	ProductOrServiceEnd *CodeableConcept                          `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
-	Modifier            []CodeableConcept                         `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
-	ProgramCode         []CodeableConcept                         `json:"programCode,omitempty" bson:"program_code,omitempty"`                   // Program the product or service is provided under
-	PatientPaid         *Money                                    `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                   // Paid by the patient
-	Quantity            *Quantity                                 `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
-	UnitPrice           *Money                                    `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
-	Factor              *float64                                  `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
-	Tax                 *Money                                    `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
-	Net                 *Money                                    `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
-	Udi                 []Reference                               `json:"udi,omitempty" bson:"udi,omitempty"`                                    // Unique device identifier
-	NoteNumber          []int                                     `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
-	ReviewOutcome       *ExplanationOfBenefitItemReviewOutcome    `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Detail level adjudication results
-	Adjudication        []ExplanationOfBenefitItemAdjudication    `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Detail level adjudication details
-	SubDetail           []ExplanationOfBenefitItemDetailSubDetail `json:"subDetail,omitempty" bson:"sub_detail,omitempty"`                       // Additional items
-}
-
-func (r *ExplanationOfBenefitItemDetail) Validate() error {
-	if r.Sequence == 0 {
-		return fmt.Errorf("field 'Sequence' is required")
-	}
-	for i, item := range r.TraceNumber {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
-		}
-	}
-	if r.Revenue != nil {
-		if err := r.Revenue.Validate(); err != nil {
-			return fmt.Errorf("Revenue: %w", err)
-		}
-	}
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
-		}
-	}
-	if r.ProductOrService != nil {
-		if err := r.ProductOrService.Validate(); err != nil {
-			return fmt.Errorf("ProductOrService: %w", err)
-		}
-	}
-	if r.ProductOrServiceEnd != nil {
-		if err := r.ProductOrServiceEnd.Validate(); err != nil {
-			return fmt.Errorf("ProductOrServiceEnd: %w", err)
-		}
-	}
-	for i, item := range r.Modifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Modifier[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.ProgramCode {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("ProgramCode[%d]: %w", i, err)
-		}
-	}
-	if r.PatientPaid != nil {
-		if err := r.PatientPaid.Validate(); err != nil {
-			return fmt.Errorf("PatientPaid: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.UnitPrice != nil {
-		if err := r.UnitPrice.Validate(); err != nil {
-			return fmt.Errorf("UnitPrice: %w", err)
-		}
-	}
-	if r.Tax != nil {
-		if err := r.Tax.Validate(); err != nil {
-			return fmt.Errorf("Tax: %w", err)
-		}
-	}
-	if r.Net != nil {
-		if err := r.Net.Validate(); err != nil {
-			return fmt.Errorf("Net: %w", err)
-		}
-	}
-	for i, item := range r.Udi {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Udi[%d]: %w", i, err)
-		}
-	}
-	if r.ReviewOutcome != nil {
-		if err := r.ReviewOutcome.Validate(); err != nil {
-			return fmt.Errorf("ReviewOutcome: %w", err)
-		}
-	}
-	for i, item := range r.Adjudication {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Adjudication[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SubDetail {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SubDetail[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitItemDetailSubDetail struct {
-	Id                  *string                                `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
-	Sequence            int                                    `json:"sequence" bson:"sequence"`                                              // Product or service provided
-	TraceNumber         []Identifier                           `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
-	Revenue             *CodeableConcept                       `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
-	Category            *CodeableConcept                       `json:"category,omitempty" bson:"category,omitempty"`                          // Benefit classification
-	ProductOrService    *CodeableConcept                       `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
-	ProductOrServiceEnd *CodeableConcept                       `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
-	Modifier            []CodeableConcept                      `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
-	ProgramCode         []CodeableConcept                      `json:"programCode,omitempty" bson:"program_code,omitempty"`                   // Program the product or service is provided under
-	PatientPaid         *Money                                 `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                   // Paid by the patient
-	Quantity            *Quantity                              `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
-	UnitPrice           *Money                                 `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
-	Factor              *float64                               `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
-	Tax                 *Money                                 `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
-	Net                 *Money                                 `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
-	Udi                 []Reference                            `json:"udi,omitempty" bson:"udi,omitempty"`                                    // Unique device identifier
-	NoteNumber          []int                                  `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
-	ReviewOutcome       *ExplanationOfBenefitItemReviewOutcome `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Subdetail level adjudication results
-	Adjudication        []ExplanationOfBenefitItemAdjudication `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Subdetail level adjudication details
-}
-
-func (r *ExplanationOfBenefitItemDetailSubDetail) Validate() error {
-	if r.Sequence == 0 {
-		return fmt.Errorf("field 'Sequence' is required")
-	}
-	for i, item := range r.TraceNumber {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
-		}
-	}
-	if r.Revenue != nil {
-		if err := r.Revenue.Validate(); err != nil {
-			return fmt.Errorf("Revenue: %w", err)
-		}
-	}
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
-		}
-	}
-	if r.ProductOrService != nil {
-		if err := r.ProductOrService.Validate(); err != nil {
-			return fmt.Errorf("ProductOrService: %w", err)
-		}
-	}
-	if r.ProductOrServiceEnd != nil {
-		if err := r.ProductOrServiceEnd.Validate(); err != nil {
-			return fmt.Errorf("ProductOrServiceEnd: %w", err)
-		}
-	}
-	for i, item := range r.Modifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Modifier[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.ProgramCode {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("ProgramCode[%d]: %w", i, err)
-		}
-	}
-	if r.PatientPaid != nil {
-		if err := r.PatientPaid.Validate(); err != nil {
-			return fmt.Errorf("PatientPaid: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.UnitPrice != nil {
-		if err := r.UnitPrice.Validate(); err != nil {
-			return fmt.Errorf("UnitPrice: %w", err)
-		}
-	}
-	if r.Tax != nil {
-		if err := r.Tax.Validate(); err != nil {
-			return fmt.Errorf("Tax: %w", err)
-		}
-	}
-	if r.Net != nil {
-		if err := r.Net.Validate(); err != nil {
-			return fmt.Errorf("Net: %w", err)
-		}
-	}
-	for i, item := range r.Udi {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Udi[%d]: %w", i, err)
-		}
-	}
-	if r.ReviewOutcome != nil {
-		if err := r.ReviewOutcome.Validate(); err != nil {
-			return fmt.Errorf("ReviewOutcome: %w", err)
-		}
-	}
-	for i, item := range r.Adjudication {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Adjudication[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitInsurance struct {
-	Id         *string    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Focal      bool       `json:"focal" bson:"focal"`                                 // Coverage to be used for adjudication
-	Coverage   *Reference `json:"coverage" bson:"coverage"`                           // Insurance information
-	PreAuthRef []string   `json:"preAuthRef,omitempty" bson:"pre_auth_ref,omitempty"` // Prior authorization reference number
-}
-
-func (r *ExplanationOfBenefitInsurance) Validate() error {
-	if r.Coverage == nil {
-		return fmt.Errorf("field 'Coverage' is required")
-	}
-	if r.Coverage != nil {
-		if err := r.Coverage.Validate(); err != nil {
-			return fmt.Errorf("Coverage: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitItemReviewOutcome struct {
-	Id            *string           `json:"id,omitempty" bson:"id,omitempty"`                         // Unique id for inter-element referencing
-	Decision      *CodeableConcept  `json:"decision,omitempty" bson:"decision,omitempty"`             // Result of the adjudication
-	Reason        []CodeableConcept `json:"reason,omitempty" bson:"reason,omitempty"`                 // Reason for result of the adjudication
-	PreAuthRef    *string           `json:"preAuthRef,omitempty" bson:"pre_auth_ref,omitempty"`       // Preauthorization reference
-	PreAuthPeriod *Period           `json:"preAuthPeriod,omitempty" bson:"pre_auth_period,omitempty"` // Preauthorization reference effective period
-}
-
-func (r *ExplanationOfBenefitItemReviewOutcome) Validate() error {
-	if r.Decision != nil {
-		if err := r.Decision.Validate(); err != nil {
-			return fmt.Errorf("Decision: %w", err)
-		}
-	}
-	for i, item := range r.Reason {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Reason[%d]: %w", i, err)
-		}
-	}
-	if r.PreAuthPeriod != nil {
-		if err := r.PreAuthPeriod.Validate(); err != nil {
-			return fmt.Errorf("PreAuthPeriod: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitItemAdjudication struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Category     *CodeableConcept `json:"category" bson:"category"`                              // Type of adjudication information
-	Reason       *CodeableConcept `json:"reason,omitempty" bson:"reason,omitempty"`              // Explanation of adjudication outcome
-	Amount       *Money           `json:"amount,omitempty" bson:"amount,omitempty"`              // Monetary amount
-	Quantity     *Quantity        `json:"quantity,omitempty" bson:"quantity,omitempty"`          // Non-monitary value
-	DecisionDate *string          `json:"decisionDate,omitempty" bson:"decision_date,omitempty"` // When was adjudication performed
-}
-
-func (r *ExplanationOfBenefitItemAdjudication) Validate() error {
-	if r.Category == nil {
-		return fmt.Errorf("field 'Category' is required")
-	}
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
-		}
-	}
-	if r.Reason != nil {
-		if err := r.Reason.Validate(); err != nil {
-			return fmt.Errorf("Reason: %w", err)
-		}
-	}
-	if r.Amount != nil {
-		if err := r.Amount.Validate(); err != nil {
-			return fmt.Errorf("Amount: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExplanationOfBenefitAddItemDetail struct {
-	Id                  *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
-	TraceNumber         []Identifier                                 `json:"traceNumber,omitempty" bson:"trace_number,omitempty"`                   // Number for tracking
-	Revenue             *CodeableConcept                             `json:"revenue,omitempty" bson:"revenue,omitempty"`                            // Revenue or cost center code
-	ProductOrService    *CodeableConcept                             `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`        // Billing, service, product, or drug code
-	ProductOrServiceEnd *CodeableConcept                             `json:"productOrServiceEnd,omitempty" bson:"product_or_service_end,omitempty"` // End of a range of codes
-	Modifier            []CodeableConcept                            `json:"modifier,omitempty" bson:"modifier,omitempty"`                          // Service/Product billing modifiers
-	PatientPaid         *Money                                       `json:"patientPaid,omitempty" bson:"patient_paid,omitempty"`                   // Paid by the patient
-	Quantity            *Quantity                                    `json:"quantity,omitempty" bson:"quantity,omitempty"`                          // Count of products or services
-	UnitPrice           *Money                                       `json:"unitPrice,omitempty" bson:"unit_price,omitempty"`                       // Fee, charge or cost per item
-	Factor              *float64                                     `json:"factor,omitempty" bson:"factor,omitempty"`                              // Price scaling factor
-	Tax                 *Money                                       `json:"tax,omitempty" bson:"tax,omitempty"`                                    // Total tax
-	Net                 *Money                                       `json:"net,omitempty" bson:"net,omitempty"`                                    // Total item cost
-	NoteNumber          []int                                        `json:"noteNumber,omitempty" bson:"note_number,omitempty"`                     // Applicable note numbers
-	ReviewOutcome       *ExplanationOfBenefitItemReviewOutcome       `json:"reviewOutcome,omitempty" bson:"review_outcome,omitempty"`               // Additem detail level adjudication results
-	Adjudication        []ExplanationOfBenefitItemAdjudication       `json:"adjudication,omitempty" bson:"adjudication,omitempty"`                  // Added items adjudication
-	SubDetail           []ExplanationOfBenefitAddItemDetailSubDetail `json:"subDetail,omitempty" bson:"sub_detail,omitempty"`                       // Insurer added line items
-}
-
-func (r *ExplanationOfBenefitAddItemDetail) Validate() error {
-	for i, item := range r.TraceNumber {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("TraceNumber[%d]: %w", i, err)
-		}
-	}
-	if r.Revenue != nil {
-		if err := r.Revenue.Validate(); err != nil {
-			return fmt.Errorf("Revenue: %w", err)
-		}
-	}
-	if r.ProductOrService != nil {
-		if err := r.ProductOrService.Validate(); err != nil {
-			return fmt.Errorf("ProductOrService: %w", err)
-		}
-	}
-	if r.ProductOrServiceEnd != nil {
-		if err := r.ProductOrServiceEnd.Validate(); err != nil {
-			return fmt.Errorf("ProductOrServiceEnd: %w", err)
-		}
-	}
-	for i, item := range r.Modifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Modifier[%d]: %w", i, err)
-		}
-	}
-	if r.PatientPaid != nil {
-		if err := r.PatientPaid.Validate(); err != nil {
-			return fmt.Errorf("PatientPaid: %w", err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	if r.UnitPrice != nil {
-		if err := r.UnitPrice.Validate(); err != nil {
-			return fmt.Errorf("UnitPrice: %w", err)
-		}
-	}
-	if r.Tax != nil {
-		if err := r.Tax.Validate(); err != nil {
-			return fmt.Errorf("Tax: %w", err)
-		}
-	}
-	if r.Net != nil {
-		if err := r.Net.Validate(); err != nil {
-			return fmt.Errorf("Net: %w", err)
-		}
-	}
-	if r.ReviewOutcome != nil {
-		if err := r.ReviewOutcome.Validate(); err != nil {
-			return fmt.Errorf("ReviewOutcome: %w", err)
-		}
-	}
-	for i, item := range r.Adjudication {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Adjudication[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SubDetail {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SubDetail[%d]: %w", i, err)
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
 		}
 	}
 	return nil

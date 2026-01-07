@@ -6,12 +6,12 @@ import (
 )
 
 type Config struct {
-    Server struct {
-        Port string `yaml:"port"`
-    } `yaml:"server"`
-    Auth struct {
-        JWTSecret string `yaml:"jwt_secret"`
-    } `yaml:"auth"`
+	Server struct {
+		Port string `yaml:"port"`
+	} `yaml:"server"`
+	Auth struct {
+		JWTSecret string `yaml:"jwt_secret"`
+	} `yaml:"auth"`
 }
 
 func NewConfig() (*Config, error) {
@@ -29,9 +29,9 @@ func NewConfig() (*Config, error) {
 		cfg.Server.Port = envPort
 	}
 
-    if envSecret := os.Getenv("JWT_SECRET"); envSecret != "" {
-        cfg.Auth.JWTSecret = envSecret
-    }
-	
+	if envSecret := os.Getenv("JWT_SECRET"); envSecret != "" {
+		cfg.Auth.JWTSecret = envSecret
+	}
+
 	return &cfg, nil
 }

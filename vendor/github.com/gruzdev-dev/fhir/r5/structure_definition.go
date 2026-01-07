@@ -125,6 +125,22 @@ func (r *StructureDefinition) Validate() error {
 	return nil
 }
 
+type StructureDefinitionMapping struct {
+	Id       *string `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
+	Identity string  `json:"identity" bson:"identity"`                   // Internal id when this mapping is used
+	Uri      *string `json:"uri,omitempty" bson:"uri,omitempty"`         // Identifies what this mapping refers to
+	Name     *string `json:"name,omitempty" bson:"name,omitempty"`       // Names what this mapping refers to
+	Comment  *string `json:"comment,omitempty" bson:"comment,omitempty"` // Versions, Issues, Scope limitations etc
+}
+
+func (r *StructureDefinitionMapping) Validate() error {
+	var emptyString string
+	if r.Identity == emptyString {
+		return fmt.Errorf("field 'Identity' is required")
+	}
+	return nil
+}
+
 type StructureDefinitionContext struct {
 	Id         *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
 	Type       string  `json:"type" bson:"type"`                 // fhirpath | element | extension
@@ -172,22 +188,6 @@ func (r *StructureDefinitionDifferential) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Element[%d]: %w", i, err)
 		}
-	}
-	return nil
-}
-
-type StructureDefinitionMapping struct {
-	Id       *string `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
-	Identity string  `json:"identity" bson:"identity"`                   // Internal id when this mapping is used
-	Uri      *string `json:"uri,omitempty" bson:"uri,omitempty"`         // Identifies what this mapping refers to
-	Name     *string `json:"name,omitempty" bson:"name,omitempty"`       // Names what this mapping refers to
-	Comment  *string `json:"comment,omitempty" bson:"comment,omitempty"` // Versions, Issues, Scope limitations etc
-}
-
-func (r *StructureDefinitionMapping) Validate() error {
-	var emptyString string
-	if r.Identity == emptyString {
-		return fmt.Errorf("field 'Identity' is required")
 	}
 	return nil
 }

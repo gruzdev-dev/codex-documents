@@ -187,71 +187,6 @@ func (r *Task) Validate() error {
 	return nil
 }
 
-type TaskFocus struct {
-	Id             *string    `json:"id,omitempty" bson:"id,omitempty"`      // Unique id for inter-element referencing
-	ValueReference *Reference `json:"valueReference" bson:"value_reference"` // What task is acting on
-	ValueCanonical *string    `json:"valueCanonical" bson:"value_canonical"` // What task is acting on
-}
-
-func (r *TaskFocus) Validate() error {
-	if r.ValueReference == nil {
-		return fmt.Errorf("field 'ValueReference' is required")
-	}
-	if r.ValueReference != nil {
-		if err := r.ValueReference.Validate(); err != nil {
-			return fmt.Errorf("ValueReference: %w", err)
-		}
-	}
-	if r.ValueCanonical == nil {
-		return fmt.Errorf("field 'ValueCanonical' is required")
-	}
-	return nil
-}
-
-type TaskPerformer struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
-	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who performed the task
-}
-
-func (r *TaskPerformer) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
-		}
-	}
-	return nil
-}
-
-type TaskRestriction struct {
-	Id          *string     `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Repetitions *int        `json:"repetitions,omitempty" bson:"repetitions,omitempty"` // How many times to repeat
-	Period      *Period     `json:"period,omitempty" bson:"period,omitempty"`           // When fulfillment is sought
-	Recipient   []Reference `json:"recipient,omitempty" bson:"recipient,omitempty"`     // Individual or entity from whom fulfillment is being sought
-}
-
-func (r *TaskRestriction) Validate() error {
-	if r.Period != nil {
-		if err := r.Period.Validate(); err != nil {
-			return fmt.Errorf("Period: %w", err)
-		}
-	}
-	for i, item := range r.Recipient {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Recipient[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type TaskInput struct {
 	Id                         *string                `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
 	Type                       *CodeableConcept       `json:"type" bson:"type"`                                                // Label for the input
@@ -1081,6 +1016,71 @@ func (r *TaskOutput) Validate() error {
 	if r.ValueMeta != nil {
 		if err := r.ValueMeta.Validate(); err != nil {
 			return fmt.Errorf("ValueMeta: %w", err)
+		}
+	}
+	return nil
+}
+
+type TaskFocus struct {
+	Id             *string    `json:"id,omitempty" bson:"id,omitempty"`      // Unique id for inter-element referencing
+	ValueReference *Reference `json:"valueReference" bson:"value_reference"` // What task is acting on
+	ValueCanonical *string    `json:"valueCanonical" bson:"value_canonical"` // What task is acting on
+}
+
+func (r *TaskFocus) Validate() error {
+	if r.ValueReference == nil {
+		return fmt.Errorf("field 'ValueReference' is required")
+	}
+	if r.ValueReference != nil {
+		if err := r.ValueReference.Validate(); err != nil {
+			return fmt.Errorf("ValueReference: %w", err)
+		}
+	}
+	if r.ValueCanonical == nil {
+		return fmt.Errorf("field 'ValueCanonical' is required")
+	}
+	return nil
+}
+
+type TaskPerformer struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
+	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who performed the task
+}
+
+func (r *TaskPerformer) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
+		}
+	}
+	return nil
+}
+
+type TaskRestriction struct {
+	Id          *string     `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Repetitions *int        `json:"repetitions,omitempty" bson:"repetitions,omitempty"` // How many times to repeat
+	Period      *Period     `json:"period,omitempty" bson:"period,omitempty"`           // When fulfillment is sought
+	Recipient   []Reference `json:"recipient,omitempty" bson:"recipient,omitempty"`     // Individual or entity from whom fulfillment is being sought
+}
+
+func (r *TaskRestriction) Validate() error {
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
+		}
+	}
+	for i, item := range r.Recipient {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Recipient[%d]: %w", i, err)
 		}
 	}
 	return nil

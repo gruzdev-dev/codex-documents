@@ -184,55 +184,6 @@ func (r *Immunization) Validate() error {
 	return nil
 }
 
-type ImmunizationPerformer struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
-	Actor    *Reference       `json:"actor" bson:"actor"`                           // Individual or organization who performed the event
-}
-
-func (r *ImmunizationPerformer) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
-		}
-	}
-	return nil
-}
-
-type ImmunizationProgramEligibility struct {
-	Id            *string          `json:"id,omitempty" bson:"id,omitempty"`    // Unique id for inter-element referencing
-	Program       *CodeableConcept `json:"program" bson:"program"`              // The program that eligibility is declared for
-	ProgramStatus *CodeableConcept `json:"programStatus" bson:"program_status"` // The patient's eligibility status for the program
-}
-
-func (r *ImmunizationProgramEligibility) Validate() error {
-	if r.Program == nil {
-		return fmt.Errorf("field 'Program' is required")
-	}
-	if r.Program != nil {
-		if err := r.Program.Validate(); err != nil {
-			return fmt.Errorf("Program: %w", err)
-		}
-	}
-	if r.ProgramStatus == nil {
-		return fmt.Errorf("field 'ProgramStatus' is required")
-	}
-	if r.ProgramStatus != nil {
-		if err := r.ProgramStatus.Validate(); err != nil {
-			return fmt.Errorf("ProgramStatus: %w", err)
-		}
-	}
-	return nil
-}
-
 type ImmunizationReaction struct {
 	Id            *string            `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Date          *string            `json:"date,omitempty" bson:"date,omitempty"`                   // When reaction started
@@ -277,6 +228,55 @@ func (r *ImmunizationProtocolApplied) Validate() error {
 	if r.SeriesDoses != nil {
 		if err := r.SeriesDoses.Validate(); err != nil {
 			return fmt.Errorf("SeriesDoses: %w", err)
+		}
+	}
+	return nil
+}
+
+type ImmunizationPerformer struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
+	Actor    *Reference       `json:"actor" bson:"actor"`                           // Individual or organization who performed the event
+}
+
+func (r *ImmunizationPerformer) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
+		}
+	}
+	return nil
+}
+
+type ImmunizationProgramEligibility struct {
+	Id            *string          `json:"id,omitempty" bson:"id,omitempty"`    // Unique id for inter-element referencing
+	Program       *CodeableConcept `json:"program" bson:"program"`              // The program that eligibility is declared for
+	ProgramStatus *CodeableConcept `json:"programStatus" bson:"program_status"` // The patient's eligibility status for the program
+}
+
+func (r *ImmunizationProgramEligibility) Validate() error {
+	if r.Program == nil {
+		return fmt.Errorf("field 'Program' is required")
+	}
+	if r.Program != nil {
+		if err := r.Program.Validate(); err != nil {
+			return fmt.Errorf("Program: %w", err)
+		}
+	}
+	if r.ProgramStatus == nil {
+		return fmt.Errorf("field 'ProgramStatus' is required")
+	}
+	if r.ProgramStatus != nil {
+		if err := r.ProgramStatus.Validate(); err != nil {
+			return fmt.Errorf("ProgramStatus: %w", err)
 		}
 	}
 	return nil

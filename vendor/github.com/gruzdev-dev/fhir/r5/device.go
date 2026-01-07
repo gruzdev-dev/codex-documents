@@ -134,6 +134,51 @@ func (r *Device) Validate() error {
 	return nil
 }
 
+type DeviceUdiCarrier struct {
+	Id                     *string `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
+	DeviceIdentifier       string  `json:"deviceIdentifier" bson:"device_identifier"`                                  // Mandatory fixed portion of UDI
+	DeviceIdentifierSystem *string `json:"deviceIdentifierSystem,omitempty" bson:"device_identifier_system,omitempty"` // The namespace for the device identifier value
+	Issuer                 string  `json:"issuer" bson:"issuer"`                                                       // UDI Issuing Organization
+	Jurisdiction           *string `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"`                       // Regional UDI authority
+	CarrierAIDC            *string `json:"carrierAIDC,omitempty" bson:"carrier_a_i_d_c,omitempty"`                     // UDI Machine Readable value
+	CarrierHRF             *string `json:"carrierHRF,omitempty" bson:"carrier_h_r_f,omitempty"`                        // UDI Human Readable value
+	EntryType              *string `json:"entryType,omitempty" bson:"entry_type,omitempty"`                            // barcode | rfid | manual | card | self-reported | electronic-transmission | unknown
+}
+
+func (r *DeviceUdiCarrier) Validate() error {
+	var emptyString string
+	if r.DeviceIdentifier == emptyString {
+		return fmt.Errorf("field 'DeviceIdentifier' is required")
+	}
+	if r.Issuer == emptyString {
+		return fmt.Errorf("field 'Issuer' is required")
+	}
+	return nil
+}
+
+type DeviceName struct {
+	Id      *string          `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
+	Value   string           `json:"value" bson:"value"`                         // The term that names the device
+	Type    *CodeableConcept `json:"type" bson:"type"`                           // registered-name | user-friendly-name | patient-reported-name
+	Display bool             `json:"display,omitempty" bson:"display,omitempty"` // The preferred device name
+}
+
+func (r *DeviceName) Validate() error {
+	var emptyString string
+	if r.Value == emptyString {
+		return fmt.Errorf("field 'Value' is required")
+	}
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	return nil
+}
+
 type DeviceDeviceVersion struct {
 	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
 	Type        *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                // The type of the device version, e.g. manufacturer, approved, internal
@@ -267,51 +312,6 @@ func (r *DeviceAdditive) Validate() error {
 	if r.Quantity != nil {
 		if err := r.Quantity.Validate(); err != nil {
 			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	return nil
-}
-
-type DeviceUdiCarrier struct {
-	Id                     *string `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
-	DeviceIdentifier       string  `json:"deviceIdentifier" bson:"device_identifier"`                                  // Mandatory fixed portion of UDI
-	DeviceIdentifierSystem *string `json:"deviceIdentifierSystem,omitempty" bson:"device_identifier_system,omitempty"` // The namespace for the device identifier value
-	Issuer                 string  `json:"issuer" bson:"issuer"`                                                       // UDI Issuing Organization
-	Jurisdiction           *string `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"`                       // Regional UDI authority
-	CarrierAIDC            *string `json:"carrierAIDC,omitempty" bson:"carrier_a_i_d_c,omitempty"`                     // UDI Machine Readable value
-	CarrierHRF             *string `json:"carrierHRF,omitempty" bson:"carrier_h_r_f,omitempty"`                        // UDI Human Readable value
-	EntryType              *string `json:"entryType,omitempty" bson:"entry_type,omitempty"`                            // barcode | rfid | manual | card | self-reported | electronic-transmission | unknown
-}
-
-func (r *DeviceUdiCarrier) Validate() error {
-	var emptyString string
-	if r.DeviceIdentifier == emptyString {
-		return fmt.Errorf("field 'DeviceIdentifier' is required")
-	}
-	if r.Issuer == emptyString {
-		return fmt.Errorf("field 'Issuer' is required")
-	}
-	return nil
-}
-
-type DeviceName struct {
-	Id      *string          `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
-	Value   string           `json:"value" bson:"value"`                         // The term that names the device
-	Type    *CodeableConcept `json:"type" bson:"type"`                           // registered-name | user-friendly-name | patient-reported-name
-	Display bool             `json:"display,omitempty" bson:"display,omitempty"` // The preferred device name
-}
-
-func (r *DeviceName) Validate() error {
-	var emptyString string
-	if r.Value == emptyString {
-		return fmt.Errorf("field 'Value' is required")
-	}
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
 		}
 	}
 	return nil

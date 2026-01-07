@@ -149,28 +149,6 @@ func (r *CodeSystem) Validate() error {
 	return nil
 }
 
-type CodeSystemFilter struct {
-	Id          *string  `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Code        string   `json:"code" bson:"code"`                                   // Code that identifies the filter
-	Description *string  `json:"description,omitempty" bson:"description,omitempty"` // How or why the filter is used
-	Operator    []string `json:"operator" bson:"operator"`                           // = | is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | child-of | descendent-leaf | exists
-	Value       string   `json:"value" bson:"value"`                                 // What to use for the value
-}
-
-func (r *CodeSystemFilter) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if len(r.Operator) < 1 {
-		return fmt.Errorf("field 'Operator' must have at least 1 elements")
-	}
-	if r.Value == emptyString {
-		return fmt.Errorf("field 'Value' is required")
-	}
-	return nil
-}
-
 type CodeSystemProperty struct {
 	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Code        string  `json:"code" bson:"code"`                                   // Identifies the property on the concepts, and when referred to in operations
@@ -291,6 +269,28 @@ func (r *CodeSystemConceptProperty) Validate() error {
 	}
 	if r.ValueDecimal == nil {
 		return fmt.Errorf("field 'ValueDecimal' is required")
+	}
+	return nil
+}
+
+type CodeSystemFilter struct {
+	Id          *string  `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Code        string   `json:"code" bson:"code"`                                   // Code that identifies the filter
+	Description *string  `json:"description,omitempty" bson:"description,omitempty"` // How or why the filter is used
+	Operator    []string `json:"operator" bson:"operator"`                           // = | is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | child-of | descendent-leaf | exists
+	Value       string   `json:"value" bson:"value"`                                 // What to use for the value
+}
+
+func (r *CodeSystemFilter) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if len(r.Operator) < 1 {
+		return fmt.Errorf("field 'Operator' must have at least 1 elements")
+	}
+	if r.Value == emptyString {
+		return fmt.Errorf("field 'Value' is required")
 	}
 	return nil
 }

@@ -109,28 +109,6 @@ func (r *EpisodeOfCare) Validate() error {
 	return nil
 }
 
-type EpisodeOfCareStatusHistory struct {
-	Id     *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Status string  `json:"status" bson:"status"`             // planned | waitlist | active | onhold | finished | cancelled | entered-in-error
-	Period *Period `json:"period" bson:"period"`             // Duration the EpisodeOfCare was in the specified status
-}
-
-func (r *EpisodeOfCareStatusHistory) Validate() error {
-	var emptyString string
-	if r.Status == emptyString {
-		return fmt.Errorf("field 'Status' is required")
-	}
-	if r.Period == nil {
-		return fmt.Errorf("field 'Period' is required")
-	}
-	if r.Period != nil {
-		if err := r.Period.Validate(); err != nil {
-			return fmt.Errorf("Period: %w", err)
-		}
-	}
-	return nil
-}
-
 type EpisodeOfCareReason struct {
 	Id    *string             `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
 	Use   []CodeableConcept   `json:"use,omitempty" bson:"use,omitempty"`     // What the reason value should be used for/as
@@ -166,6 +144,28 @@ func (r *EpisodeOfCareDiagnosis) Validate() error {
 	for i, item := range r.Use {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Use[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type EpisodeOfCareStatusHistory struct {
+	Id     *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Status string  `json:"status" bson:"status"`             // planned | waitlist | active | onhold | finished | cancelled | entered-in-error
+	Period *Period `json:"period" bson:"period"`             // Duration the EpisodeOfCare was in the specified status
+}
+
+func (r *EpisodeOfCareStatusHistory) Validate() error {
+	var emptyString string
+	if r.Status == emptyString {
+		return fmt.Errorf("field 'Status' is required")
+	}
+	if r.Period == nil {
+		return fmt.Errorf("field 'Period' is required")
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
 		}
 	}
 	return nil

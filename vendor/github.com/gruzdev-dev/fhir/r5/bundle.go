@@ -54,37 +54,6 @@ func (r *Bundle) Validate() error {
 	return nil
 }
 
-type BundleEntrySearch struct {
-	Id    *string  `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Mode  *string  `json:"mode,omitempty" bson:"mode,omitempty"`   // match | include - why this is in the result set
-	Score *float64 `json:"score,omitempty" bson:"score,omitempty"` // Search ranking (between 0 and 1)
-}
-
-func (r *BundleEntrySearch) Validate() error {
-	return nil
-}
-
-type BundleEntryRequest struct {
-	Id              *string `json:"id,omitempty" bson:"id,omitempty"`                             // Unique id for inter-element referencing
-	Method          string  `json:"method" bson:"method"`                                         // GET | HEAD | POST | PUT | DELETE | PATCH
-	Url             string  `json:"url" bson:"url"`                                               // URL for HTTP equivalent of this entry
-	IfNoneMatch     *string `json:"ifNoneMatch,omitempty" bson:"if_none_match,omitempty"`         // For managing cache validation
-	IfModifiedSince *string `json:"ifModifiedSince,omitempty" bson:"if_modified_since,omitempty"` // For managing cache currency
-	IfMatch         *string `json:"ifMatch,omitempty" bson:"if_match,omitempty"`                  // For managing update contention
-	IfNoneExist     *string `json:"ifNoneExist,omitempty" bson:"if_none_exist,omitempty"`         // For conditional creates
-}
-
-func (r *BundleEntryRequest) Validate() error {
-	var emptyString string
-	if r.Method == emptyString {
-		return fmt.Errorf("field 'Method' is required")
-	}
-	if r.Url == emptyString {
-		return fmt.Errorf("field 'Url' is required")
-	}
-	return nil
-}
-
 type BundleEntryResponse struct {
 	Id           *string         `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
 	Status       string          `json:"status" bson:"status"`                                  // Status response code (text optional)
@@ -149,6 +118,37 @@ func (r *BundleEntry) Validate() error {
 		if err := r.Response.Validate(); err != nil {
 			return fmt.Errorf("Response: %w", err)
 		}
+	}
+	return nil
+}
+
+type BundleEntrySearch struct {
+	Id    *string  `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Mode  *string  `json:"mode,omitempty" bson:"mode,omitempty"`   // match | include - why this is in the result set
+	Score *float64 `json:"score,omitempty" bson:"score,omitempty"` // Search ranking (between 0 and 1)
+}
+
+func (r *BundleEntrySearch) Validate() error {
+	return nil
+}
+
+type BundleEntryRequest struct {
+	Id              *string `json:"id,omitempty" bson:"id,omitempty"`                             // Unique id for inter-element referencing
+	Method          string  `json:"method" bson:"method"`                                         // GET | HEAD | POST | PUT | DELETE | PATCH
+	Url             string  `json:"url" bson:"url"`                                               // URL for HTTP equivalent of this entry
+	IfNoneMatch     *string `json:"ifNoneMatch,omitempty" bson:"if_none_match,omitempty"`         // For managing cache validation
+	IfModifiedSince *string `json:"ifModifiedSince,omitempty" bson:"if_modified_since,omitempty"` // For managing cache currency
+	IfMatch         *string `json:"ifMatch,omitempty" bson:"if_match,omitempty"`                  // For managing update contention
+	IfNoneExist     *string `json:"ifNoneExist,omitempty" bson:"if_none_exist,omitempty"`         // For conditional creates
+}
+
+func (r *BundleEntryRequest) Validate() error {
+	var emptyString string
+	if r.Method == emptyString {
+		return fmt.Errorf("field 'Method' is required")
+	}
+	if r.Url == emptyString {
+		return fmt.Errorf("field 'Url' is required")
 	}
 	return nil
 }
