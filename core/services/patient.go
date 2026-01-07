@@ -8,6 +8,7 @@ import (
 	"codex-documents/core/ports"
 	"codex-documents/core/validator"
 	"codex-documents/pkg/identity"
+
 	models "github.com/gruzdev-dev/fhir/r5"
 )
 
@@ -35,7 +36,7 @@ func (s *PatientService) Create(ctx context.Context, patient *models.Patient) er
 	return nil
 }
 
-func (s *PatientService) GetPatient(ctx context.Context, id string) (*models.Patient, error) {
+func (s *PatientService) Get(ctx context.Context, id string) (*models.Patient, error) {
 	user, ok := identity.FromCtx(ctx)
 	if !ok {
 		return nil, domain.ErrAccessDenied
