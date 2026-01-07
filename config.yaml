@@ -1,4 +1,9 @@
 server:
-  port: "8081"
+  port: "8080"
 
-jwt_secret: "secret"
+auth:
+  jwt_secret: "secret-key"
+
+mongodb:
+  uri: "mongodb://localhost:27017"
+  database: "cpdex"

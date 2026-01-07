@@ -1,12 +1,12 @@
 package http
 
 import (
-	"fmt"
-	"net/http"
-		"encoding/json"
 	"codex-documents/configs"
 	"codex-documents/core/ports"
+	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 type Handler struct {

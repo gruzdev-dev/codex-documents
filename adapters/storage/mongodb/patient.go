@@ -12,17 +12,17 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-type PatientStore struct {
+type PatientRepo struct {
 	collection *mongo.Collection
 }
 
-func NewPatientStore(db *mongo.Database) *PatientStore {
-	return &PatientStore{
+func NewPatientRepo(db *mongo.Database) *PatientRepo {
+	return &PatientRepo{
 		collection: db.Collection("patients"),
 	}
 }
 
-func (s *PatientStore) Create(ctx context.Context, patient *models.Patient) error {
+func (s *PatientRepo) Create(ctx context.Context, patient *models.Patient) error {
 	_, err := s.collection.InsertOne(ctx, patient)
 	if err != nil {
 		return fmt.Errorf("failed to insert patient: %w", err)
@@ -30,7 +30,7 @@ func (s *PatientStore) Create(ctx context.Context, patient *models.Patient) erro
 	return nil
 }
 
-func (s *PatientStore) GetByID(ctx context.Context, id string) (*models.Patient, error) {
+func (s *PatientRepo) GetByID(ctx context.Context, id string) (*models.Patient, error) {
 	var patient models.Patient
 
 	filter := bson.M{"id": id}
@@ -46,7 +46,7 @@ func (s *PatientStore) GetByID(ctx context.Context, id string) (*models.Patient,
 	return &patient, nil
 }
 
-func (s *PatientStore) Update(ctx context.Context, patient *models.Patient) error {
+func (s *PatientRepo) Update(ctx context.Context, patient *models.Patient) error {
 	if patient.Id == nil {
 		return domain.ErrPatientIDRequired
 	}

@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"codex-documents/pkg/ptr"
-	models "github.com/gruzdev-dev/fhir/r5"
 	"github.com/gorilla/mux"
+	models "github.com/gruzdev-dev/fhir/r5"
 )
 
 func (h *Handler) CreatePatient(w http.ResponseWriter, r *http.Request) {
