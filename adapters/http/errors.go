@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -24,13 +23,19 @@ func (h *Handler) respondWithError(w http.ResponseWriter, err error) {
 	}
 
 	if valErr := outcome.Validate(); valErr != nil {
-		h.respondWithInternalError(w, valErr)
+		h.respondWithResource(w, http.StatusInternalServerError, models.OperationOutcome{
+			Issue: []models.OperationOutcomeIssue{
+				{
+					Severity:    string(models.IssueSeverityFatal),
+					Code:        string(models.IssueTypeException),
+					Diagnostics: ptr.To("Internal error during error response generation: " + valErr.Error()),
+				},
+			},
+		})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/fhir+json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(outcome)
+	h.respondWithResource(w, status, outcome)
 }
 
 func (h *Handler) mapErrorToFhir(err error) (int, models.IssueSeverity, models.IssueType) {
@@ -50,19 +55,4 @@ func (h *Handler) mapErrorToFhir(err error) (int, models.IssueSeverity, models.I
 	default:
 		return http.StatusInternalServerError, models.IssueSeverityFatal, models.IssueTypeException
 	}
-}
-
-func (h *Handler) respondWithInternalError(w http.ResponseWriter, valErr error) {
-	w.Header().Set("Content-Type", "application/fhir+json")
-	w.WriteHeader(http.StatusInternalServerError)
-
-	json.NewEncoder(w).Encode(models.OperationOutcome{
-		Issue: []models.OperationOutcomeIssue{
-			{
-				Severity:    string(models.IssueSeverityFatal),
-				Code:        string(models.IssueTypeException),
-				Diagnostics: ptr.To("Internal error during error response generation: " + valErr.Error()),
-			},
-		},
-	})
 }
