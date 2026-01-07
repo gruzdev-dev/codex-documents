@@ -15,7 +15,7 @@ type Organization struct {
 	Text          *Narrative                  `json:"text,omitempty" bson:"text,omitempty"`                    // Text summary of the resource, for human interpretation
 	Contained     []json.RawMessage           `json:"contained,omitempty" bson:"contained,omitempty"`          // Contained, inline Resources
 	Identifier    []Identifier                `json:"identifier,omitempty" bson:"identifier,omitempty"`        // Identifies this organization  across multiple systems
-	Active        bool                        `json:"active,omitempty" bson:"active,omitempty"`                // Whether the organization's record is still in active use
+	Active        *bool                       `json:"active,omitempty" bson:"active,omitempty"`                // Whether the organization's record is still in active use
 	Type          []CodeableConcept           `json:"type,omitempty" bson:"type,omitempty"`                    // Kind of organization
 	Name          *string                     `json:"name,omitempty" bson:"name,omitempty"`                    // Name used for the organization
 	Alias         []string                    `json:"alias,omitempty" bson:"alias,omitempty"`                  // A list of alternate names that the organization is known as, or was known as in the past

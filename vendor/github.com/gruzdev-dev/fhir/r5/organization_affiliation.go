@@ -15,7 +15,7 @@ type OrganizationAffiliation struct {
 	Text                      *Narrative              `json:"text,omitempty" bson:"text,omitempty"`                                            // Text summary of the resource, for human interpretation
 	Contained                 []json.RawMessage       `json:"contained,omitempty" bson:"contained,omitempty"`                                  // Contained, inline Resources
 	Identifier                []Identifier            `json:"identifier,omitempty" bson:"identifier,omitempty"`                                // Business identifiers that are specific to this role
-	Active                    bool                    `json:"active,omitempty" bson:"active,omitempty"`                                        // Whether this organization affiliation record is in active use
+	Active                    *bool                   `json:"active,omitempty" bson:"active,omitempty"`                                        // Whether this organization affiliation record is in active use
 	Period                    *Period                 `json:"period,omitempty" bson:"period,omitempty"`                                        // The period during which the participatingOrganization is affiliated with the primary organization
 	Organization              *Reference              `json:"organization,omitempty" bson:"organization,omitempty"`                            // Organization where the role is available
 	ParticipatingOrganization *Reference              `json:"participatingOrganization,omitempty" bson:"participating_organization,omitempty"` // Organization that provides/performs the role (e.g. providing services or is a member of)

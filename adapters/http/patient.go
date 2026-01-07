@@ -2,8 +2,10 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
+	"codex-documents/core/domain"
 	"codex-documents/pkg/ptr"
 	"github.com/gorilla/mux"
 	models "github.com/gruzdev-dev/fhir/r5"
@@ -17,7 +19,7 @@ func (h *Handler) CreatePatient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := patient.Validate(); err != nil {
-		h.respondWithError(w, err)
+		h.respondWithError(w, fmt.Errorf("%w: %v", domain.ErrInvalidInput, err))
 		return
 	}
 
@@ -52,7 +54,7 @@ func (h *Handler) UpdatePatient(w http.ResponseWriter, r *http.Request) {
 	patient.Id = ptr.To(id)
 
 	if err := patient.Validate(); err != nil {
-		h.respondWithError(w, err)
+		h.respondWithError(w, fmt.Errorf("%w: %v", domain.ErrInvalidInput, err))
 		return
 	}
 

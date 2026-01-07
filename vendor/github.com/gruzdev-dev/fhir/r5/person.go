@@ -15,7 +15,7 @@ type Person struct {
 	Text                 *Narrative            `json:"text,omitempty" bson:"text,omitempty"`                                  // Text summary of the resource, for human interpretation
 	Contained            []json.RawMessage     `json:"contained,omitempty" bson:"contained,omitempty"`                        // Contained, inline Resources
 	Identifier           []Identifier          `json:"identifier,omitempty" bson:"identifier,omitempty"`                      // A human identifier for this person
-	Active               bool                  `json:"active,omitempty" bson:"active,omitempty"`                              // This person's record is in active use
+	Active               *bool                 `json:"active,omitempty" bson:"active,omitempty"`                              // This person's record is in active use
 	Name                 []HumanName           `json:"name,omitempty" bson:"name,omitempty"`                                  // A name associated with the person
 	Telecom              []ContactPoint        `json:"telecom,omitempty" bson:"telecom,omitempty"`                            // A contact detail for the person
 	Gender               *string               `json:"gender,omitempty" bson:"gender,omitempty"`                              // male | female | other | unknown
@@ -95,7 +95,7 @@ func (r *Person) Validate() error {
 type PersonCommunication struct {
 	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	Language  *CodeableConcept `json:"language" bson:"language"`                       // The language which can be used to communicate with the person about his or her health
-	Preferred bool             `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
+	Preferred *bool            `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
 }
 
 func (r *PersonCommunication) Validate() error {

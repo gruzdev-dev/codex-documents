@@ -23,7 +23,7 @@ type CommunicationRequest struct {
 	Intent              string                        `json:"intent" bson:"intent"`                                                // proposal | solicit-offer | offer-response | plan | directive | order | original-order | reflex-order | filler-order | instance-order | option
 	Category            []CodeableConcept             `json:"category,omitempty" bson:"category,omitempty"`                        // Message category
 	Priority            *string                       `json:"priority,omitempty" bson:"priority,omitempty"`                        // routine | urgent | asap | stat
-	DoNotPerform        bool                          `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`              // True if request is prohibiting action
+	DoNotPerform        *bool                         `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`              // True if request is prohibiting action
 	Medium              []CodeableConcept             `json:"medium,omitempty" bson:"medium,omitempty"`                            // A channel of communication
 	Subject             *Reference                    `json:"subject,omitempty" bson:"subject,omitempty"`                          // Focus of message
 	About               []Reference                   `json:"about,omitempty" bson:"about,omitempty"`                              // Resources that pertain to this communication request

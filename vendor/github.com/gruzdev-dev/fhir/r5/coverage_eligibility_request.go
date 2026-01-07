@@ -126,61 +126,9 @@ func (r *CoverageEligibilityRequest) Validate() error {
 	return nil
 }
 
-type CoverageEligibilityRequestEvent struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
-	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
-	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
-	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
-}
-
-func (r *CoverageEligibilityRequestEvent) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.WhenDateTime == nil {
-		return fmt.Errorf("field 'WhenDateTime' is required")
-	}
-	if r.WhenPeriod == nil {
-		return fmt.Errorf("field 'WhenPeriod' is required")
-	}
-	if r.WhenPeriod != nil {
-		if err := r.WhenPeriod.Validate(); err != nil {
-			return fmt.Errorf("WhenPeriod: %w", err)
-		}
-	}
-	return nil
-}
-
-type CoverageEligibilityRequestSupportingInfo struct {
-	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Sequence     int        `json:"sequence" bson:"sequence"`                               // Information instance identifier
-	Information  *Reference `json:"information" bson:"information"`                         // Data to be provided
-	AppliesToAll bool       `json:"appliesToAll,omitempty" bson:"applies_to_all,omitempty"` // Applies to all items
-}
-
-func (r *CoverageEligibilityRequestSupportingInfo) Validate() error {
-	if r.Sequence == 0 {
-		return fmt.Errorf("field 'Sequence' is required")
-	}
-	if r.Information == nil {
-		return fmt.Errorf("field 'Information' is required")
-	}
-	if r.Information != nil {
-		if err := r.Information.Validate(); err != nil {
-			return fmt.Errorf("Information: %w", err)
-		}
-	}
-	return nil
-}
-
 type CoverageEligibilityRequestInsurance struct {
 	Id                  *string    `json:"id,omitempty" bson:"id,omitempty"`                                    // Unique id for inter-element referencing
-	Focal               bool       `json:"focal,omitempty" bson:"focal,omitempty"`                              // Applicable coverage
+	Focal               *bool      `json:"focal,omitempty" bson:"focal,omitempty"`                              // Applicable coverage
 	Coverage            *Reference `json:"coverage" bson:"coverage"`                                            // Insurance information
 	BusinessArrangement *string    `json:"businessArrangement,omitempty" bson:"business_arrangement,omitempty"` // Additional provider contract number
 }
@@ -275,6 +223,58 @@ func (r *CoverageEligibilityRequestItemDiagnosis) Validate() error {
 	if r.DiagnosisReference != nil {
 		if err := r.DiagnosisReference.Validate(); err != nil {
 			return fmt.Errorf("DiagnosisReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type CoverageEligibilityRequestEvent struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
+	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
+	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
+	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
+}
+
+func (r *CoverageEligibilityRequestEvent) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.WhenDateTime == nil {
+		return fmt.Errorf("field 'WhenDateTime' is required")
+	}
+	if r.WhenPeriod == nil {
+		return fmt.Errorf("field 'WhenPeriod' is required")
+	}
+	if r.WhenPeriod != nil {
+		if err := r.WhenPeriod.Validate(); err != nil {
+			return fmt.Errorf("WhenPeriod: %w", err)
+		}
+	}
+	return nil
+}
+
+type CoverageEligibilityRequestSupportingInfo struct {
+	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Sequence     int        `json:"sequence" bson:"sequence"`                               // Information instance identifier
+	Information  *Reference `json:"information" bson:"information"`                         // Data to be provided
+	AppliesToAll *bool      `json:"appliesToAll,omitempty" bson:"applies_to_all,omitempty"` // Applies to all items
+}
+
+func (r *CoverageEligibilityRequestSupportingInfo) Validate() error {
+	if r.Sequence == 0 {
+		return fmt.Errorf("field 'Sequence' is required")
+	}
+	if r.Information == nil {
+		return fmt.Errorf("field 'Information' is required")
+	}
+	if r.Information != nil {
+		if err := r.Information.Validate(); err != nil {
+			return fmt.Errorf("Information: %w", err)
 		}
 	}
 	return nil

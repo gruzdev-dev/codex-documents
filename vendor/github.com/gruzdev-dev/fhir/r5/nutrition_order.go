@@ -29,7 +29,7 @@ type NutritionOrder struct {
 	AllergyIntolerance     []Reference                   `json:"allergyIntolerance,omitempty" bson:"allergy_intolerance,omitempty"`          // List of the patient's food and nutrition-related allergies and intolerances
 	FoodPreferenceModifier []CodeableConcept             `json:"foodPreferenceModifier,omitempty" bson:"food_preference_modifier,omitempty"` // Order-specific modifier about the type of food that should be given
 	ExcludeFoodModifier    []CodeableConcept             `json:"excludeFoodModifier,omitempty" bson:"exclude_food_modifier,omitempty"`       // Food that should not be given
-	OutsideFoodAllowed     bool                          `json:"outsideFoodAllowed,omitempty" bson:"outside_food_allowed,omitempty"`         // Capture if patient is permitted to consume food from outside of current setting brought by the patient, family, and/or caregiver
+	OutsideFoodAllowed     *bool                         `json:"outsideFoodAllowed,omitempty" bson:"outside_food_allowed,omitempty"`         // Capture if patient is permitted to consume food from outside of current setting brought by the patient, family, and/or caregiver
 	OralDiet               *NutritionOrderOralDiet       `json:"oralDiet,omitempty" bson:"oral_diet,omitempty"`                              // Oral diet components
 	Supplement             []NutritionOrderSupplement    `json:"supplement,omitempty" bson:"supplement,omitempty"`                           // Supplement components
 	EnteralFormula         *NutritionOrderEnteralFormula `json:"enteralFormula,omitempty" bson:"enteral_formula,omitempty"`                  // Enteral formula product
@@ -147,27 +147,6 @@ func (r *NutritionOrder) Validate() error {
 	return nil
 }
 
-type NutritionOrderOralDietSchedule struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Timing      []Timing         `json:"timing,omitempty" bson:"timing,omitempty"`             // Scheduled frequency of diet
-	AsNeeded    bool             `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`        // Take 'as needed'
-	AsNeededFor *CodeableConcept `json:"asNeededFor,omitempty" bson:"as_needed_for,omitempty"` // Take 'as needed' for x
-}
-
-func (r *NutritionOrderOralDietSchedule) Validate() error {
-	for i, item := range r.Timing {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Timing[%d]: %w", i, err)
-		}
-	}
-	if r.AsNeededFor != nil {
-		if err := r.AsNeededFor.Validate(); err != nil {
-			return fmt.Errorf("AsNeededFor: %w", err)
-		}
-	}
-	return nil
-}
-
 type NutritionOrderOralDietNutrient struct {
 	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
 	Modifier *CodeableConcept `json:"modifier,omitempty" bson:"modifier,omitempty"` // Nutrient modified in the oral diet type
@@ -208,22 +187,48 @@ func (r *NutritionOrderOralDietTexture) Validate() error {
 	return nil
 }
 
-type NutritionOrderSupplementSchedule struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Timing      []Timing         `json:"timing,omitempty" bson:"timing,omitempty"`             // Scheduled frequency of supplement
-	AsNeeded    bool             `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`        // Take 'as needed'
-	AsNeededFor *CodeableConcept `json:"asNeededFor,omitempty" bson:"as_needed_for,omitempty"` // Take 'as needed' for x
+type NutritionOrderEnteralFormula struct {
+	Id                            *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                                          // Unique id for inter-element referencing
+	Type                          *CodeableReference                           `json:"type,omitempty" bson:"type,omitempty"`                                                      // Type of patient enteral feeding
+	ProductName                   *string                                      `json:"productName,omitempty" bson:"product_name,omitempty"`                                       // Product or brand name of the enteral feeding
+	DeliveryDeviceCodeableConcept *CodeableConcept                             `json:"deliveryDeviceCodeableConcept,omitempty" bson:"delivery_device_codeable_concept,omitempty"` // Intended type of device for the enteral feeding administration
+	DeliveryDeviceCanonical       *string                                      `json:"deliveryDeviceCanonical,omitempty" bson:"delivery_device_canonical,omitempty"`              // Intended type of device for the enteral feeding administration
+	CaloricDensity                *Quantity                                    `json:"caloricDensity,omitempty" bson:"caloric_density,omitempty"`                                 // Amount of energy per specified volume of feeding that is required
+	RouteOfAdministration         []CodeableConcept                            `json:"routeOfAdministration,omitempty" bson:"route_of_administration,omitempty"`                  // How the enteral feeding should enter the patient's gastrointestinal tract
+	Administration                []NutritionOrderEnteralFormulaAdministration `json:"administration,omitempty" bson:"administration,omitempty"`                                  // Formula feeding instruction as structured data
+	MaxVolumeToAdminister         *Quantity                                    `json:"maxVolumeToAdminister,omitempty" bson:"max_volume_to_administer,omitempty"`                 // Upper limit on formula feeding volume per unit of time
+	AdministrationInstruction     *string                                      `json:"administrationInstruction,omitempty" bson:"administration_instruction,omitempty"`           // Formula feeding instructions expressed as text
 }
 
-func (r *NutritionOrderSupplementSchedule) Validate() error {
-	for i, item := range r.Timing {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Timing[%d]: %w", i, err)
+func (r *NutritionOrderEnteralFormula) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
 		}
 	}
-	if r.AsNeededFor != nil {
-		if err := r.AsNeededFor.Validate(); err != nil {
-			return fmt.Errorf("AsNeededFor: %w", err)
+	if r.DeliveryDeviceCodeableConcept != nil {
+		if err := r.DeliveryDeviceCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("DeliveryDeviceCodeableConcept: %w", err)
+		}
+	}
+	if r.CaloricDensity != nil {
+		if err := r.CaloricDensity.Validate(); err != nil {
+			return fmt.Errorf("CaloricDensity: %w", err)
+		}
+	}
+	for i, item := range r.RouteOfAdministration {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("RouteOfAdministration[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Administration {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Administration[%d]: %w", i, err)
+		}
+	}
+	if r.MaxVolumeToAdminister != nil {
+		if err := r.MaxVolumeToAdminister.Validate(); err != nil {
+			return fmt.Errorf("MaxVolumeToAdminister: %w", err)
 		}
 	}
 	return nil
@@ -256,6 +261,27 @@ func (r *NutritionOrderEnteralFormulaAdministration) Validate() error {
 	if r.RateRatio != nil {
 		if err := r.RateRatio.Validate(); err != nil {
 			return fmt.Errorf("RateRatio: %w", err)
+		}
+	}
+	return nil
+}
+
+type NutritionOrderEnteralFormulaAdministrationSchedule struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Timing      []Timing         `json:"timing,omitempty" bson:"timing,omitempty"`             // Scheduled frequency of enteral feeding
+	AsNeeded    *bool            `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`        // Take 'as needed'
+	AsNeededFor *CodeableConcept `json:"asNeededFor,omitempty" bson:"as_needed_for,omitempty"` // Take 'as needed' for x
+}
+
+func (r *NutritionOrderEnteralFormulaAdministrationSchedule) Validate() error {
+	for i, item := range r.Timing {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Timing[%d]: %w", i, err)
+		}
+	}
+	if r.AsNeededFor != nil {
+		if err := r.AsNeededFor.Validate(); err != nil {
+			return fmt.Errorf("AsNeededFor: %w", err)
 		}
 	}
 	return nil
@@ -327,6 +353,27 @@ func (r *NutritionOrderOralDiet) Validate() error {
 	return nil
 }
 
+type NutritionOrderOralDietSchedule struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Timing      []Timing         `json:"timing,omitempty" bson:"timing,omitempty"`             // Scheduled frequency of diet
+	AsNeeded    *bool            `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`        // Take 'as needed'
+	AsNeededFor *CodeableConcept `json:"asNeededFor,omitempty" bson:"as_needed_for,omitempty"` // Take 'as needed' for x
+}
+
+func (r *NutritionOrderOralDietSchedule) Validate() error {
+	for i, item := range r.Timing {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Timing[%d]: %w", i, err)
+		}
+	}
+	if r.AsNeededFor != nil {
+		if err := r.AsNeededFor.Validate(); err != nil {
+			return fmt.Errorf("AsNeededFor: %w", err)
+		}
+	}
+	return nil
+}
+
 type NutritionOrderSupplement struct {
 	Id             *string                           `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
 	Type           *CodeableReference                `json:"type,omitempty" bson:"type,omitempty"`                      // Type of supplement product requested
@@ -361,61 +408,14 @@ func (r *NutritionOrderSupplement) Validate() error {
 	return nil
 }
 
-type NutritionOrderEnteralFormula struct {
-	Id                            *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                                          // Unique id for inter-element referencing
-	Type                          *CodeableReference                           `json:"type,omitempty" bson:"type,omitempty"`                                                      // Type of patient enteral feeding
-	ProductName                   *string                                      `json:"productName,omitempty" bson:"product_name,omitempty"`                                       // Product or brand name of the enteral feeding
-	DeliveryDeviceCodeableConcept *CodeableConcept                             `json:"deliveryDeviceCodeableConcept,omitempty" bson:"delivery_device_codeable_concept,omitempty"` // Intended type of device for the enteral feeding administration
-	DeliveryDeviceCanonical       *string                                      `json:"deliveryDeviceCanonical,omitempty" bson:"delivery_device_canonical,omitempty"`              // Intended type of device for the enteral feeding administration
-	CaloricDensity                *Quantity                                    `json:"caloricDensity,omitempty" bson:"caloric_density,omitempty"`                                 // Amount of energy per specified volume of feeding that is required
-	RouteOfAdministration         []CodeableConcept                            `json:"routeOfAdministration,omitempty" bson:"route_of_administration,omitempty"`                  // How the enteral feeding should enter the patient's gastrointestinal tract
-	Administration                []NutritionOrderEnteralFormulaAdministration `json:"administration,omitempty" bson:"administration,omitempty"`                                  // Formula feeding instruction as structured data
-	MaxVolumeToAdminister         *Quantity                                    `json:"maxVolumeToAdminister,omitempty" bson:"max_volume_to_administer,omitempty"`                 // Upper limit on formula feeding volume per unit of time
-	AdministrationInstruction     *string                                      `json:"administrationInstruction,omitempty" bson:"administration_instruction,omitempty"`           // Formula feeding instructions expressed as text
-}
-
-func (r *NutritionOrderEnteralFormula) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.DeliveryDeviceCodeableConcept != nil {
-		if err := r.DeliveryDeviceCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("DeliveryDeviceCodeableConcept: %w", err)
-		}
-	}
-	if r.CaloricDensity != nil {
-		if err := r.CaloricDensity.Validate(); err != nil {
-			return fmt.Errorf("CaloricDensity: %w", err)
-		}
-	}
-	for i, item := range r.RouteOfAdministration {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("RouteOfAdministration[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Administration {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Administration[%d]: %w", i, err)
-		}
-	}
-	if r.MaxVolumeToAdminister != nil {
-		if err := r.MaxVolumeToAdminister.Validate(); err != nil {
-			return fmt.Errorf("MaxVolumeToAdminister: %w", err)
-		}
-	}
-	return nil
-}
-
-type NutritionOrderEnteralFormulaAdministrationSchedule struct {
+type NutritionOrderSupplementSchedule struct {
 	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Timing      []Timing         `json:"timing,omitempty" bson:"timing,omitempty"`             // Scheduled frequency of enteral feeding
-	AsNeeded    bool             `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`        // Take 'as needed'
+	Timing      []Timing         `json:"timing,omitempty" bson:"timing,omitempty"`             // Scheduled frequency of supplement
+	AsNeeded    *bool            `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`        // Take 'as needed'
 	AsNeededFor *CodeableConcept `json:"asNeededFor,omitempty" bson:"as_needed_for,omitempty"` // Take 'as needed' for x
 }
 
-func (r *NutritionOrderEnteralFormulaAdministrationSchedule) Validate() error {
+func (r *NutritionOrderSupplementSchedule) Validate() error {
 	for i, item := range r.Timing {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Timing[%d]: %w", i, err)

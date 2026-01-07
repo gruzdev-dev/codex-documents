@@ -23,7 +23,7 @@ type Observation struct {
 	Code                  *CodeableConcept            `json:"code" bson:"code"`                                                        // Type of observation (code / type)
 	Subject               *Reference                  `json:"subject,omitempty" bson:"subject,omitempty"`                              // Who and/or what the observation is about
 	Focus                 []Reference                 `json:"focus,omitempty" bson:"focus,omitempty"`                                  // What the observation is about, when it is not about the subject of record
-	Organizer             bool                        `json:"organizer,omitempty" bson:"organizer,omitempty"`                          // This observation organizes/groups a set of sub-observations
+	Organizer             *bool                       `json:"organizer,omitempty" bson:"organizer,omitempty"`                          // This observation organizes/groups a set of sub-observations
 	Encounter             *Reference                  `json:"encounter,omitempty" bson:"encounter,omitempty"`                          // Healthcare event during which this observation is made. If you need to place the observation within one or more episodes of care, use the workflow-episodeOfCare extension
 	EffectiveDateTime     *string                     `json:"effectiveDateTime,omitempty" bson:"effective_date_time,omitempty"`        // Clinically relevant time/time-period for observation
 	EffectivePeriod       *Period                     `json:"effectivePeriod,omitempty" bson:"effective_period,omitempty"`             // Clinically relevant time/time-period for observation
@@ -242,6 +242,29 @@ func (r *Observation) Validate() error {
 	return nil
 }
 
+type ObservationTriggeredBy struct {
+	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Observation *Reference `json:"observation" bson:"observation"`           // Triggering observation
+	Type        string     `json:"type" bson:"type"`                         // reflex | repeat | re-run
+	Reason      *string    `json:"reason,omitempty" bson:"reason,omitempty"` // Reason that the observation was triggered
+}
+
+func (r *ObservationTriggeredBy) Validate() error {
+	if r.Observation == nil {
+		return fmt.Errorf("field 'Observation' is required")
+	}
+	if r.Observation != nil {
+		if err := r.Observation.Validate(); err != nil {
+			return fmt.Errorf("Observation: %w", err)
+		}
+	}
+	var emptyString string
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	return nil
+}
+
 type ObservationReferenceRange struct {
 	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
 	Low         *Quantity         `json:"low,omitempty" bson:"low,omitempty"`                  // Low Range, if relevant
@@ -365,29 +388,6 @@ func (r *ObservationComponent) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("ReferenceRange[%d]: %w", i, err)
 		}
-	}
-	return nil
-}
-
-type ObservationTriggeredBy struct {
-	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Observation *Reference `json:"observation" bson:"observation"`           // Triggering observation
-	Type        string     `json:"type" bson:"type"`                         // reflex | repeat | re-run
-	Reason      *string    `json:"reason,omitempty" bson:"reason,omitempty"` // Reason that the observation was triggered
-}
-
-func (r *ObservationTriggeredBy) Validate() error {
-	if r.Observation == nil {
-		return fmt.Errorf("field 'Observation' is required")
-	}
-	if r.Observation != nil {
-		if err := r.Observation.Validate(); err != nil {
-			return fmt.Errorf("Observation: %w", err)
-		}
-	}
-	var emptyString string
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
 	}
 	return nil
 }

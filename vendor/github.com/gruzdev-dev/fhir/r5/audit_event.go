@@ -144,7 +144,7 @@ type AuditEventAgent struct {
 	Type             *CodeableConcept  `json:"type,omitempty" bson:"type,omitempty"`                          // How agent participated
 	Role             []CodeableConcept `json:"role,omitempty" bson:"role,omitempty"`                          // Agent role in the event
 	Who              *Reference        `json:"who" bson:"who"`                                                // Identifier of who
-	Requestor        bool              `json:"requestor,omitempty" bson:"requestor,omitempty"`                // Whether user is initiator
+	Requestor        *bool             `json:"requestor,omitempty" bson:"requestor,omitempty"`                // Whether user is initiator
 	Location         *Reference        `json:"location,omitempty" bson:"location,omitempty"`                  // The agent location when the event occurred
 	Policy           []string          `json:"policy,omitempty" bson:"policy,omitempty"`                      // Policy that authorized the agent participation in the event
 	NetworkReference *Reference        `json:"networkReference,omitempty" bson:"network_reference,omitempty"` // This agent network location for the activity

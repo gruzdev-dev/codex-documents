@@ -22,7 +22,7 @@ type Requirements struct {
 	Name                   *string                 `json:"name,omitempty" bson:"name,omitempty"`                                       // Name for this Requirements (computer friendly)
 	Title                  *string                 `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this Requirements (human friendly)
 	Status                 string                  `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                    `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                   `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   *string                 `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string                 `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail         `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -133,7 +133,7 @@ type RequirementsStatement struct {
 	Key            string                            `json:"key" bson:"key"`                                           // Key that identifies this statement
 	Label          *string                           `json:"label,omitempty" bson:"label,omitempty"`                   // Short Human label for this statement
 	Conformance    []string                          `json:"conformance,omitempty" bson:"conformance,omitempty"`       // SHALL | SHOULD | MAY | SHOULD-NOT | SHALL-NOT
-	Conditionality bool                              `json:"conditionality,omitempty" bson:"conditionality,omitempty"` // Set to true if requirements statement is conditional
+	Conditionality *bool                             `json:"conditionality,omitempty" bson:"conditionality,omitempty"` // Set to true if requirements statement is conditional
 	Requirement    string                            `json:"requirement" bson:"requirement"`                           // The actual requirement
 	Category       []Coding                          `json:"category,omitempty" bson:"category,omitempty"`             // High level categorization of a statement
 	DerivedFrom    *RequirementsStatementDerivedFrom `json:"derivedFrom,omitempty" bson:"derived_from,omitempty"`      // Another statement this is refining, tightening, or establishing more context for

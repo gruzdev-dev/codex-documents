@@ -23,7 +23,7 @@ type MessageDefinition struct {
 	Title                  *string                            `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this message definition (human friendly)
 	Replaces               []string                           `json:"replaces,omitempty" bson:"replaces,omitempty"`                               // Takes the place of
 	Status                 string                             `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                               `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                              `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   string                             `json:"date" bson:"date"`                                                           // Date last changed
 	Publisher              *string                            `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail                    `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher

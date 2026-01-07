@@ -28,7 +28,7 @@ type MedicationAdministration struct {
 	OccurrencePeriod      *Period                             `json:"occurrencePeriod" bson:"occurrence_period"`                               // Specific date/time or interval of time during which the administration took place (or did not take place)
 	OccurrenceTiming      *Timing                             `json:"occurrenceTiming" bson:"occurrence_timing"`                               // Specific date/time or interval of time during which the administration took place (or did not take place)
 	Recorded              *string                             `json:"recorded,omitempty" bson:"recorded,omitempty"`                            // When the MedicationAdministration was first captured in the subject's record
-	IsSubPotent           bool                                `json:"isSubPotent,omitempty" bson:"is_sub_potent,omitempty"`                    // An indication that the full ordered dose was not administered
+	IsSubPotent           *bool                               `json:"isSubPotent,omitempty" bson:"is_sub_potent,omitempty"`                    // An indication that the full ordered dose was not administered
 	SubPotentReason       []CodeableConcept                   `json:"subPotentReason,omitempty" bson:"sub_potent_reason,omitempty"`            // Reason full dose was not administered
 	Performer             []MedicationAdministrationPerformer `json:"performer,omitempty" bson:"performer,omitempty"`                          // Who or what performed the medication administration and what type of performance they did
 	Reason                []CodeableReference                 `json:"reason,omitempty" bson:"reason,omitempty"`                                // Reason that supports why the medication was administered
@@ -170,6 +170,29 @@ func (r *MedicationAdministration) Validate() error {
 	return nil
 }
 
+type MedicationAdministrationPerformer struct {
+	Id       *string            `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept   `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
+	Actor    *CodeableReference `json:"actor" bson:"actor"`                           // Who or what performed the medication administration
+}
+
+func (r *MedicationAdministrationPerformer) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
+		}
+	}
+	return nil
+}
+
 type MedicationAdministrationDosage struct {
 	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
 	Text         *string          `json:"text,omitempty" bson:"text,omitempty"`                  // Free text dosage instructions e.g. SIG
@@ -210,29 +233,6 @@ func (r *MedicationAdministrationDosage) Validate() error {
 	if r.RateQuantity != nil {
 		if err := r.RateQuantity.Validate(); err != nil {
 			return fmt.Errorf("RateQuantity: %w", err)
-		}
-	}
-	return nil
-}
-
-type MedicationAdministrationPerformer struct {
-	Id       *string            `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept   `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
-	Actor    *CodeableReference `json:"actor" bson:"actor"`                           // Who or what performed the medication administration
-}
-
-func (r *MedicationAdministrationPerformer) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
 		}
 	}
 	return nil

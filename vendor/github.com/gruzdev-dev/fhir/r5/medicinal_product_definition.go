@@ -190,24 +190,23 @@ func (r *MedicinalProductDefinition) Validate() error {
 	return nil
 }
 
-type MedicinalProductDefinitionContact struct {
-	Id      *string          `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Type    *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"` // Allows the contact to be classified, for example QPPV, Pharmacovigilance Enquiry Information
-	Contact *Reference       `json:"contact" bson:"contact"`               // A product specific contact, person (in a role), or an organization
+type MedicinalProductDefinitionNamePart struct {
+	Id   *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Part string           `json:"part" bson:"part"`                 // A fragment of a product name
+	Type *CodeableConcept `json:"type" bson:"type"`                 // Identifying type for this part of the name (e.g. strength part)
 }
 
-func (r *MedicinalProductDefinitionContact) Validate() error {
+func (r *MedicinalProductDefinitionNamePart) Validate() error {
+	var emptyString string
+	if r.Part == emptyString {
+		return fmt.Errorf("field 'Part' is required")
+	}
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
 	if r.Type != nil {
 		if err := r.Type.Validate(); err != nil {
 			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Contact == nil {
-		return fmt.Errorf("field 'Contact' is required")
-	}
-	if r.Contact != nil {
-		if err := r.Contact.Validate(); err != nil {
-			return fmt.Errorf("Contact: %w", err)
 		}
 	}
 	return nil
@@ -240,6 +239,38 @@ func (r *MedicinalProductDefinitionNameUsage) Validate() error {
 	if r.Language != nil {
 		if err := r.Language.Validate(); err != nil {
 			return fmt.Errorf("Language: %w", err)
+		}
+	}
+	return nil
+}
+
+type MedicinalProductDefinitionOperation struct {
+	Id                       *string            `json:"id,omitempty" bson:"id,omitempty"`                                              // Unique id for inter-element referencing
+	Type                     *CodeableReference `json:"type,omitempty" bson:"type,omitempty"`                                          // The type of manufacturing operation e.g. manufacturing itself, re-packaging
+	EffectiveDate            *Period            `json:"effectiveDate,omitempty" bson:"effective_date,omitempty"`                       // Date range of applicability
+	Organization             []Reference        `json:"organization,omitempty" bson:"organization,omitempty"`                          // The organization responsible for the particular process, e.g. the manufacturer or importer
+	ConfidentialityIndicator *CodeableConcept   `json:"confidentialityIndicator,omitempty" bson:"confidentiality_indicator,omitempty"` // Specifies whether this process is considered proprietary or confidential
+}
+
+func (r *MedicinalProductDefinitionOperation) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.EffectiveDate != nil {
+		if err := r.EffectiveDate.Validate(); err != nil {
+			return fmt.Errorf("EffectiveDate: %w", err)
+		}
+	}
+	for i, item := range r.Organization {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Organization[%d]: %w", i, err)
+		}
+	}
+	if r.ConfidentialityIndicator != nil {
+		if err := r.ConfidentialityIndicator.Validate(); err != nil {
+			return fmt.Errorf("ConfidentialityIndicator: %w", err)
 		}
 	}
 	return nil
@@ -290,6 +321,29 @@ func (r *MedicinalProductDefinitionCharacteristic) Validate() error {
 	return nil
 }
 
+type MedicinalProductDefinitionContact struct {
+	Id      *string          `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Type    *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"` // Allows the contact to be classified, for example QPPV, Pharmacovigilance Enquiry Information
+	Contact *Reference       `json:"contact" bson:"contact"`               // A product specific contact, person (in a role), or an organization
+}
+
+func (r *MedicinalProductDefinitionContact) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Contact == nil {
+		return fmt.Errorf("field 'Contact' is required")
+	}
+	if r.Contact != nil {
+		if err := r.Contact.Validate(); err != nil {
+			return fmt.Errorf("Contact: %w", err)
+		}
+	}
+	return nil
+}
+
 type MedicinalProductDefinitionName struct {
 	Id          *string                               `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
 	ProductName string                                `json:"productName" bson:"product_name"`        // The full product name
@@ -321,28 +375,6 @@ func (r *MedicinalProductDefinitionName) Validate() error {
 	return nil
 }
 
-type MedicinalProductDefinitionNamePart struct {
-	Id   *string          `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Part string           `json:"part" bson:"part"`                 // A fragment of a product name
-	Type *CodeableConcept `json:"type" bson:"type"`                 // Identifying type for this part of the name (e.g. strength part)
-}
-
-func (r *MedicinalProductDefinitionNamePart) Validate() error {
-	var emptyString string
-	if r.Part == emptyString {
-		return fmt.Errorf("field 'Part' is required")
-	}
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	return nil
-}
-
 type MedicinalProductDefinitionCrossReference struct {
 	Id      *string            `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
 	Product *CodeableReference `json:"product" bson:"product"`               // Reference to another product, e.g. for linking authorised to investigational product
@@ -361,38 +393,6 @@ func (r *MedicinalProductDefinitionCrossReference) Validate() error {
 	if r.Type != nil {
 		if err := r.Type.Validate(); err != nil {
 			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	return nil
-}
-
-type MedicinalProductDefinitionOperation struct {
-	Id                       *string            `json:"id,omitempty" bson:"id,omitempty"`                                              // Unique id for inter-element referencing
-	Type                     *CodeableReference `json:"type,omitempty" bson:"type,omitempty"`                                          // The type of manufacturing operation e.g. manufacturing itself, re-packaging
-	EffectiveDate            *Period            `json:"effectiveDate,omitempty" bson:"effective_date,omitempty"`                       // Date range of applicability
-	Organization             []Reference        `json:"organization,omitempty" bson:"organization,omitempty"`                          // The organization responsible for the particular process, e.g. the manufacturer or importer
-	ConfidentialityIndicator *CodeableConcept   `json:"confidentialityIndicator,omitempty" bson:"confidentiality_indicator,omitempty"` // Specifies whether this process is considered proprietary or confidential
-}
-
-func (r *MedicinalProductDefinitionOperation) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.EffectiveDate != nil {
-		if err := r.EffectiveDate.Validate(); err != nil {
-			return fmt.Errorf("EffectiveDate: %w", err)
-		}
-	}
-	for i, item := range r.Organization {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Organization[%d]: %w", i, err)
-		}
-	}
-	if r.ConfidentialityIndicator != nil {
-		if err := r.ConfidentialityIndicator.Validate(); err != nil {
-			return fmt.Errorf("ConfidentialityIndicator: %w", err)
 		}
 	}
 	return nil

@@ -15,7 +15,7 @@ type PractitionerRole struct {
 	Text              *Narrative              `json:"text,omitempty" bson:"text,omitempty"`                            // Text summary of the resource, for human interpretation
 	Contained         []json.RawMessage       `json:"contained,omitempty" bson:"contained,omitempty"`                  // Contained, inline Resources
 	Identifier        []Identifier            `json:"identifier,omitempty" bson:"identifier,omitempty"`                // Identifiers for a role/location
-	Active            bool                    `json:"active,omitempty" bson:"active,omitempty"`                        // Whether this practitioner role record is in active use
+	Active            *bool                   `json:"active,omitempty" bson:"active,omitempty"`                        // Whether this practitioner role record is in active use
 	Period            *Period                 `json:"period,omitempty" bson:"period,omitempty"`                        // The period during which the practitioner is authorized to perform in these role(s)
 	Practitioner      *Reference              `json:"practitioner,omitempty" bson:"practitioner,omitempty"`            // Practitioner that provides services for the organization
 	Organization      *Reference              `json:"organization,omitempty" bson:"organization,omitempty"`            // Organization where the role is available

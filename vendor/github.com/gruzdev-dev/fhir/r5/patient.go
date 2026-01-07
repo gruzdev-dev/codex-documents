@@ -15,7 +15,7 @@ type Patient struct {
 	Text                 *Narrative             `json:"text,omitempty" bson:"text,omitempty"`                                   // Text summary of the resource, for human interpretation
 	Contained            []json.RawMessage      `json:"contained,omitempty" bson:"contained,omitempty"`                         // Contained, inline Resources
 	Identifier           []Identifier           `json:"identifier,omitempty" bson:"identifier,omitempty"`                       // An identifier for this patient
-	Active               bool                   `json:"active,omitempty" bson:"active,omitempty"`                               // Whether this patient's record is in active use
+	Active               *bool                  `json:"active,omitempty" bson:"active,omitempty"`                               // Whether this patient's record is in active use
 	Name                 []HumanName            `json:"name,omitempty" bson:"name,omitempty"`                                   // A name associated with the patient
 	Telecom              []ContactPoint         `json:"telecom,omitempty" bson:"telecom,omitempty"`                             // A contact detail for the individual
 	Gender               *string                `json:"gender,omitempty" bson:"gender,omitempty"`                               // male | female | other | unknown
@@ -172,7 +172,7 @@ func (r *PatientContact) Validate() error {
 type PatientCommunication struct {
 	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	Language  *CodeableConcept `json:"language" bson:"language"`                       // The language which can be used to communicate with the patient about his or her health
-	Preferred bool             `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
+	Preferred *bool            `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
 }
 
 func (r *PatientCommunication) Validate() error {

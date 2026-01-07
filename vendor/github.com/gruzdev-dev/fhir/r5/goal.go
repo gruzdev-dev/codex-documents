@@ -18,7 +18,7 @@ type Goal struct {
 	LifecycleStatus      string            `json:"lifecycleStatus" bson:"lifecycle_status"`                                // proposed | planned | accepted | active | on-hold | completed | cancelled | entered-in-error | rejected
 	AchievementStatus    *CodeableConcept  `json:"achievementStatus,omitempty" bson:"achievement_status,omitempty"`        // in-progress | improving | worsening | no-change | achieved | sustaining | not-achieved | no-progress | not-attainable
 	Category             []CodeableConcept `json:"category,omitempty" bson:"category,omitempty"`                           // E.g. Treatment, dietary, behavioral, etc
-	Continuous           bool              `json:"continuous,omitempty" bson:"continuous,omitempty"`                       // After meeting the goal, ongoing activity is needed to sustain the goal objective
+	Continuous           *bool             `json:"continuous,omitempty" bson:"continuous,omitempty"`                       // After meeting the goal, ongoing activity is needed to sustain the goal objective
 	Priority             *CodeableConcept  `json:"priority,omitempty" bson:"priority,omitempty"`                           // high-priority | medium-priority | low-priority
 	Description          *CodeableConcept  `json:"description" bson:"description"`                                         // Code or text describing goal
 	Subject              *Reference        `json:"subject" bson:"subject"`                                                 // Who this goal is intended for

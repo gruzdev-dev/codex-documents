@@ -23,7 +23,7 @@ type Library struct {
 	Title                  *string               `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this library (human friendly)
 	Subtitle               *string               `json:"subtitle,omitempty" bson:"subtitle,omitempty"`                               // Subordinate title of the library
 	Status                 string                `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                  `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                 `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Type                   *CodeableConcept      `json:"type" bson:"type"`                                                           // logic-library | model-definition | asset-collection | module-definition | etc.
 	SubjectCodeableConcept *CodeableConcept      `json:"subjectCodeableConcept,omitempty" bson:"subject_codeable_concept,omitempty"` // Type of individual the library content is focused on
 	SubjectReference       *Reference            `json:"subjectReference,omitempty" bson:"subject_reference,omitempty"`              // Type of individual the library content is focused on

@@ -23,7 +23,7 @@ type ServiceRequest struct {
 	Intent             string                             `json:"intent" bson:"intent"`                                               // proposal | solicit-offer | offer-response | plan | directive | order | original-order | reflex-order | filler-order | instance-order | option
 	Category           []CodeableConcept                  `json:"category,omitempty" bson:"category,omitempty"`                       // Classification of service
 	Priority           *string                            `json:"priority,omitempty" bson:"priority,omitempty"`                       // routine | urgent | asap | stat
-	DoNotPerform       bool                               `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`             // True if service/procedure should not be performed
+	DoNotPerform       *bool                              `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`             // True if service/procedure should not be performed
 	Code               *CodeableReference                 `json:"code,omitempty" bson:"code,omitempty"`                               // What is being requested/ordered
 	OrderDetail        []ServiceRequestOrderDetail        `json:"orderDetail,omitempty" bson:"order_detail,omitempty"`                // Additional information about the request
 	QuantityQuantity   *Quantity                          `json:"quantityQuantity,omitempty" bson:"quantity_quantity,omitempty"`      // Service amount
@@ -35,7 +35,7 @@ type ServiceRequest struct {
 	OccurrenceDateTime *string                            `json:"occurrenceDateTime,omitempty" bson:"occurrence_date_time,omitempty"` // When service should occur
 	OccurrencePeriod   *Period                            `json:"occurrencePeriod,omitempty" bson:"occurrence_period,omitempty"`      // When service should occur
 	OccurrenceTiming   *Timing                            `json:"occurrenceTiming,omitempty" bson:"occurrence_timing,omitempty"`      // When service should occur
-	AsNeeded           bool                               `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`                      // Perform the service "as needed"
+	AsNeeded           *bool                              `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`                      // Perform the service "as needed"
 	AsNeededFor        []CodeableConcept                  `json:"asNeededFor,omitempty" bson:"as_needed_for,omitempty"`               // Specified criteria for the service
 	AuthoredOn         *string                            `json:"authoredOn,omitempty" bson:"authored_on,omitempty"`                  // Date request signed
 	Requester          *Reference                         `json:"requester,omitempty" bson:"requester,omitempty"`                     // Who/what is requesting service

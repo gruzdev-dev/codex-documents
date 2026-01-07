@@ -27,7 +27,7 @@ type DeviceAlert struct {
 	OccurrenceDateTime *string                  `json:"occurrenceDateTime,omitempty" bson:"occurrence_date_time,omitempty"` // When the alert condition occurred/is occurring
 	OccurrencePeriod   *Period                  `json:"occurrencePeriod,omitempty" bson:"occurrence_period,omitempty"`      // When the alert condition occurred/is occurring
 	Device             *Reference               `json:"device,omitempty" bson:"device,omitempty"`                           // The Device (or DeviceMetric) that detected the alert condition
-	Acknowledged       bool                     `json:"acknowledged,omitempty" bson:"acknowledged,omitempty"`               // Whether the alert condition has been acknowledged
+	Acknowledged       *bool                    `json:"acknowledged,omitempty" bson:"acknowledged,omitempty"`               // Whether the alert condition has been acknowledged
 	AcknowledgedBy     *Reference               `json:"acknowledgedBy,omitempty" bson:"acknowledged_by,omitempty"`          // Who acknowledged the alert condition
 	Location           *Reference               `json:"location,omitempty" bson:"location,omitempty"`                       // Location of the subject when the alert was raised
 	DerivedFrom        []DeviceAlertDerivedFrom `json:"derivedFrom,omitempty" bson:"derived_from,omitempty"`                // The value causing the alert condition

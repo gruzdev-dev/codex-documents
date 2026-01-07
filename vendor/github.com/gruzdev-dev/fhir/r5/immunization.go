@@ -28,7 +28,7 @@ type Immunization struct {
 	SupportingInformation []Reference                      `json:"supportingInformation,omitempty" bson:"supporting_information,omitempty"` // Additional information in support of the immunization
 	OccurrenceDateTime    *string                          `json:"occurrenceDateTime" bson:"occurrence_date_time"`                          // Vaccine administration date
 	OccurrenceString      *string                          `json:"occurrenceString" bson:"occurrence_string"`                               // Vaccine administration date
-	PrimarySource         bool                             `json:"primarySource,omitempty" bson:"primary_source,omitempty"`                 // Indicates context the data was captured in
+	PrimarySource         *bool                            `json:"primarySource,omitempty" bson:"primary_source,omitempty"`                 // Indicates context the data was captured in
 	InformationSource     *CodeableReference               `json:"informationSource,omitempty" bson:"information_source,omitempty"`         // Indicates the source of a  reported record
 	Location              *Reference                       `json:"location,omitempty" bson:"location,omitempty"`                            // The service delivery location
 	Site                  *CodeableConcept                 `json:"site,omitempty" bson:"site,omitempty"`                                    // Body site vaccine  was administered
@@ -37,7 +37,7 @@ type Immunization struct {
 	Performer             []ImmunizationPerformer          `json:"performer,omitempty" bson:"performer,omitempty"`                          // Who performed event
 	Note                  []Annotation                     `json:"note,omitempty" bson:"note,omitempty"`                                    // Additional immunization notes
 	Reason                []CodeableReference              `json:"reason,omitempty" bson:"reason,omitempty"`                                // Why immunization occurred
-	IsSubpotent           bool                             `json:"isSubpotent,omitempty" bson:"is_subpotent,omitempty"`                     // Dose potency
+	IsSubpotent           *bool                            `json:"isSubpotent,omitempty" bson:"is_subpotent,omitempty"`                     // Dose potency
 	SubpotentReason       []CodeableConcept                `json:"subpotentReason,omitempty" bson:"subpotent_reason,omitempty"`             // Reason for being subpotent
 	ProgramEligibility    []ImmunizationProgramEligibility `json:"programEligibility,omitempty" bson:"program_eligibility,omitempty"`       // Patient eligibility for a specific vaccination program
 	FundingSource         *CodeableConcept                 `json:"fundingSource,omitempty" bson:"funding_source,omitempty"`                 // Funding source for the vaccine
@@ -188,6 +188,29 @@ func (r *Immunization) Validate() error {
 	return nil
 }
 
+type ImmunizationPerformer struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
+	Actor    *Reference       `json:"actor" bson:"actor"`                           // Individual or organization who performed the event
+}
+
+func (r *ImmunizationPerformer) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
+		}
+	}
+	return nil
+}
+
 type ImmunizationProgramEligibility struct {
 	Id            *string          `json:"id,omitempty" bson:"id,omitempty"`    // Unique id for inter-element referencing
 	Program       *CodeableConcept `json:"program" bson:"program"`              // The program that eligibility is declared for
@@ -218,7 +241,7 @@ type ImmunizationReaction struct {
 	Id            *string            `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Date          *string            `json:"date,omitempty" bson:"date,omitempty"`                   // When reaction started
 	Manifestation *CodeableReference `json:"manifestation,omitempty" bson:"manifestation,omitempty"` // Additional information on reaction
-	Reported      bool               `json:"reported,omitempty" bson:"reported,omitempty"`           // Indicates self-reported reaction
+	Reported      *bool              `json:"reported,omitempty" bson:"reported,omitempty"`           // Indicates self-reported reaction
 }
 
 func (r *ImmunizationReaction) Validate() error {
@@ -258,29 +281,6 @@ func (r *ImmunizationProtocolApplied) Validate() error {
 	if r.SeriesDoses != nil {
 		if err := r.SeriesDoses.Validate(); err != nil {
 			return fmt.Errorf("SeriesDoses: %w", err)
-		}
-	}
-	return nil
-}
-
-type ImmunizationPerformer struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
-	Actor    *Reference       `json:"actor" bson:"actor"`                           // Individual or organization who performed the event
-}
-
-func (r *ImmunizationPerformer) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
 		}
 	}
 	return nil

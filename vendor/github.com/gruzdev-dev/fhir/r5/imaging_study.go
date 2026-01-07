@@ -117,29 +117,6 @@ func (r *ImagingStudy) Validate() error {
 	return nil
 }
 
-type ImagingStudySeriesPerformer struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
-	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who performed imaging study
-}
-
-func (r *ImagingStudySeriesPerformer) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
-		}
-	}
-	return nil
-}
-
 type ImagingStudySeriesInstance struct {
 	Id       *string `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
 	Uid      string  `json:"uid" bson:"uid"`                           // DICOM SOP Instance UID
@@ -210,6 +187,29 @@ func (r *ImagingStudySeries) Validate() error {
 	for i, item := range r.Instance {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Instance[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ImagingStudySeriesPerformer struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of performance
+	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who performed imaging study
+}
+
+func (r *ImagingStudySeriesPerformer) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
 		}
 	}
 	return nil

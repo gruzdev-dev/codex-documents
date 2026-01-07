@@ -23,7 +23,7 @@ type Evidence struct {
 	Title                  *string                      `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this summary (human friendly)
 	CiteAs                 *string                      `json:"citeAs,omitempty" bson:"cite_as,omitempty"`                                  // Display of how to cite this Evidence
 	Status                 string                       `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                         `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                        `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   *string                      `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	ApprovalDate           *string                      `json:"approvalDate,omitempty" bson:"approval_date,omitempty"`                      // When the summary was approved by publisher
 	LastReviewDate         *string                      `json:"lastReviewDate,omitempty" bson:"last_review_date,omitempty"`                 // When the summary was last reviewed by the publisher
@@ -150,53 +150,6 @@ func (r *Evidence) Validate() error {
 	return nil
 }
 
-type EvidenceRelatesTo struct {
-	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
-	Type             *CodeableConcept `json:"type" bson:"type"`                          // documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with | documents | specification-of | created-with | cite-as | reprint | reprint-of | summarizes
-	TargetUri        *string          `json:"targetUri" bson:"target_uri"`               // The artifact that is related to this Evidence
-	TargetAttachment *Attachment      `json:"targetAttachment" bson:"target_attachment"` // The artifact that is related to this Evidence
-	TargetCanonical  *string          `json:"targetCanonical" bson:"target_canonical"`   // The artifact that is related to this Evidence
-	TargetReference  *Reference       `json:"targetReference" bson:"target_reference"`   // The artifact that is related to this Evidence
-	TargetMarkdown   *string          `json:"targetMarkdown" bson:"target_markdown"`     // The artifact that is related to this Evidence
-}
-
-func (r *EvidenceRelatesTo) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.TargetUri == nil {
-		return fmt.Errorf("field 'TargetUri' is required")
-	}
-	if r.TargetAttachment == nil {
-		return fmt.Errorf("field 'TargetAttachment' is required")
-	}
-	if r.TargetAttachment != nil {
-		if err := r.TargetAttachment.Validate(); err != nil {
-			return fmt.Errorf("TargetAttachment: %w", err)
-		}
-	}
-	if r.TargetCanonical == nil {
-		return fmt.Errorf("field 'TargetCanonical' is required")
-	}
-	if r.TargetReference == nil {
-		return fmt.Errorf("field 'TargetReference' is required")
-	}
-	if r.TargetReference != nil {
-		if err := r.TargetReference.Validate(); err != nil {
-			return fmt.Errorf("TargetReference: %w", err)
-		}
-	}
-	if r.TargetMarkdown == nil {
-		return fmt.Errorf("field 'TargetMarkdown' is required")
-	}
-	return nil
-}
-
 type EvidenceVariableDefinition struct {
 	Id                 *string          `json:"id,omitempty" bson:"id,omitempty"`                                  // Unique id for inter-element referencing
 	Description        *string          `json:"description,omitempty" bson:"description,omitempty"`                // A text description or summary of the variable
@@ -295,6 +248,25 @@ func (r *EvidenceStatistic) Validate() error {
 	return nil
 }
 
+type EvidenceStatisticSampleSize struct {
+	Id                   *string      `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
+	Description          *string      `json:"description,omitempty" bson:"description,omitempty"`                     // Textual description of sample size for statistic
+	Note                 []Annotation `json:"note,omitempty" bson:"note,omitempty"`                                   // Footnote or explanatory note about the sample size
+	NumberOfStudies      *int         `json:"numberOfStudies,omitempty" bson:"number_of_studies,omitempty"`           // Number of contributing studies
+	NumberOfParticipants *int         `json:"numberOfParticipants,omitempty" bson:"number_of_participants,omitempty"` // Total number of participants
+	KnownDataCount       *int         `json:"knownDataCount,omitempty" bson:"known_data_count,omitempty"`             // Number of participants with known results for measured variables
+	NumberAnalyzed       *int         `json:"numberAnalyzed,omitempty" bson:"number_analyzed,omitempty"`              // Total number of participants who were analayzed
+}
+
+func (r *EvidenceStatisticSampleSize) Validate() error {
+	for i, item := range r.Note {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Note[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type EvidenceStatisticAttributeEstimate struct {
 	Id                *string                              `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
 	Description       *string                              `json:"description,omitempty" bson:"description,omitempty"`              // Textual description of the attribute estimate
@@ -341,8 +313,8 @@ type EvidenceStatisticModelCharacteristic struct {
 	ValueQuantity        *Quantity                                      `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"`                // The specific value (when paired with code)
 	ValueRange           *Range                                         `json:"valueRange,omitempty" bson:"value_range,omitempty"`                      // The specific value (when paired with code)
 	ValueCodeableConcept *CodeableConcept                               `json:"valueCodeableConcept,omitempty" bson:"value_codeable_concept,omitempty"` // The specific value (when paired with code)
-	Intended             bool                                           `json:"intended,omitempty" bson:"intended,omitempty"`                           // The plan for analysis
-	Applied              bool                                           `json:"applied,omitempty" bson:"applied,omitempty"`                             // This model characteristic is part of the analysis that was applied, whether or not the analysis followed the plan
+	Intended             *bool                                          `json:"intended,omitempty" bson:"intended,omitempty"`                           // The plan for analysis
+	Applied              *bool                                          `json:"applied,omitempty" bson:"applied,omitempty"`                             // This model characteristic is part of the analysis that was applied, whether or not the analysis followed the plan
 	Variable             []EvidenceStatisticModelCharacteristicVariable `json:"variable,omitempty" bson:"variable,omitempty"`                           // A variable adjusted for in the adjusted analysis
 	Attribute            []EvidenceStatisticAttributeEstimate           `json:"attribute,omitempty" bson:"attribute,omitempty"`                         // An attribute of the model characteristic
 }
@@ -384,59 +356,6 @@ func (r *EvidenceStatisticModelCharacteristic) Validate() error {
 	return nil
 }
 
-type EvidenceCertainty struct {
-	Id           *string             `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Description  *string             `json:"description,omitempty" bson:"description,omitempty"`   // Textual description of certainty
-	Note         []Annotation        `json:"note,omitempty" bson:"note,omitempty"`                 // Footnotes and/or explanatory notes
-	Type         *CodeableConcept    `json:"type,omitempty" bson:"type,omitempty"`                 // Aspect of certainty being rated
-	Rating       *CodeableConcept    `json:"rating,omitempty" bson:"rating,omitempty"`             // Assessment or judgement of the aspect
-	Rater        []string            `json:"rater,omitempty" bson:"rater,omitempty"`               // Individual or group who did the rating
-	Subcomponent []EvidenceCertainty `json:"subcomponent,omitempty" bson:"subcomponent,omitempty"` // A domain or subdomain of certainty
-}
-
-func (r *EvidenceCertainty) Validate() error {
-	for i, item := range r.Note {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Note[%d]: %w", i, err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.Rating != nil {
-		if err := r.Rating.Validate(); err != nil {
-			return fmt.Errorf("Rating: %w", err)
-		}
-	}
-	for i, item := range r.Subcomponent {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Subcomponent[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type EvidenceStatisticSampleSize struct {
-	Id                   *string      `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
-	Description          *string      `json:"description,omitempty" bson:"description,omitempty"`                     // Textual description of sample size for statistic
-	Note                 []Annotation `json:"note,omitempty" bson:"note,omitempty"`                                   // Footnote or explanatory note about the sample size
-	NumberOfStudies      *int         `json:"numberOfStudies,omitempty" bson:"number_of_studies,omitempty"`           // Number of contributing studies
-	NumberOfParticipants *int         `json:"numberOfParticipants,omitempty" bson:"number_of_participants,omitempty"` // Total number of participants
-	KnownDataCount       *int         `json:"knownDataCount,omitempty" bson:"known_data_count,omitempty"`             // Number of participants with known results for measured variables
-	NumberAnalyzed       *int         `json:"numberAnalyzed,omitempty" bson:"number_analyzed,omitempty"`              // Total number of participants who were analayzed
-}
-
-func (r *EvidenceStatisticSampleSize) Validate() error {
-	for i, item := range r.Note {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Note[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type EvidenceStatisticModelCharacteristicVariable struct {
 	Id                 *string           `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
 	VariableDefinition *Reference        `json:"variableDefinition" bson:"variable_definition"`           // Description and definition of the variable
@@ -473,6 +392,87 @@ func (r *EvidenceStatisticModelCharacteristicVariable) Validate() error {
 	for i, item := range r.ValueRange {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("ValueRange[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type EvidenceRelatesTo struct {
+	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
+	Type             *CodeableConcept `json:"type" bson:"type"`                          // documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with | documents | specification-of | created-with | cite-as | reprint | reprint-of | summarizes
+	TargetUri        *string          `json:"targetUri" bson:"target_uri"`               // The artifact that is related to this Evidence
+	TargetAttachment *Attachment      `json:"targetAttachment" bson:"target_attachment"` // The artifact that is related to this Evidence
+	TargetCanonical  *string          `json:"targetCanonical" bson:"target_canonical"`   // The artifact that is related to this Evidence
+	TargetReference  *Reference       `json:"targetReference" bson:"target_reference"`   // The artifact that is related to this Evidence
+	TargetMarkdown   *string          `json:"targetMarkdown" bson:"target_markdown"`     // The artifact that is related to this Evidence
+}
+
+func (r *EvidenceRelatesTo) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.TargetUri == nil {
+		return fmt.Errorf("field 'TargetUri' is required")
+	}
+	if r.TargetAttachment == nil {
+		return fmt.Errorf("field 'TargetAttachment' is required")
+	}
+	if r.TargetAttachment != nil {
+		if err := r.TargetAttachment.Validate(); err != nil {
+			return fmt.Errorf("TargetAttachment: %w", err)
+		}
+	}
+	if r.TargetCanonical == nil {
+		return fmt.Errorf("field 'TargetCanonical' is required")
+	}
+	if r.TargetReference == nil {
+		return fmt.Errorf("field 'TargetReference' is required")
+	}
+	if r.TargetReference != nil {
+		if err := r.TargetReference.Validate(); err != nil {
+			return fmt.Errorf("TargetReference: %w", err)
+		}
+	}
+	if r.TargetMarkdown == nil {
+		return fmt.Errorf("field 'TargetMarkdown' is required")
+	}
+	return nil
+}
+
+type EvidenceCertainty struct {
+	Id           *string             `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Description  *string             `json:"description,omitempty" bson:"description,omitempty"`   // Textual description of certainty
+	Note         []Annotation        `json:"note,omitempty" bson:"note,omitempty"`                 // Footnotes and/or explanatory notes
+	Type         *CodeableConcept    `json:"type,omitempty" bson:"type,omitempty"`                 // Aspect of certainty being rated
+	Rating       *CodeableConcept    `json:"rating,omitempty" bson:"rating,omitempty"`             // Assessment or judgement of the aspect
+	Rater        []string            `json:"rater,omitempty" bson:"rater,omitempty"`               // Individual or group who did the rating
+	Subcomponent []EvidenceCertainty `json:"subcomponent,omitempty" bson:"subcomponent,omitempty"` // A domain or subdomain of certainty
+}
+
+func (r *EvidenceCertainty) Validate() error {
+	for i, item := range r.Note {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Note[%d]: %w", i, err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.Rating != nil {
+		if err := r.Rating.Validate(); err != nil {
+			return fmt.Errorf("Rating: %w", err)
+		}
+	}
+	for i, item := range r.Subcomponent {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Subcomponent[%d]: %w", i, err)
 		}
 	}
 	return nil

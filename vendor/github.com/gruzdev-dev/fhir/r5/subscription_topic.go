@@ -23,7 +23,7 @@ type SubscriptionTopic struct {
 	Title                  *string                    `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this subscription topic (human friendly)
 	DerivedFrom            []string                   `json:"derivedFrom,omitempty" bson:"derived_from,omitempty"`                        // Based on FHIR protocol or definition
 	Status                 string                     `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                       `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // If For testing only - never for real usage
+	Experimental           *bool                      `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // If For testing only - never for real usage
 	Date                   *string                    `json:"date,omitempty" bson:"date,omitempty"`                                       // Date status first applied
 	Publisher              *string                    `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // The name of the individual or organization that published the SubscriptionTopic
 	Contact                []ContactDetail            `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -144,7 +144,7 @@ type SubscriptionTopicTriggerQueryCriteria struct {
 	ResultForCreate *string `json:"resultForCreate,omitempty" bson:"result_for_create,omitempty"` // test-passes | test-fails
 	Current         *string `json:"current,omitempty" bson:"current,omitempty"`                   // Rule applied to current resource state
 	ResultForDelete *string `json:"resultForDelete,omitempty" bson:"result_for_delete,omitempty"` // test-passes | test-fails
-	RequireBoth     bool    `json:"requireBoth,omitempty" bson:"require_both,omitempty"`          // Both must be true flag
+	RequireBoth     *bool   `json:"requireBoth,omitempty" bson:"require_both,omitempty"`          // Both must be true flag
 }
 
 func (r *SubscriptionTopicTriggerQueryCriteria) Validate() error {

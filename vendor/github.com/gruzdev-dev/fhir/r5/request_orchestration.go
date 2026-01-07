@@ -118,29 +118,17 @@ func (r *RequestOrchestration) Validate() error {
 	return nil
 }
 
-type RequestOrchestrationActionOutput struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
-	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
-	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
-}
-
-func (r *RequestOrchestrationActionOutput) Validate() error {
-	if r.Requirement != nil {
-		if err := r.Requirement.Validate(); err != nil {
-			return fmt.Errorf("Requirement: %w", err)
-		}
-	}
-	return nil
-}
-
-type RequestOrchestrationActionDynamicValue struct {
+type RequestOrchestrationActionCondition struct {
 	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Path       *string     `json:"path,omitempty" bson:"path,omitempty"`             // The path to the element to be set dynamically
-	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // An expression that provides the dynamic value for the customization
+	Kind       string      `json:"kind" bson:"kind"`                                 // applicability | start | stop
+	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // Boolean-valued expression
 }
 
-func (r *RequestOrchestrationActionDynamicValue) Validate() error {
+func (r *RequestOrchestrationActionCondition) Validate() error {
+	var emptyString string
+	if r.Kind == emptyString {
+		return fmt.Errorf("field 'Kind' is required")
+	}
 	if r.Expression != nil {
 		if err := r.Expression.Validate(); err != nil {
 			return fmt.Errorf("Expression: %w", err)
@@ -149,66 +137,17 @@ func (r *RequestOrchestrationActionDynamicValue) Validate() error {
 	return nil
 }
 
-type RequestOrchestrationActionRelatedAction struct {
-	Id              *string   `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
-	TargetId        string    `json:"targetId" bson:"target_id"`                                   // What action this is related to
-	Relationship    string    `json:"relationship" bson:"relationship"`                            // before | before-start | before-end | concurrent | concurrent-with-start | concurrent-with-end | after | after-start | after-end
-	EndRelationship *string   `json:"endRelationship,omitempty" bson:"end_relationship,omitempty"` // before | before-start | before-end | concurrent | concurrent-with-start | concurrent-with-end | after | after-start | after-end
-	OffsetDuration  *Duration `json:"offsetDuration,omitempty" bson:"offset_duration,omitempty"`   // Time offset for the relationship
-	OffsetRange     *Range    `json:"offsetRange,omitempty" bson:"offset_range,omitempty"`         // Time offset for the relationship
+type RequestOrchestrationActionInput struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
+	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
+	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
 }
 
-func (r *RequestOrchestrationActionRelatedAction) Validate() error {
-	var emptyString string
-	if r.TargetId == emptyString {
-		return fmt.Errorf("field 'TargetId' is required")
-	}
-	if r.Relationship == emptyString {
-		return fmt.Errorf("field 'Relationship' is required")
-	}
-	if r.OffsetDuration != nil {
-		if err := r.OffsetDuration.Validate(); err != nil {
-			return fmt.Errorf("OffsetDuration: %w", err)
-		}
-	}
-	if r.OffsetRange != nil {
-		if err := r.OffsetRange.Validate(); err != nil {
-			return fmt.Errorf("OffsetRange: %w", err)
-		}
-	}
-	return nil
-}
-
-type RequestOrchestrationActionParticipant struct {
-	Id             *string          `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
-	Type           *string          `json:"type,omitempty" bson:"type,omitempty"`                      // careteam | device | group | healthcareservice | location | organization | patient | practitioner | practitionerrole | relatedperson
-	TypeCanonical  *string          `json:"typeCanonical,omitempty" bson:"type_canonical,omitempty"`   // Who or what can participate
-	TypeReference  *Reference       `json:"typeReference,omitempty" bson:"type_reference,omitempty"`   // Who or what can participate
-	Role           *CodeableConcept `json:"role,omitempty" bson:"role,omitempty"`                      // E.g. Nurse, Surgeon, Parent, etc
-	Function       *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"`              // E.g. Author, Reviewer, Witness, etc
-	ActorCanonical *string          `json:"actorCanonical,omitempty" bson:"actor_canonical,omitempty"` // Who/what is participating?
-	ActorReference *Reference       `json:"actorReference,omitempty" bson:"actor_reference,omitempty"` // Who/what is participating?
-}
-
-func (r *RequestOrchestrationActionParticipant) Validate() error {
-	if r.TypeReference != nil {
-		if err := r.TypeReference.Validate(); err != nil {
-			return fmt.Errorf("TypeReference: %w", err)
-		}
-	}
-	if r.Role != nil {
-		if err := r.Role.Validate(); err != nil {
-			return fmt.Errorf("Role: %w", err)
-		}
-	}
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.ActorReference != nil {
-		if err := r.ActorReference.Validate(); err != nil {
-			return fmt.Errorf("ActorReference: %w", err)
+func (r *RequestOrchestrationActionInput) Validate() error {
+	if r.Requirement != nil {
+		if err := r.Requirement.Validate(); err != nil {
+			return fmt.Errorf("Requirement: %w", err)
 		}
 	}
 	return nil
@@ -352,36 +291,97 @@ func (r *RequestOrchestrationAction) Validate() error {
 	return nil
 }
 
-type RequestOrchestrationActionCondition struct {
-	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Kind       string      `json:"kind" bson:"kind"`                                 // applicability | start | stop
-	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // Boolean-valued expression
-}
-
-func (r *RequestOrchestrationActionCondition) Validate() error {
-	var emptyString string
-	if r.Kind == emptyString {
-		return fmt.Errorf("field 'Kind' is required")
-	}
-	if r.Expression != nil {
-		if err := r.Expression.Validate(); err != nil {
-			return fmt.Errorf("Expression: %w", err)
-		}
-	}
-	return nil
-}
-
-type RequestOrchestrationActionInput struct {
+type RequestOrchestrationActionOutput struct {
 	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
 	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
 	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
 	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
 }
 
-func (r *RequestOrchestrationActionInput) Validate() error {
+func (r *RequestOrchestrationActionOutput) Validate() error {
 	if r.Requirement != nil {
 		if err := r.Requirement.Validate(); err != nil {
 			return fmt.Errorf("Requirement: %w", err)
+		}
+	}
+	return nil
+}
+
+type RequestOrchestrationActionRelatedAction struct {
+	Id              *string   `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
+	TargetId        string    `json:"targetId" bson:"target_id"`                                   // What action this is related to
+	Relationship    string    `json:"relationship" bson:"relationship"`                            // before | before-start | before-end | concurrent | concurrent-with-start | concurrent-with-end | after | after-start | after-end
+	EndRelationship *string   `json:"endRelationship,omitempty" bson:"end_relationship,omitempty"` // before | before-start | before-end | concurrent | concurrent-with-start | concurrent-with-end | after | after-start | after-end
+	OffsetDuration  *Duration `json:"offsetDuration,omitempty" bson:"offset_duration,omitempty"`   // Time offset for the relationship
+	OffsetRange     *Range    `json:"offsetRange,omitempty" bson:"offset_range,omitempty"`         // Time offset for the relationship
+}
+
+func (r *RequestOrchestrationActionRelatedAction) Validate() error {
+	var emptyString string
+	if r.TargetId == emptyString {
+		return fmt.Errorf("field 'TargetId' is required")
+	}
+	if r.Relationship == emptyString {
+		return fmt.Errorf("field 'Relationship' is required")
+	}
+	if r.OffsetDuration != nil {
+		if err := r.OffsetDuration.Validate(); err != nil {
+			return fmt.Errorf("OffsetDuration: %w", err)
+		}
+	}
+	if r.OffsetRange != nil {
+		if err := r.OffsetRange.Validate(); err != nil {
+			return fmt.Errorf("OffsetRange: %w", err)
+		}
+	}
+	return nil
+}
+
+type RequestOrchestrationActionParticipant struct {
+	Id             *string          `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
+	Type           *string          `json:"type,omitempty" bson:"type,omitempty"`                      // careteam | device | group | healthcareservice | location | organization | patient | practitioner | practitionerrole | relatedperson
+	TypeCanonical  *string          `json:"typeCanonical,omitempty" bson:"type_canonical,omitempty"`   // Who or what can participate
+	TypeReference  *Reference       `json:"typeReference,omitempty" bson:"type_reference,omitempty"`   // Who or what can participate
+	Role           *CodeableConcept `json:"role,omitempty" bson:"role,omitempty"`                      // E.g. Nurse, Surgeon, Parent, etc
+	Function       *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"`              // E.g. Author, Reviewer, Witness, etc
+	ActorCanonical *string          `json:"actorCanonical,omitempty" bson:"actor_canonical,omitempty"` // Who/what is participating?
+	ActorReference *Reference       `json:"actorReference,omitempty" bson:"actor_reference,omitempty"` // Who/what is participating?
+}
+
+func (r *RequestOrchestrationActionParticipant) Validate() error {
+	if r.TypeReference != nil {
+		if err := r.TypeReference.Validate(); err != nil {
+			return fmt.Errorf("TypeReference: %w", err)
+		}
+	}
+	if r.Role != nil {
+		if err := r.Role.Validate(); err != nil {
+			return fmt.Errorf("Role: %w", err)
+		}
+	}
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.ActorReference != nil {
+		if err := r.ActorReference.Validate(); err != nil {
+			return fmt.Errorf("ActorReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type RequestOrchestrationActionDynamicValue struct {
+	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Path       *string     `json:"path,omitempty" bson:"path,omitempty"`             // The path to the element to be set dynamically
+	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // An expression that provides the dynamic value for the customization
+}
+
+func (r *RequestOrchestrationActionDynamicValue) Validate() error {
+	if r.Expression != nil {
+		if err := r.Expression.Validate(); err != nil {
+			return fmt.Errorf("Expression: %w", err)
 		}
 	}
 	return nil

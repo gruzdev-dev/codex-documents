@@ -90,6 +90,56 @@ func (r *ManufacturedItemDefinition) Validate() error {
 	return nil
 }
 
+type ManufacturedItemDefinitionProperty struct {
+	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
+	Type                 *CodeableConcept `json:"type" bson:"type"`                                                       // A code expressing the type of characteristic
+	ValueCodeableConcept *CodeableConcept `json:"valueCodeableConcept,omitempty" bson:"value_codeable_concept,omitempty"` // A value for the characteristic
+	ValueQuantity        *Quantity        `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"`                // A value for the characteristic
+	ValueRange           *Range           `json:"valueRange,omitempty" bson:"value_range,omitempty"`                      // A value for the characteristic
+	ValueDate            *string          `json:"valueDate,omitempty" bson:"value_date,omitempty"`                        // A value for the characteristic
+	ValueBoolean         *bool            `json:"valueBoolean,omitempty" bson:"value_boolean,omitempty"`                  // A value for the characteristic
+	ValueMarkdown        *string          `json:"valueMarkdown,omitempty" bson:"value_markdown,omitempty"`                // A value for the characteristic
+	ValueAttachment      *Attachment      `json:"valueAttachment,omitempty" bson:"value_attachment,omitempty"`            // A value for the characteristic
+	ValueReference       *Reference       `json:"valueReference,omitempty" bson:"value_reference,omitempty"`              // A value for the characteristic
+}
+
+func (r *ManufacturedItemDefinitionProperty) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.ValueCodeableConcept != nil {
+		if err := r.ValueCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("ValueCodeableConcept: %w", err)
+		}
+	}
+	if r.ValueQuantity != nil {
+		if err := r.ValueQuantity.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity: %w", err)
+		}
+	}
+	if r.ValueRange != nil {
+		if err := r.ValueRange.Validate(); err != nil {
+			return fmt.Errorf("ValueRange: %w", err)
+		}
+	}
+	if r.ValueAttachment != nil {
+		if err := r.ValueAttachment.Validate(); err != nil {
+			return fmt.Errorf("ValueAttachment: %w", err)
+		}
+	}
+	if r.ValueReference != nil {
+		if err := r.ValueReference.Validate(); err != nil {
+			return fmt.Errorf("ValueReference: %w", err)
+		}
+	}
+	return nil
+}
+
 type ManufacturedItemDefinitionComponent struct {
 	Id          *string                                          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Type        *CodeableConcept                                 `json:"type" bson:"type"`                                   // Defining type of the component e.g. shell, layer, ink
@@ -164,56 +214,6 @@ func (r *ManufacturedItemDefinitionComponentConstituent) Validate() error {
 	for i, item := range r.HasIngredient {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("HasIngredient[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ManufacturedItemDefinitionProperty struct {
-	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                       // Unique id for inter-element referencing
-	Type                 *CodeableConcept `json:"type" bson:"type"`                                                       // A code expressing the type of characteristic
-	ValueCodeableConcept *CodeableConcept `json:"valueCodeableConcept,omitempty" bson:"value_codeable_concept,omitempty"` // A value for the characteristic
-	ValueQuantity        *Quantity        `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"`                // A value for the characteristic
-	ValueRange           *Range           `json:"valueRange,omitempty" bson:"value_range,omitempty"`                      // A value for the characteristic
-	ValueDate            *string          `json:"valueDate,omitempty" bson:"value_date,omitempty"`                        // A value for the characteristic
-	ValueBoolean         *bool            `json:"valueBoolean,omitempty" bson:"value_boolean,omitempty"`                  // A value for the characteristic
-	ValueMarkdown        *string          `json:"valueMarkdown,omitempty" bson:"value_markdown,omitempty"`                // A value for the characteristic
-	ValueAttachment      *Attachment      `json:"valueAttachment,omitempty" bson:"value_attachment,omitempty"`            // A value for the characteristic
-	ValueReference       *Reference       `json:"valueReference,omitempty" bson:"value_reference,omitempty"`              // A value for the characteristic
-}
-
-func (r *ManufacturedItemDefinitionProperty) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.ValueCodeableConcept != nil {
-		if err := r.ValueCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("ValueCodeableConcept: %w", err)
-		}
-	}
-	if r.ValueQuantity != nil {
-		if err := r.ValueQuantity.Validate(); err != nil {
-			return fmt.Errorf("ValueQuantity: %w", err)
-		}
-	}
-	if r.ValueRange != nil {
-		if err := r.ValueRange.Validate(); err != nil {
-			return fmt.Errorf("ValueRange: %w", err)
-		}
-	}
-	if r.ValueAttachment != nil {
-		if err := r.ValueAttachment.Validate(); err != nil {
-			return fmt.Errorf("ValueAttachment: %w", err)
-		}
-	}
-	if r.ValueReference != nil {
-		if err := r.ValueReference.Validate(); err != nil {
-			return fmt.Errorf("ValueReference: %w", err)
 		}
 	}
 	return nil

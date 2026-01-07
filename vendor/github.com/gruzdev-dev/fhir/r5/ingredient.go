@@ -20,7 +20,7 @@ type Ingredient struct {
 	Role                *CodeableConcept         `json:"role" bson:"role"`                                                    // Purpose of the ingredient within the product, e.g. active, inactive
 	Function            []CodeableConcept        `json:"function,omitempty" bson:"function,omitempty"`                        // Precise action within the drug product, e.g. antioxidant, alkalizing agent
 	Group               *CodeableConcept         `json:"group,omitempty" bson:"group,omitempty"`                              // A classification of the ingredient according to where in the physical item it tends to be used, such the outer shell of a tablet, inner body or ink
-	AllergenicIndicator bool                     `json:"allergenicIndicator,omitempty" bson:"allergenic_indicator,omitempty"` // If the ingredient is a known or suspected allergen
+	AllergenicIndicator *bool                    `json:"allergenicIndicator,omitempty" bson:"allergenic_indicator,omitempty"` // If the ingredient is a known or suspected allergen
 	Comment             *string                  `json:"comment,omitempty" bson:"comment,omitempty"`                          // A place for providing any notes that are relevant to the component, e.g. removed during process, adjusted for loss on drying
 	Manufacturer        []IngredientManufacturer `json:"manufacturer,omitempty" bson:"manufacturer,omitempty"`                // An organization that manufactures this ingredient
 	Substance           *IngredientSubstance     `json:"substance" bson:"substance"`                                          // The substance that comprises this ingredient

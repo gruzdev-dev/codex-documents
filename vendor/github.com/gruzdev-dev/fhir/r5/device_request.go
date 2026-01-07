@@ -21,7 +21,7 @@ type DeviceRequest struct {
 	Status                 *string                  `json:"status,omitempty" bson:"status,omitempty"`                           // draft | active | on-hold | entered-in-error | ended | completed | revoked | unknown
 	Intent                 string                   `json:"intent" bson:"intent"`                                               // proposal | solicit-offer | offer-response | plan | directive | order | original-order | reflex-order | filler-order | instance-order | option
 	Priority               *string                  `json:"priority,omitempty" bson:"priority,omitempty"`                       // routine | urgent | asap | stat
-	DoNotPerform           bool                     `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`             // True if the request is to stop or not to start using the device
+	DoNotPerform           *bool                    `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`             // True if the request is to stop or not to start using the device
 	ProductCodeableConcept *CodeableConcept         `json:"productCodeableConcept" bson:"product_codeable_concept"`             // Device requested
 	ProductReference       *Reference               `json:"productReference" bson:"product_reference"`                          // Device requested
 	ProductCanonical       *string                  `json:"productCanonical" bson:"product_canonical"`                          // Device requested
@@ -37,7 +37,7 @@ type DeviceRequest struct {
 	Performer              *CodeableReference       `json:"performer,omitempty" bson:"performer,omitempty"`                     // Requested Filler
 	Location               []CodeableReference      `json:"location,omitempty" bson:"location,omitempty"`                       // Requested location
 	Reason                 []CodeableReference      `json:"reason,omitempty" bson:"reason,omitempty"`                           // Coded/Linked Reason for request
-	AsNeeded               bool                     `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`                      // PRN status of request
+	AsNeeded               *bool                    `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`                      // PRN status of request
 	AsNeededFor            *CodeableConcept         `json:"asNeededFor,omitempty" bson:"as_needed_for,omitempty"`               // Device usage reason
 	Insurance              []Reference              `json:"insurance,omitempty" bson:"insurance,omitempty"`                     // Associated insurance coverage
 	SupportingInfo         []Reference              `json:"supportingInfo,omitempty" bson:"supporting_info,omitempty"`          // Additional clinical information

@@ -12,7 +12,7 @@ type Dosage struct {
 	AdditionalInstruction []CodeableConcept   `json:"additionalInstruction,omitempty" bson:"additional_instruction,omitempty"` // Supplemental instruction or warnings to the patient - e.g. "with meals", "may cause drowsiness"
 	PatientInstruction    *string             `json:"patientInstruction,omitempty" bson:"patient_instruction,omitempty"`       // Patient or consumer oriented instructions
 	Timing                *Timing             `json:"timing,omitempty" bson:"timing,omitempty"`                                // When medication should be administered
-	AsNeeded              bool                `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`                           // Take "as needed"
+	AsNeeded              *bool               `json:"asNeeded,omitempty" bson:"as_needed,omitempty"`                           // Take "as needed"
 	AsNeededFor           []CodeableConcept   `json:"asNeededFor,omitempty" bson:"as_needed_for,omitempty"`                    // Take "as needed" (for x)
 	Site                  *CodeableConcept    `json:"site,omitempty" bson:"site,omitempty"`                                    // Body site to administer to
 	Route                 *CodeableConcept    `json:"route,omitempty" bson:"route,omitempty"`                                  // How drug should enter body

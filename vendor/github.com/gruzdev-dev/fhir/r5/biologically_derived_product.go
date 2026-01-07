@@ -101,45 +101,6 @@ func (r *BiologicallyDerivedProduct) Validate() error {
 	return nil
 }
 
-type BiologicallyDerivedProductCollection struct {
-	Id                 *string    `json:"id,omitempty" bson:"id,omitempty"`                                  // Unique id for inter-element referencing
-	Collector          *Reference `json:"collector,omitempty" bson:"collector,omitempty"`                    // Individual performing the collection
-	SourcePatient      *Reference `json:"sourcePatient,omitempty" bson:"source_patient,omitempty"`           // The patient who underwent the medical procedure to collect the product
-	SourceOrganization *Reference `json:"sourceOrganization,omitempty" bson:"source_organization,omitempty"` // The organization that facilitated the collection
-	CollectedDateTime  *string    `json:"collectedDateTime,omitempty" bson:"collected_date_time,omitempty"`  // Time of product collection
-	CollectedPeriod    *Period    `json:"collectedPeriod,omitempty" bson:"collected_period,omitempty"`       // Time of product collection
-	Procedure          *Reference `json:"procedure,omitempty" bson:"procedure,omitempty"`                    // The procedure involved in the collection
-}
-
-func (r *BiologicallyDerivedProductCollection) Validate() error {
-	if r.Collector != nil {
-		if err := r.Collector.Validate(); err != nil {
-			return fmt.Errorf("Collector: %w", err)
-		}
-	}
-	if r.SourcePatient != nil {
-		if err := r.SourcePatient.Validate(); err != nil {
-			return fmt.Errorf("SourcePatient: %w", err)
-		}
-	}
-	if r.SourceOrganization != nil {
-		if err := r.SourceOrganization.Validate(); err != nil {
-			return fmt.Errorf("SourceOrganization: %w", err)
-		}
-	}
-	if r.CollectedPeriod != nil {
-		if err := r.CollectedPeriod.Validate(); err != nil {
-			return fmt.Errorf("CollectedPeriod: %w", err)
-		}
-	}
-	if r.Procedure != nil {
-		if err := r.Procedure.Validate(); err != nil {
-			return fmt.Errorf("Procedure: %w", err)
-		}
-	}
-	return nil
-}
-
 type BiologicallyDerivedProductProperty struct {
 	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Type                 *CodeableConcept `json:"type" bson:"type"`                                   // Code that specifies the property
@@ -218,6 +179,45 @@ func (r *BiologicallyDerivedProductProperty) Validate() error {
 	if r.ValueAttachment != nil {
 		if err := r.ValueAttachment.Validate(); err != nil {
 			return fmt.Errorf("ValueAttachment: %w", err)
+		}
+	}
+	return nil
+}
+
+type BiologicallyDerivedProductCollection struct {
+	Id                 *string    `json:"id,omitempty" bson:"id,omitempty"`                                  // Unique id for inter-element referencing
+	Collector          *Reference `json:"collector,omitempty" bson:"collector,omitempty"`                    // Individual performing the collection
+	SourcePatient      *Reference `json:"sourcePatient,omitempty" bson:"source_patient,omitempty"`           // The patient who underwent the medical procedure to collect the product
+	SourceOrganization *Reference `json:"sourceOrganization,omitempty" bson:"source_organization,omitempty"` // The organization that facilitated the collection
+	CollectedDateTime  *string    `json:"collectedDateTime,omitempty" bson:"collected_date_time,omitempty"`  // Time of product collection
+	CollectedPeriod    *Period    `json:"collectedPeriod,omitempty" bson:"collected_period,omitempty"`       // Time of product collection
+	Procedure          *Reference `json:"procedure,omitempty" bson:"procedure,omitempty"`                    // The procedure involved in the collection
+}
+
+func (r *BiologicallyDerivedProductCollection) Validate() error {
+	if r.Collector != nil {
+		if err := r.Collector.Validate(); err != nil {
+			return fmt.Errorf("Collector: %w", err)
+		}
+	}
+	if r.SourcePatient != nil {
+		if err := r.SourcePatient.Validate(); err != nil {
+			return fmt.Errorf("SourcePatient: %w", err)
+		}
+	}
+	if r.SourceOrganization != nil {
+		if err := r.SourceOrganization.Validate(); err != nil {
+			return fmt.Errorf("SourceOrganization: %w", err)
+		}
+	}
+	if r.CollectedPeriod != nil {
+		if err := r.CollectedPeriod.Validate(); err != nil {
+			return fmt.Errorf("CollectedPeriod: %w", err)
+		}
+	}
+	if r.Procedure != nil {
+		if err := r.Procedure.Validate(); err != nil {
+			return fmt.Errorf("Procedure: %w", err)
 		}
 	}
 	return nil

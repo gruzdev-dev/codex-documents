@@ -120,20 +120,80 @@ func (r *CoverageEligibilityResponse) Validate() error {
 	return nil
 }
 
+type CoverageEligibilityResponseEvent struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
+	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
+	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
+	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
+}
+
+func (r *CoverageEligibilityResponseEvent) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.WhenDateTime == nil {
+		return fmt.Errorf("field 'WhenDateTime' is required")
+	}
+	if r.WhenPeriod == nil {
+		return fmt.Errorf("field 'WhenPeriod' is required")
+	}
+	if r.WhenPeriod != nil {
+		if err := r.WhenPeriod.Validate(); err != nil {
+			return fmt.Errorf("WhenPeriod: %w", err)
+		}
+	}
+	return nil
+}
+
+type CoverageEligibilityResponseInsurance struct {
+	Id            *string                                    `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	Coverage      *Reference                                 `json:"coverage" bson:"coverage"`                                // Insurance information
+	Inforce       *bool                                      `json:"inforce,omitempty" bson:"inforce,omitempty"`              // Coverage inforce indicator
+	BenefitPeriod *Period                                    `json:"benefitPeriod,omitempty" bson:"benefit_period,omitempty"` // When the benefits are applicable
+	Item          []CoverageEligibilityResponseInsuranceItem `json:"item,omitempty" bson:"item,omitempty"`                    // Benefits and authorization details
+}
+
+func (r *CoverageEligibilityResponseInsurance) Validate() error {
+	if r.Coverage == nil {
+		return fmt.Errorf("field 'Coverage' is required")
+	}
+	if r.Coverage != nil {
+		if err := r.Coverage.Validate(); err != nil {
+			return fmt.Errorf("Coverage: %w", err)
+		}
+	}
+	if r.BenefitPeriod != nil {
+		if err := r.BenefitPeriod.Validate(); err != nil {
+			return fmt.Errorf("BenefitPeriod: %w", err)
+		}
+	}
+	for i, item := range r.Item {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Item[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type CoverageEligibilityResponseInsuranceItem struct {
 	Id                      *string                                           `json:"id,omitempty" bson:"id,omitempty"`                                            // Unique id for inter-element referencing
 	Category                *CodeableConcept                                  `json:"category,omitempty" bson:"category,omitempty"`                                // Benefit classification
 	ProductOrService        *CodeableConcept                                  `json:"productOrService,omitempty" bson:"product_or_service,omitempty"`              // Billing, service, product, or drug code
 	Modifier                []CodeableConcept                                 `json:"modifier,omitempty" bson:"modifier,omitempty"`                                // Product or service billing modifiers
 	Provider                *Reference                                        `json:"provider,omitempty" bson:"provider,omitempty"`                                // Performing practitioner
-	Excluded                bool                                              `json:"excluded,omitempty" bson:"excluded,omitempty"`                                // Excluded from the plan
+	Excluded                *bool                                             `json:"excluded,omitempty" bson:"excluded,omitempty"`                                // Excluded from the plan
 	Name                    *string                                           `json:"name,omitempty" bson:"name,omitempty"`                                        // Short name for the benefit
 	Description             *string                                           `json:"description,omitempty" bson:"description,omitempty"`                          // Description of the benefit or services covered
 	Network                 *CodeableConcept                                  `json:"network,omitempty" bson:"network,omitempty"`                                  // In or out of network
 	Unit                    *CodeableConcept                                  `json:"unit,omitempty" bson:"unit,omitempty"`                                        // Individual or family
 	Term                    *CodeableConcept                                  `json:"term,omitempty" bson:"term,omitempty"`                                        // Annual or lifetime
 	Benefit                 []CoverageEligibilityResponseInsuranceItemBenefit `json:"benefit,omitempty" bson:"benefit,omitempty"`                                  // Benefit Summary
-	AuthorizationRequired   bool                                              `json:"authorizationRequired,omitempty" bson:"authorization_required,omitempty"`     // Authorization required flag
+	AuthorizationRequired   *bool                                             `json:"authorizationRequired,omitempty" bson:"authorization_required,omitempty"`     // Authorization required flag
 	AuthorizationSupporting []CodeableConcept                                 `json:"authorizationSupporting,omitempty" bson:"authorization_supporting,omitempty"` // Type of required supporting materials
 	AuthorizationUrl        *string                                           `json:"authorizationUrl,omitempty" bson:"authorization_url,omitempty"`               // Preauthorization requirements endpoint
 }
@@ -233,66 +293,6 @@ func (r *CoverageEligibilityResponseError) Validate() error {
 	if r.Code != nil {
 		if err := r.Code.Validate(); err != nil {
 			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	return nil
-}
-
-type CoverageEligibilityResponseEvent struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
-	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
-	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
-	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
-}
-
-func (r *CoverageEligibilityResponseEvent) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.WhenDateTime == nil {
-		return fmt.Errorf("field 'WhenDateTime' is required")
-	}
-	if r.WhenPeriod == nil {
-		return fmt.Errorf("field 'WhenPeriod' is required")
-	}
-	if r.WhenPeriod != nil {
-		if err := r.WhenPeriod.Validate(); err != nil {
-			return fmt.Errorf("WhenPeriod: %w", err)
-		}
-	}
-	return nil
-}
-
-type CoverageEligibilityResponseInsurance struct {
-	Id            *string                                    `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	Coverage      *Reference                                 `json:"coverage" bson:"coverage"`                                // Insurance information
-	Inforce       bool                                       `json:"inforce,omitempty" bson:"inforce,omitempty"`              // Coverage inforce indicator
-	BenefitPeriod *Period                                    `json:"benefitPeriod,omitempty" bson:"benefit_period,omitempty"` // When the benefits are applicable
-	Item          []CoverageEligibilityResponseInsuranceItem `json:"item,omitempty" bson:"item,omitempty"`                    // Benefits and authorization details
-}
-
-func (r *CoverageEligibilityResponseInsurance) Validate() error {
-	if r.Coverage == nil {
-		return fmt.Errorf("field 'Coverage' is required")
-	}
-	if r.Coverage != nil {
-		if err := r.Coverage.Validate(); err != nil {
-			return fmt.Errorf("Coverage: %w", err)
-		}
-	}
-	if r.BenefitPeriod != nil {
-		if err := r.BenefitPeriod.Validate(); err != nil {
-			return fmt.Errorf("BenefitPeriod: %w", err)
-		}
-	}
-	for i, item := range r.Item {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Item[%d]: %w", i, err)
 		}
 	}
 	return nil

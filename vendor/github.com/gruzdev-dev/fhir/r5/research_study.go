@@ -184,88 +184,6 @@ func (r *ResearchStudy) Validate() error {
 	return nil
 }
 
-type ResearchStudyAssociatedParty struct {
-	Id         *string           `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Name       *string           `json:"name,omitempty" bson:"name,omitempty"`             // Name of associated party
-	Role       *CodeableConcept  `json:"role" bson:"role"`                                 // sponsor | lead-sponsor | sponsor-investigator | primary-investigator | collaborator | funding-source | general-contact | recruitment-contact | sub-investigator | study-chair | irb | data-monitoring
-	Period     []Period          `json:"period,omitempty" bson:"period,omitempty"`         // When active in the role
-	Classifier []CodeableConcept `json:"classifier,omitempty" bson:"classifier,omitempty"` // nih | fda | government | nonprofit | academic | industry
-	Party      *Reference        `json:"party,omitempty" bson:"party,omitempty"`           // Individual or organization associated with study (use practitionerRole to specify their organisation)
-}
-
-func (r *ResearchStudyAssociatedParty) Validate() error {
-	if r.Role == nil {
-		return fmt.Errorf("field 'Role' is required")
-	}
-	if r.Role != nil {
-		if err := r.Role.Validate(); err != nil {
-			return fmt.Errorf("Role: %w", err)
-		}
-	}
-	for i, item := range r.Period {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Period[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Classifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Classifier[%d]: %w", i, err)
-		}
-	}
-	if r.Party != nil {
-		if err := r.Party.Validate(); err != nil {
-			return fmt.Errorf("Party: %w", err)
-		}
-	}
-	return nil
-}
-
-type ResearchStudyRecruitment struct {
-	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	TargetNumber *int       `json:"targetNumber,omitempty" bson:"target_number,omitempty"` // Estimated total number of participants to be enrolled
-	ActualNumber *int       `json:"actualNumber,omitempty" bson:"actual_number,omitempty"` // Actual total number of participants enrolled in study
-	Eligibility  *Reference `json:"eligibility,omitempty" bson:"eligibility,omitempty"`    // Inclusion and exclusion criteria
-	ActualGroup  *Reference `json:"actualGroup,omitempty" bson:"actual_group,omitempty"`   // Group of participants who were enrolled in study
-	Description  *string    `json:"description,omitempty" bson:"description,omitempty"`    // Description of the recruitment
-}
-
-func (r *ResearchStudyRecruitment) Validate() error {
-	if r.Eligibility != nil {
-		if err := r.Eligibility.Validate(); err != nil {
-			return fmt.Errorf("Eligibility: %w", err)
-		}
-	}
-	if r.ActualGroup != nil {
-		if err := r.ActualGroup.Validate(); err != nil {
-			return fmt.Errorf("ActualGroup: %w", err)
-		}
-	}
-	return nil
-}
-
-type ResearchStudyComparisonGroup struct {
-	Id            *string    `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	TargetNumber  *int       `json:"targetNumber,omitempty" bson:"target_number,omitempty"`   // Estimated total number of participants to be enrolled in the comparison group
-	ActualNumber  *int       `json:"actualNumber,omitempty" bson:"actual_number,omitempty"`   // Actual total number of participants enrolled in the comparison group
-	Eligibility   *Reference `json:"eligibility,omitempty" bson:"eligibility,omitempty"`      // Inclusion and exclusion criteria for the comparison group
-	ObservedGroup *Reference `json:"observedGroup,omitempty" bson:"observed_group,omitempty"` // Group of participants who were enrolled in the comparison group
-	Description   *string    `json:"description,omitempty" bson:"description,omitempty"`      // Description of the comparison Group
-}
-
-func (r *ResearchStudyComparisonGroup) Validate() error {
-	if r.Eligibility != nil {
-		if err := r.Eligibility.Validate(); err != nil {
-			return fmt.Errorf("Eligibility: %w", err)
-		}
-	}
-	if r.ObservedGroup != nil {
-		if err := r.ObservedGroup.Validate(); err != nil {
-			return fmt.Errorf("ObservedGroup: %w", err)
-		}
-	}
-	return nil
-}
-
 type ResearchStudyLabel struct {
 	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
 	Type     *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // primary | official | scientific | plain-language | subtitle | short-title | acronym | earlier-title | language | auto-translated | human-use | machine-use | duplicate-uid
@@ -329,10 +247,46 @@ func (r *ResearchStudyRelatesTo) Validate() error {
 	return nil
 }
 
+type ResearchStudyAssociatedParty struct {
+	Id         *string           `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Name       *string           `json:"name,omitempty" bson:"name,omitempty"`             // Name of associated party
+	Role       *CodeableConcept  `json:"role" bson:"role"`                                 // sponsor | lead-sponsor | sponsor-investigator | primary-investigator | collaborator | funding-source | general-contact | recruitment-contact | sub-investigator | study-chair | irb | data-monitoring
+	Period     []Period          `json:"period,omitempty" bson:"period,omitempty"`         // When active in the role
+	Classifier []CodeableConcept `json:"classifier,omitempty" bson:"classifier,omitempty"` // nih | fda | government | nonprofit | academic | industry
+	Party      *Reference        `json:"party,omitempty" bson:"party,omitempty"`           // Individual or organization associated with study (use practitionerRole to specify their organisation)
+}
+
+func (r *ResearchStudyAssociatedParty) Validate() error {
+	if r.Role == nil {
+		return fmt.Errorf("field 'Role' is required")
+	}
+	if r.Role != nil {
+		if err := r.Role.Validate(); err != nil {
+			return fmt.Errorf("Role: %w", err)
+		}
+	}
+	for i, item := range r.Period {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Period[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Classifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Classifier[%d]: %w", i, err)
+		}
+	}
+	if r.Party != nil {
+		if err := r.Party.Validate(); err != nil {
+			return fmt.Errorf("Party: %w", err)
+		}
+	}
+	return nil
+}
+
 type ResearchStudyProgressStatus struct {
 	Id     *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
 	State  *CodeableConcept `json:"state" bson:"state"`                       // Label for status or state (e.g. recruitment status)
-	Actual bool             `json:"actual,omitempty" bson:"actual,omitempty"` // Actual if true else anticipated
+	Actual *bool            `json:"actual,omitempty" bson:"actual,omitempty"` // Actual if true else anticipated
 	Period *Period          `json:"period,omitempty" bson:"period,omitempty"` // Date range
 }
 
@@ -348,6 +302,52 @@ func (r *ResearchStudyProgressStatus) Validate() error {
 	if r.Period != nil {
 		if err := r.Period.Validate(); err != nil {
 			return fmt.Errorf("Period: %w", err)
+		}
+	}
+	return nil
+}
+
+type ResearchStudyRecruitment struct {
+	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	TargetNumber *int       `json:"targetNumber,omitempty" bson:"target_number,omitempty"` // Estimated total number of participants to be enrolled
+	ActualNumber *int       `json:"actualNumber,omitempty" bson:"actual_number,omitempty"` // Actual total number of participants enrolled in study
+	Eligibility  *Reference `json:"eligibility,omitempty" bson:"eligibility,omitempty"`    // Inclusion and exclusion criteria
+	ActualGroup  *Reference `json:"actualGroup,omitempty" bson:"actual_group,omitempty"`   // Group of participants who were enrolled in study
+	Description  *string    `json:"description,omitempty" bson:"description,omitempty"`    // Description of the recruitment
+}
+
+func (r *ResearchStudyRecruitment) Validate() error {
+	if r.Eligibility != nil {
+		if err := r.Eligibility.Validate(); err != nil {
+			return fmt.Errorf("Eligibility: %w", err)
+		}
+	}
+	if r.ActualGroup != nil {
+		if err := r.ActualGroup.Validate(); err != nil {
+			return fmt.Errorf("ActualGroup: %w", err)
+		}
+	}
+	return nil
+}
+
+type ResearchStudyComparisonGroup struct {
+	Id            *string    `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	TargetNumber  *int       `json:"targetNumber,omitempty" bson:"target_number,omitempty"`   // Estimated total number of participants to be enrolled in the comparison group
+	ActualNumber  *int       `json:"actualNumber,omitempty" bson:"actual_number,omitempty"`   // Actual total number of participants enrolled in the comparison group
+	Eligibility   *Reference `json:"eligibility,omitempty" bson:"eligibility,omitempty"`      // Inclusion and exclusion criteria for the comparison group
+	ObservedGroup *Reference `json:"observedGroup,omitempty" bson:"observed_group,omitempty"` // Group of participants who were enrolled in the comparison group
+	Description   *string    `json:"description,omitempty" bson:"description,omitempty"`      // Description of the comparison Group
+}
+
+func (r *ResearchStudyComparisonGroup) Validate() error {
+	if r.Eligibility != nil {
+		if err := r.Eligibility.Validate(); err != nil {
+			return fmt.Errorf("Eligibility: %w", err)
+		}
+	}
+	if r.ObservedGroup != nil {
+		if err := r.ObservedGroup.Validate(); err != nil {
+			return fmt.Errorf("ObservedGroup: %w", err)
 		}
 	}
 	return nil

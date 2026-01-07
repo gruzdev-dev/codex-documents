@@ -23,7 +23,7 @@ type Measure struct {
 	Title                           *string                   `json:"title,omitempty" bson:"title,omitempty"`                                                       // Name for this measure (human friendly)
 	Subtitle                        *string                   `json:"subtitle,omitempty" bson:"subtitle,omitempty"`                                                 // Subordinate title of the measure
 	Status                          string                    `json:"status" bson:"status"`                                                                         // draft | active | retired | unknown
-	Experimental                    bool                      `json:"experimental,omitempty" bson:"experimental,omitempty"`                                         // For testing only - never for real usage
+	Experimental                    *bool                     `json:"experimental,omitempty" bson:"experimental,omitempty"`                                         // For testing only - never for real usage
 	SubjectCodeableConcept          *CodeableConcept          `json:"subjectCodeableConcept,omitempty" bson:"subject_codeable_concept,omitempty"`                   // E.g. Patient, Practitioner, RelatedPerson, Organization, Location, Device
 	SubjectReference                *Reference                `json:"subjectReference,omitempty" bson:"subject_reference,omitempty"`                                // E.g. Patient, Practitioner, RelatedPerson, Organization, Location, Device
 	Date                            *string                   `json:"date,omitempty" bson:"date,omitempty"`                                                         // Date last changed
@@ -257,14 +257,39 @@ func (r *MeasureGroup) Validate() error {
 	return nil
 }
 
-type MeasureGroupComponent struct {
-	Id      *string  `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
-	Measure *string  `json:"measure,omitempty" bson:"measure,omitempty"`  // What measure?
-	GroupId *string  `json:"groupId,omitempty" bson:"group_id,omitempty"` // What group?
-	Weight  *float64 `json:"weight,omitempty" bson:"weight,omitempty"`    // What weight?
+type MeasureGroupPopulation struct {
+	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                                 // Unique id for inter-element referencing
+	LinkId            *string          `json:"linkId,omitempty" bson:"link_id,omitempty"`                        // Unique id for population in measure
+	Title             *string          `json:"title,omitempty" bson:"title,omitempty"`                           // Title of the group's population. This title is expected in the corresponding MeasureReport.group.population.title
+	Code              *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`                             // initial-population | numerator | numerator-exclusion | denominator | denominator-exclusion | denominator-exception | measure-population | measure-population-exclusion | measure-observation
+	Description       *string          `json:"description,omitempty" bson:"description,omitempty"`               // The human readable description of this population criteria
+	Criteria          *Expression      `json:"criteria,omitempty" bson:"criteria,omitempty"`                     // The criteria that defines this population
+	GroupDefinition   *Reference       `json:"groupDefinition,omitempty" bson:"group_definition,omitempty"`      // A group resource that defines this population
+	InputPopulationId *string          `json:"inputPopulationId,omitempty" bson:"input_population_id,omitempty"` // Which population
+	AggregateMethod   *CodeableConcept `json:"aggregateMethod,omitempty" bson:"aggregate_method,omitempty"`      // Aggregation method for a measure score (e.g. sum, average, median, minimum, maximum, count)
 }
 
-func (r *MeasureGroupComponent) Validate() error {
+func (r *MeasureGroupPopulation) Validate() error {
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	if r.Criteria != nil {
+		if err := r.Criteria.Validate(); err != nil {
+			return fmt.Errorf("Criteria: %w", err)
+		}
+	}
+	if r.GroupDefinition != nil {
+		if err := r.GroupDefinition.Validate(); err != nil {
+			return fmt.Errorf("GroupDefinition: %w", err)
+		}
+	}
+	if r.AggregateMethod != nil {
+		if err := r.AggregateMethod.Validate(); err != nil {
+			return fmt.Errorf("AggregateMethod: %w", err)
+		}
+	}
 	return nil
 }
 
@@ -303,57 +328,6 @@ func (r *MeasureGroupStratifier) Validate() error {
 	return nil
 }
 
-type MeasureTerm struct {
-	Id         *string          `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Code       *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`             // What term?
-	Definition *string          `json:"definition,omitempty" bson:"definition,omitempty"` // Meaning of the term
-}
-
-func (r *MeasureTerm) Validate() error {
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	return nil
-}
-
-type MeasureGroupPopulation struct {
-	Id                *string          `json:"id,omitempty" bson:"id,omitempty"`                                 // Unique id for inter-element referencing
-	LinkId            *string          `json:"linkId,omitempty" bson:"link_id,omitempty"`                        // Unique id for population in measure
-	Title             *string          `json:"title,omitempty" bson:"title,omitempty"`                           // Title of the group's population. This title is expected in the corresponding MeasureReport.group.population.title
-	Code              *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`                             // initial-population | numerator | numerator-exclusion | denominator | denominator-exclusion | denominator-exception | measure-population | measure-population-exclusion | measure-observation
-	Description       *string          `json:"description,omitempty" bson:"description,omitempty"`               // The human readable description of this population criteria
-	Criteria          *Expression      `json:"criteria,omitempty" bson:"criteria,omitempty"`                     // The criteria that defines this population
-	GroupDefinition   *Reference       `json:"groupDefinition,omitempty" bson:"group_definition,omitempty"`      // A group resource that defines this population
-	InputPopulationId *string          `json:"inputPopulationId,omitempty" bson:"input_population_id,omitempty"` // Which population
-	AggregateMethod   *CodeableConcept `json:"aggregateMethod,omitempty" bson:"aggregate_method,omitempty"`      // Aggregation method for a measure score (e.g. sum, average, median, minimum, maximum, count)
-}
-
-func (r *MeasureGroupPopulation) Validate() error {
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	if r.Criteria != nil {
-		if err := r.Criteria.Validate(); err != nil {
-			return fmt.Errorf("Criteria: %w", err)
-		}
-	}
-	if r.GroupDefinition != nil {
-		if err := r.GroupDefinition.Validate(); err != nil {
-			return fmt.Errorf("GroupDefinition: %w", err)
-		}
-	}
-	if r.AggregateMethod != nil {
-		if err := r.AggregateMethod.Validate(); err != nil {
-			return fmt.Errorf("AggregateMethod: %w", err)
-		}
-	}
-	return nil
-}
-
 type MeasureGroupStratifierComponent struct {
 	Id              *string          `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
 	LinkId          *string          `json:"linkId,omitempty" bson:"link_id,omitempty"`                   // Unique id for stratifier component in measure
@@ -381,6 +355,32 @@ func (r *MeasureGroupStratifierComponent) Validate() error {
 			return fmt.Errorf("GroupDefinition: %w", err)
 		}
 	}
+	return nil
+}
+
+type MeasureTerm struct {
+	Id         *string          `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Code       *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`             // What term?
+	Definition *string          `json:"definition,omitempty" bson:"definition,omitempty"` // Meaning of the term
+}
+
+func (r *MeasureTerm) Validate() error {
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	return nil
+}
+
+type MeasureGroupComponent struct {
+	Id      *string  `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
+	Measure *string  `json:"measure,omitempty" bson:"measure,omitempty"`  // What measure?
+	GroupId *string  `json:"groupId,omitempty" bson:"group_id,omitempty"` // What group?
+	Weight  *float64 `json:"weight,omitempty" bson:"weight,omitempty"`    // What weight?
+}
+
+func (r *MeasureGroupComponent) Validate() error {
 	return nil
 }
 

@@ -15,7 +15,7 @@ type RelatedPerson struct {
 	Text          *Narrative                   `json:"text,omitempty" bson:"text,omitempty"`                    // Text summary of the resource, for human interpretation
 	Contained     []json.RawMessage            `json:"contained,omitempty" bson:"contained,omitempty"`          // Contained, inline Resources
 	Identifier    []Identifier                 `json:"identifier,omitempty" bson:"identifier,omitempty"`        // A human identifier for this person
-	Active        bool                         `json:"active,omitempty" bson:"active,omitempty"`                // Whether this related person's record is in active use
+	Active        *bool                        `json:"active,omitempty" bson:"active,omitempty"`                // Whether this related person's record is in active use
 	Patient       *Reference                   `json:"patient" bson:"patient"`                                  // The patient this person is related to
 	Relationship  []CodeableConcept            `json:"relationship,omitempty" bson:"relationship,omitempty"`    // The personal relationship of the related person to the patient
 	Role          []CodeableConcept            `json:"role,omitempty" bson:"role,omitempty"`                    // The functional role of the related person to the patient
@@ -102,7 +102,7 @@ func (r *RelatedPerson) Validate() error {
 type RelatedPersonCommunication struct {
 	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	Language  *CodeableConcept `json:"language" bson:"language"`                       // The language which can be used to communicate with the related person about the patient's health
-	Preferred bool             `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
+	Preferred *bool            `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
 }
 
 func (r *RelatedPersonCommunication) Validate() error {

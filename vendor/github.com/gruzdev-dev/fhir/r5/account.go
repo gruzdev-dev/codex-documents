@@ -146,7 +146,7 @@ func (r *AccountCoverage) Validate() error {
 type AccountGuarantor struct {
 	Id             *string    `json:"id,omitempty" bson:"id,omitempty"`                         // Unique id for inter-element referencing
 	Party          *Reference `json:"party,omitempty" bson:"party,omitempty"`                   // Responsible entity
-	OnHold         bool       `json:"onHold,omitempty" bson:"on_hold,omitempty"`                // Credit or other hold applied
+	OnHold         *bool      `json:"onHold,omitempty" bson:"on_hold,omitempty"`                // Credit or other hold applied
 	Period         *Period    `json:"period,omitempty" bson:"period,omitempty"`                 // Guarantee account during
 	Account        *Reference `json:"account,omitempty" bson:"account,omitempty"`               // A specific Account for the guarantor
 	Responsibility *Quantity  `json:"responsibility,omitempty" bson:"responsibility,omitempty"` // Responsible %'age of charges
@@ -189,7 +189,7 @@ type AccountDiagnosis struct {
 	Condition       *CodeableReference `json:"condition" bson:"condition"`                                   // The diagnosis relevant to the account
 	DateOfDiagnosis *string            `json:"dateOfDiagnosis,omitempty" bson:"date_of_diagnosis,omitempty"` // Date of the diagnosis (when coded diagnosis)
 	Type            []CodeableConcept  `json:"type,omitempty" bson:"type,omitempty"`                         // Type that this diagnosis has relevant to the account (e.g. admission, billing, discharge …)
-	OnAdmission     bool               `json:"onAdmission,omitempty" bson:"on_admission,omitempty"`          // Diagnosis present on Admission
+	OnAdmission     *bool              `json:"onAdmission,omitempty" bson:"on_admission,omitempty"`          // Diagnosis present on Admission
 	PackageCode     []CodeableConcept  `json:"packageCode,omitempty" bson:"package_code,omitempty"`          // Package Code specific for billing
 }
 
@@ -256,7 +256,7 @@ type AccountBalance struct {
 	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	Aggregate *CodeableConcept `json:"aggregate,omitempty" bson:"aggregate,omitempty"` // Who is expected to pay this part of the balance
 	Term      *CodeableConcept `json:"term,omitempty" bson:"term,omitempty"`           // current | 30 | 60 | 90 | 120
-	Estimate  bool             `json:"estimate,omitempty" bson:"estimate,omitempty"`   // Estimated balance
+	Estimate  *bool            `json:"estimate,omitempty" bson:"estimate,omitempty"`   // Estimated balance
 	Amount    *Money           `json:"amount" bson:"amount"`                           // Calculated amount
 }
 

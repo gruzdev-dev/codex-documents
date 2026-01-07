@@ -22,7 +22,7 @@ type CodeSystem struct {
 	Name                   *string              `json:"name,omitempty" bson:"name,omitempty"`                                       // Name for this code system (computer friendly)
 	Title                  *string              `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this code system (human friendly)
 	Status                 string               `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                 `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   *string              `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string              `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail      `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -41,11 +41,11 @@ type CodeSystem struct {
 	Reviewer               []ContactDetail      `json:"reviewer,omitempty" bson:"reviewer,omitempty"`                               // Who reviewed the CodeSystem
 	Endorser               []ContactDetail      `json:"endorser,omitempty" bson:"endorser,omitempty"`                               // Who endorsed the CodeSystem
 	RelatedArtifact        []RelatedArtifact    `json:"relatedArtifact,omitempty" bson:"related_artifact,omitempty"`                // Additional documentation, citations, etc
-	CaseSensitive          bool                 `json:"caseSensitive,omitempty" bson:"case_sensitive,omitempty"`                    // If code comparison is case sensitive
+	CaseSensitive          *bool                `json:"caseSensitive,omitempty" bson:"case_sensitive,omitempty"`                    // If code comparison is case sensitive
 	ValueSet               *string              `json:"valueSet,omitempty" bson:"value_set,omitempty"`                              // Canonical reference to the value set with entire code system
 	HierarchyMeaning       *string              `json:"hierarchyMeaning,omitempty" bson:"hierarchy_meaning,omitempty"`              // grouped-by | is-a | part-of | classified-with
-	Compositional          bool                 `json:"compositional,omitempty" bson:"compositional,omitempty"`                     // If code system defines a compositional grammar
-	VersionNeeded          bool                 `json:"versionNeeded,omitempty" bson:"version_needed,omitempty"`                    // If definitions are not stable
+	Compositional          *bool                `json:"compositional,omitempty" bson:"compositional,omitempty"`                     // If code system defines a compositional grammar
+	VersionNeeded          *bool                `json:"versionNeeded,omitempty" bson:"version_needed,omitempty"`                    // If definitions are not stable
 	Content                string               `json:"content" bson:"content"`                                                     // not-present | example | fragment | complete | supplement
 	Supplements            *string              `json:"supplements,omitempty" bson:"supplements,omitempty"`                         // Canonical URL of Code System this adds designations and properties to
 	Count                  *int                 `json:"count,omitempty" bson:"count,omitempty"`                                     // Total concepts in the code system
@@ -153,52 +153,6 @@ func (r *CodeSystem) Validate() error {
 	return nil
 }
 
-type CodeSystemConceptProperty struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Code          string   `json:"code" bson:"code"`                     // Reference to CodeSystem.property.code or a FHIR defined concept-property
-	ValueCode     *string  `json:"valueCode" bson:"value_code"`          // Value of the property for this concept
-	ValueCoding   *Coding  `json:"valueCoding" bson:"value_coding"`      // Value of the property for this concept
-	ValueString   *string  `json:"valueString" bson:"value_string"`      // Value of the property for this concept
-	ValueInteger  *int     `json:"valueInteger" bson:"value_integer"`    // Value of the property for this concept
-	ValueBoolean  *bool    `json:"valueBoolean" bson:"value_boolean"`    // Value of the property for this concept
-	ValueDateTime *string  `json:"valueDateTime" bson:"value_date_time"` // Value of the property for this concept
-	ValueDecimal  *float64 `json:"valueDecimal" bson:"value_decimal"`    // Value of the property for this concept
-}
-
-func (r *CodeSystemConceptProperty) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.ValueCode == nil {
-		return fmt.Errorf("field 'ValueCode' is required")
-	}
-	if r.ValueCoding == nil {
-		return fmt.Errorf("field 'ValueCoding' is required")
-	}
-	if r.ValueCoding != nil {
-		if err := r.ValueCoding.Validate(); err != nil {
-			return fmt.Errorf("ValueCoding: %w", err)
-		}
-	}
-	if r.ValueString == nil {
-		return fmt.Errorf("field 'ValueString' is required")
-	}
-	if r.ValueInteger == nil {
-		return fmt.Errorf("field 'ValueInteger' is required")
-	}
-	if r.ValueBoolean == nil {
-		return fmt.Errorf("field 'ValueBoolean' is required")
-	}
-	if r.ValueDateTime == nil {
-		return fmt.Errorf("field 'ValueDateTime' is required")
-	}
-	if r.ValueDecimal == nil {
-		return fmt.Errorf("field 'ValueDecimal' is required")
-	}
-	return nil
-}
-
 type CodeSystemFilter struct {
 	Id          *string  `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Code        string   `json:"code" bson:"code"`                                   // Code that identifies the filter
@@ -295,6 +249,52 @@ func (r *CodeSystemConceptDesignation) Validate() error {
 	var emptyString string
 	if r.Value == emptyString {
 		return fmt.Errorf("field 'Value' is required")
+	}
+	return nil
+}
+
+type CodeSystemConceptProperty struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Code          string   `json:"code" bson:"code"`                     // Reference to CodeSystem.property.code or a FHIR defined concept-property
+	ValueCode     *string  `json:"valueCode" bson:"value_code"`          // Value of the property for this concept
+	ValueCoding   *Coding  `json:"valueCoding" bson:"value_coding"`      // Value of the property for this concept
+	ValueString   *string  `json:"valueString" bson:"value_string"`      // Value of the property for this concept
+	ValueInteger  *int     `json:"valueInteger" bson:"value_integer"`    // Value of the property for this concept
+	ValueBoolean  *bool    `json:"valueBoolean" bson:"value_boolean"`    // Value of the property for this concept
+	ValueDateTime *string  `json:"valueDateTime" bson:"value_date_time"` // Value of the property for this concept
+	ValueDecimal  *float64 `json:"valueDecimal" bson:"value_decimal"`    // Value of the property for this concept
+}
+
+func (r *CodeSystemConceptProperty) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.ValueCode == nil {
+		return fmt.Errorf("field 'ValueCode' is required")
+	}
+	if r.ValueCoding == nil {
+		return fmt.Errorf("field 'ValueCoding' is required")
+	}
+	if r.ValueCoding != nil {
+		if err := r.ValueCoding.Validate(); err != nil {
+			return fmt.Errorf("ValueCoding: %w", err)
+		}
+	}
+	if r.ValueString == nil {
+		return fmt.Errorf("field 'ValueString' is required")
+	}
+	if r.ValueInteger == nil {
+		return fmt.Errorf("field 'ValueInteger' is required")
+	}
+	if r.ValueBoolean == nil {
+		return fmt.Errorf("field 'ValueBoolean' is required")
+	}
+	if r.ValueDateTime == nil {
+		return fmt.Errorf("field 'ValueDateTime' is required")
+	}
+	if r.ValueDecimal == nil {
+		return fmt.Errorf("field 'ValueDecimal' is required")
 	}
 	return nil
 }

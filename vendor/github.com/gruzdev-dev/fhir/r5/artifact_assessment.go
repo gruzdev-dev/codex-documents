@@ -76,6 +76,53 @@ func (r *ArtifactAssessment) Validate() error {
 	return nil
 }
 
+type ArtifactAssessmentContent struct {
+	Id          *string                       `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Summary     *string                       `json:"summary,omitempty" bson:"summary,omitempty"`           // Brief summary of the content
+	Type        *CodeableConcept              `json:"type,omitempty" bson:"type,omitempty"`                 // What type of content
+	Classifier  []CodeableConcept             `json:"classifier,omitempty" bson:"classifier,omitempty"`     // Rating, classifier, or assessment
+	Quantity    *Quantity                     `json:"quantity,omitempty" bson:"quantity,omitempty"`         // Quantitative rating
+	Author      []Reference                   `json:"author,omitempty" bson:"author,omitempty"`             // Who authored the content
+	Path        []string                      `json:"path,omitempty" bson:"path,omitempty"`                 // What the comment is directed to
+	RelatesTo   []ArtifactAssessmentRelatesTo `json:"relatesTo,omitempty" bson:"relates_to,omitempty"`      // Relationship to other Resources
+	FreeToShare *bool                         `json:"freeToShare,omitempty" bson:"free_to_share,omitempty"` // Acceptable to publicly share the content
+	Component   []ArtifactAssessmentContent   `json:"component,omitempty" bson:"component,omitempty"`       // Comment, classifier, or rating content
+}
+
+func (r *ArtifactAssessmentContent) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.Classifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Classifier[%d]: %w", i, err)
+		}
+	}
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	for i, item := range r.Author {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Author[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.RelatesTo {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("RelatesTo[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Component {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Component[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type ArtifactAssessmentRelatesTo struct {
 	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
 	Type             *CodeableConcept `json:"type" bson:"type"`                          // documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with | documents | specification-of | created-with | cite-as | reprint | reprint-of | summarizes
@@ -119,53 +166,6 @@ func (r *ArtifactAssessmentRelatesTo) Validate() error {
 	}
 	if r.TargetMarkdown == nil {
 		return fmt.Errorf("field 'TargetMarkdown' is required")
-	}
-	return nil
-}
-
-type ArtifactAssessmentContent struct {
-	Id          *string                       `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Summary     *string                       `json:"summary,omitempty" bson:"summary,omitempty"`           // Brief summary of the content
-	Type        *CodeableConcept              `json:"type,omitempty" bson:"type,omitempty"`                 // What type of content
-	Classifier  []CodeableConcept             `json:"classifier,omitempty" bson:"classifier,omitempty"`     // Rating, classifier, or assessment
-	Quantity    *Quantity                     `json:"quantity,omitempty" bson:"quantity,omitempty"`         // Quantitative rating
-	Author      []Reference                   `json:"author,omitempty" bson:"author,omitempty"`             // Who authored the content
-	Path        []string                      `json:"path,omitempty" bson:"path,omitempty"`                 // What the comment is directed to
-	RelatesTo   []ArtifactAssessmentRelatesTo `json:"relatesTo,omitempty" bson:"relates_to,omitempty"`      // Relationship to other Resources
-	FreeToShare bool                          `json:"freeToShare,omitempty" bson:"free_to_share,omitempty"` // Acceptable to publicly share the content
-	Component   []ArtifactAssessmentContent   `json:"component,omitempty" bson:"component,omitempty"`       // Comment, classifier, or rating content
-}
-
-func (r *ArtifactAssessmentContent) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	for i, item := range r.Classifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Classifier[%d]: %w", i, err)
-		}
-	}
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	for i, item := range r.Author {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Author[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.RelatesTo {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("RelatesTo[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Component {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Component[%d]: %w", i, err)
-		}
 	}
 	return nil
 }

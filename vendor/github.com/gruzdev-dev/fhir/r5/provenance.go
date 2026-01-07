@@ -109,34 +109,6 @@ func (r *Provenance) Validate() error {
 	return nil
 }
 
-type ProvenanceEntity struct {
-	Id    *string           `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Role  string            `json:"role" bson:"role"`                       // revision | quotation | source | instantiates | removal
-	What  *Reference        `json:"what" bson:"what"`                       // Identity of entity
-	Agent []ProvenanceAgent `json:"agent,omitempty" bson:"agent,omitempty"` // Entity is attributed to this agent
-}
-
-func (r *ProvenanceEntity) Validate() error {
-	var emptyString string
-	if r.Role == emptyString {
-		return fmt.Errorf("field 'Role' is required")
-	}
-	if r.What == nil {
-		return fmt.Errorf("field 'What' is required")
-	}
-	if r.What != nil {
-		if err := r.What.Validate(); err != nil {
-			return fmt.Errorf("What: %w", err)
-		}
-	}
-	for i, item := range r.Agent {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Agent[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type ProvenanceAgent struct {
 	Id         *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Type       *CodeableConcept  `json:"type,omitempty" bson:"type,omitempty"`               // How the agent participated
@@ -167,6 +139,34 @@ func (r *ProvenanceAgent) Validate() error {
 	if r.OnBehalfOf != nil {
 		if err := r.OnBehalfOf.Validate(); err != nil {
 			return fmt.Errorf("OnBehalfOf: %w", err)
+		}
+	}
+	return nil
+}
+
+type ProvenanceEntity struct {
+	Id    *string           `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Role  string            `json:"role" bson:"role"`                       // revision | quotation | source | instantiates | removal
+	What  *Reference        `json:"what" bson:"what"`                       // Identity of entity
+	Agent []ProvenanceAgent `json:"agent,omitempty" bson:"agent,omitempty"` // Entity is attributed to this agent
+}
+
+func (r *ProvenanceEntity) Validate() error {
+	var emptyString string
+	if r.Role == emptyString {
+		return fmt.Errorf("field 'Role' is required")
+	}
+	if r.What == nil {
+		return fmt.Errorf("field 'What' is required")
+	}
+	if r.What != nil {
+		if err := r.What.Validate(); err != nil {
+			return fmt.Errorf("What: %w", err)
+		}
+	}
+	for i, item := range r.Agent {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Agent[%d]: %w", i, err)
 		}
 	}
 	return nil

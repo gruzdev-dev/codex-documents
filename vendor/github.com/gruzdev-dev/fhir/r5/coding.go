@@ -7,7 +7,7 @@ type Coding struct {
 	Version      *string `json:"version,omitempty" bson:"version,omitempty"`            // Version of the system - if relevant
 	Code         *string `json:"code,omitempty" bson:"code,omitempty"`                  // Symbol in syntax defined by the system
 	Display      *string `json:"display,omitempty" bson:"display,omitempty"`            // Representation defined by the system
-	UserSelected bool    `json:"userSelected,omitempty" bson:"user_selected,omitempty"` // If this coding was chosen directly by the user
+	UserSelected *bool   `json:"userSelected,omitempty" bson:"user_selected,omitempty"` // If this coding was chosen directly by the user
 }
 
 func (r *Coding) Validate() error {

@@ -23,7 +23,7 @@ type SearchParameter struct {
 	Title                  *string                    `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this search parameter (human friendly)
 	DerivedFrom            *string                    `json:"derivedFrom,omitempty" bson:"derived_from,omitempty"`                        // Original definition for the search parameter
 	Status                 string                     `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                       `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                      `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   *string                    `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string                    `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail            `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -41,8 +41,8 @@ type SearchParameter struct {
 	ProcessingMode         *string                    `json:"processingMode,omitempty" bson:"processing_mode,omitempty"`                  // normal | phonetic | other
 	Constraint             *string                    `json:"constraint,omitempty" bson:"constraint,omitempty"`                           // FHIRPath expression that constraints the usage of this SearchParameter
 	Target                 []string                   `json:"target,omitempty" bson:"target,omitempty"`                                   // Types of resource (if a resource reference)
-	MultipleOr             bool                       `json:"multipleOr,omitempty" bson:"multiple_or,omitempty"`                          // Allow multiple values per parameter (or)
-	MultipleAnd            bool                       `json:"multipleAnd,omitempty" bson:"multiple_and,omitempty"`                        // Allow multiple parameters (and)
+	MultipleOr             *bool                      `json:"multipleOr,omitempty" bson:"multiple_or,omitempty"`                          // Allow multiple values per parameter (or)
+	MultipleAnd            *bool                      `json:"multipleAnd,omitempty" bson:"multiple_and,omitempty"`                        // Allow multiple parameters (and)
 	Comparator             []string                   `json:"comparator,omitempty" bson:"comparator,omitempty"`                           // eq | ne | gt | lt | ge | le | sa | eb | ap
 	Modifier               []string                   `json:"modifier,omitempty" bson:"modifier,omitempty"`                               // missing | exact | contains | not | text | in | not-in | below | above | type | identifier | of-type | code-text | text-advanced | iterate
 	Chain                  []string                   `json:"chain,omitempty" bson:"chain,omitempty"`                                     // Chained names supported

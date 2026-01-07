@@ -22,7 +22,7 @@ type ActorDefinition struct {
 	Name                   *string           `json:"name,omitempty" bson:"name,omitempty"`                                       // Name for this actor definition (computer friendly)
 	Title                  *string           `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this actor definition (human friendly)
 	Status                 string            `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool              `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool             `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   *string           `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string           `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail   `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher

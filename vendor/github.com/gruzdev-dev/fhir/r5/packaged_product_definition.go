@@ -24,7 +24,7 @@ type PackagedProductDefinition struct {
 	Description           *string                                        `json:"description,omitempty" bson:"description,omitempty"`                       // Textual description. Note that this is not the name of the package or product
 	LegalStatusOfSupply   []PackagedProductDefinitionLegalStatusOfSupply `json:"legalStatusOfSupply,omitempty" bson:"legal_status_of_supply,omitempty"`    // The legal status of supply of the packaged item as classified by the regulator
 	MarketingStatus       []MarketingStatus                              `json:"marketingStatus,omitempty" bson:"marketing_status,omitempty"`              // Allows specifying that an item is on the market for sale, or that it is not available, and the dates and locations associated
-	CopackagedIndicator   bool                                           `json:"copackagedIndicator,omitempty" bson:"copackaged_indicator,omitempty"`      // Identifies if the drug product is supplied with another item such as a diluent or adjuvant
+	CopackagedIndicator   *bool                                          `json:"copackagedIndicator,omitempty" bson:"copackaged_indicator,omitempty"`      // Identifies if the drug product is supplied with another item such as a diluent or adjuvant
 	Manufacturer          []Reference                                    `json:"manufacturer,omitempty" bson:"manufacturer,omitempty"`                     // Manufacturer of this package type (multiple means these are all possible manufacturers)
 	AttachedDocument      []Reference                                    `json:"attachedDocument,omitempty" bson:"attached_document,omitempty"`            // Additional information or supporting documentation about the packaged product
 	Packaging             *PackagedProductDefinitionPackaging            `json:"packaging,omitempty" bson:"packaging,omitempty"`                           // A packaging item, as a container for medically related items, possibly with other packaging items within, or a packaging component, such as bottle cap
@@ -98,70 +98,6 @@ func (r *PackagedProductDefinition) Validate() error {
 	for i, item := range r.Characteristic {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Characteristic[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type PackagedProductDefinitionPackaging struct {
-	Id                *string                                           `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
-	Identifier        []Identifier                                      `json:"identifier,omitempty" bson:"identifier,omitempty"`                // An identifier that is specific to this particular part of the packaging. Including possibly a Data Carrier Identifier
-	Type              *CodeableConcept                                  `json:"type,omitempty" bson:"type,omitempty"`                            // The physical type of the container of the items
-	ComponentPart     bool                                              `json:"componentPart,omitempty" bson:"component_part,omitempty"`         // Is this a part of the packaging (e.g. a cap or bottle stopper), rather than the packaging itself (e.g. a bottle or vial)
-	Quantity          *int                                              `json:"quantity,omitempty" bson:"quantity,omitempty"`                    // The quantity of this level of packaging in the package that contains it (with the outermost level being 1)
-	Material          []CodeableConcept                                 `json:"material,omitempty" bson:"material,omitempty"`                    // Material type of the package item
-	AlternateMaterial []CodeableConcept                                 `json:"alternateMaterial,omitempty" bson:"alternate_material,omitempty"` // A possible alternate material for this part of the packaging, that is allowed to be used instead of the usual material
-	ShelfLifeStorage  []ProductShelfLife                                `json:"shelfLifeStorage,omitempty" bson:"shelf_life_storage,omitempty"`  // Shelf Life and storage information
-	Manufacturer      []Reference                                       `json:"manufacturer,omitempty" bson:"manufacturer,omitempty"`            // Manufacturer of this packaging item (multiple means these are all potential manufacturers)
-	Property          []PackagedProductDefinitionPackagingProperty      `json:"property,omitempty" bson:"property,omitempty"`                    // General characteristics of this item
-	ContainedItem     []PackagedProductDefinitionPackagingContainedItem `json:"containedItem,omitempty" bson:"contained_item,omitempty"`         // The item(s) within the packaging
-	Packaging         []PackagedProductDefinitionPackaging              `json:"packaging,omitempty" bson:"packaging,omitempty"`                  // Allows containers (and parts of containers) within containers, still as a part of single packaged product
-}
-
-func (r *PackagedProductDefinitionPackaging) Validate() error {
-	for i, item := range r.Identifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Identifier[%d]: %w", i, err)
-		}
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	for i, item := range r.Material {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Material[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.AlternateMaterial {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("AlternateMaterial[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.ShelfLifeStorage {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("ShelfLifeStorage[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Manufacturer {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Manufacturer[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Property {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Property[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.ContainedItem {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("ContainedItem[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Packaging {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Packaging[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -242,6 +178,70 @@ func (r *PackagedProductDefinitionLegalStatusOfSupply) Validate() error {
 	if r.Jurisdiction != nil {
 		if err := r.Jurisdiction.Validate(); err != nil {
 			return fmt.Errorf("Jurisdiction: %w", err)
+		}
+	}
+	return nil
+}
+
+type PackagedProductDefinitionPackaging struct {
+	Id                *string                                           `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
+	Identifier        []Identifier                                      `json:"identifier,omitempty" bson:"identifier,omitempty"`                // An identifier that is specific to this particular part of the packaging. Including possibly a Data Carrier Identifier
+	Type              *CodeableConcept                                  `json:"type,omitempty" bson:"type,omitempty"`                            // The physical type of the container of the items
+	ComponentPart     *bool                                             `json:"componentPart,omitempty" bson:"component_part,omitempty"`         // Is this a part of the packaging (e.g. a cap or bottle stopper), rather than the packaging itself (e.g. a bottle or vial)
+	Quantity          *int                                              `json:"quantity,omitempty" bson:"quantity,omitempty"`                    // The quantity of this level of packaging in the package that contains it (with the outermost level being 1)
+	Material          []CodeableConcept                                 `json:"material,omitempty" bson:"material,omitempty"`                    // Material type of the package item
+	AlternateMaterial []CodeableConcept                                 `json:"alternateMaterial,omitempty" bson:"alternate_material,omitempty"` // A possible alternate material for this part of the packaging, that is allowed to be used instead of the usual material
+	ShelfLifeStorage  []ProductShelfLife                                `json:"shelfLifeStorage,omitempty" bson:"shelf_life_storage,omitempty"`  // Shelf Life and storage information
+	Manufacturer      []Reference                                       `json:"manufacturer,omitempty" bson:"manufacturer,omitempty"`            // Manufacturer of this packaging item (multiple means these are all potential manufacturers)
+	Property          []PackagedProductDefinitionPackagingProperty      `json:"property,omitempty" bson:"property,omitempty"`                    // General characteristics of this item
+	ContainedItem     []PackagedProductDefinitionPackagingContainedItem `json:"containedItem,omitempty" bson:"contained_item,omitempty"`         // The item(s) within the packaging
+	Packaging         []PackagedProductDefinitionPackaging              `json:"packaging,omitempty" bson:"packaging,omitempty"`                  // Allows containers (and parts of containers) within containers, still as a part of single packaged product
+}
+
+func (r *PackagedProductDefinitionPackaging) Validate() error {
+	for i, item := range r.Identifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Identifier[%d]: %w", i, err)
+		}
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	for i, item := range r.Material {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Material[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.AlternateMaterial {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AlternateMaterial[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.ShelfLifeStorage {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ShelfLifeStorage[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Manufacturer {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Manufacturer[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Property {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Property[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.ContainedItem {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("ContainedItem[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Packaging {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Packaging[%d]: %w", i, err)
 		}
 	}
 	return nil

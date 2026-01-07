@@ -62,6 +62,24 @@ func (r *SubscriptionStatus) Validate() error {
 	return nil
 }
 
+type SubscriptionStatusNotificationEventAuthorizationHint struct {
+	Id                *string `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
+	AuthorizationType *Coding `json:"authorizationType" bson:"authorization_type"` // Classification of the authorization hint, e.g., 'oAuthChallengeToken'
+	Value             *string `json:"value,omitempty" bson:"value,omitempty"`      // Authorization value, as defined by the 'authorizationType'
+}
+
+func (r *SubscriptionStatusNotificationEventAuthorizationHint) Validate() error {
+	if r.AuthorizationType == nil {
+		return fmt.Errorf("field 'AuthorizationType' is required")
+	}
+	if r.AuthorizationType != nil {
+		if err := r.AuthorizationType.Validate(); err != nil {
+			return fmt.Errorf("AuthorizationType: %w", err)
+		}
+	}
+	return nil
+}
+
 type SubscriptionStatusNotificationEvent struct {
 	Id                *string                                                `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
 	EventNumber       int64                                                  `json:"eventNumber" bson:"event_number"`                                 // Sequencing index of this event
@@ -120,24 +138,6 @@ func (r *SubscriptionStatusNotificationEventRelatedQuery) Validate() error {
 	var emptyString string
 	if r.Query == emptyString {
 		return fmt.Errorf("field 'Query' is required")
-	}
-	return nil
-}
-
-type SubscriptionStatusNotificationEventAuthorizationHint struct {
-	Id                *string `json:"id,omitempty" bson:"id,omitempty"`            // Unique id for inter-element referencing
-	AuthorizationType *Coding `json:"authorizationType" bson:"authorization_type"` // Classification of the authorization hint, e.g., 'oAuthChallengeToken'
-	Value             *string `json:"value,omitempty" bson:"value,omitempty"`      // Authorization value, as defined by the 'authorizationType'
-}
-
-func (r *SubscriptionStatusNotificationEventAuthorizationHint) Validate() error {
-	if r.AuthorizationType == nil {
-		return fmt.Errorf("field 'AuthorizationType' is required")
-	}
-	if r.AuthorizationType != nil {
-		if err := r.AuthorizationType.Validate(); err != nil {
-			return fmt.Errorf("AuthorizationType: %w", err)
-		}
 	}
 	return nil
 }

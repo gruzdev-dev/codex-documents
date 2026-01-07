@@ -23,7 +23,7 @@ type OperationDefinition struct {
 	Title                  *string                        `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this operation definition (human friendly)
 	Status                 string                         `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
 	Kind                   string                         `json:"kind" bson:"kind"`                                                           // operation | query
-	Experimental           bool                           `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                          `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   *string                        `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string                        `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail                `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -33,7 +33,7 @@ type OperationDefinition struct {
 	Purpose                *string                        `json:"purpose,omitempty" bson:"purpose,omitempty"`                                 // Why this operation definition is defined
 	Copyright              *string                        `json:"copyright,omitempty" bson:"copyright,omitempty"`                             // Notice about intellectual property ownership, can include restrictions on use
 	CopyrightLabel         *string                        `json:"copyrightLabel,omitempty" bson:"copyright_label,omitempty"`                  // Copyright holder and year(s)
-	AffectsState           bool                           `json:"affectsState,omitempty" bson:"affects_state,omitempty"`                      // Whether content is changed by the operation
+	AffectsState           *bool                          `json:"affectsState,omitempty" bson:"affects_state,omitempty"`                      // Whether content is changed by the operation
 	Synchronicity          *string                        `json:"synchronicity,omitempty" bson:"synchronicity,omitempty"`                     // synchronous | asynchronous | either
 	Code                   string                         `json:"code" bson:"code"`                                                           // Recommended name for operation in search url
 	Comment                *string                        `json:"comment,omitempty" bson:"comment,omitempty"`                                 // Additional information about use
@@ -113,30 +113,6 @@ func (r *OperationDefinition) Validate() error {
 	return nil
 }
 
-type OperationDefinitionParameterReferencedFrom struct {
-	Id       *string `json:"id,omitempty" bson:"id,omitempty"`              // Unique id for inter-element referencing
-	Source   string  `json:"source" bson:"source"`                          // Referencing parameter
-	SourceId *string `json:"sourceId,omitempty" bson:"source_id,omitempty"` // Element id of reference
-}
-
-func (r *OperationDefinitionParameterReferencedFrom) Validate() error {
-	var emptyString string
-	if r.Source == emptyString {
-		return fmt.Errorf("field 'Source' is required")
-	}
-	return nil
-}
-
-type OperationDefinitionOverload struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	ParameterName []string `json:"parameterName,omitempty" bson:"parameter_name,omitempty"` // Name of parameter to include in overload
-	Comment       *string  `json:"comment,omitempty" bson:"comment,omitempty"`              // Comments to go on overload
-}
-
-func (r *OperationDefinitionOverload) Validate() error {
-	return nil
-}
-
 type OperationDefinitionParameter struct {
 	Id             *string                                      `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
 	Name           string                                       `json:"name" bson:"name"`                                          // Name in Parameters.parameter.name or in URL
@@ -200,5 +176,29 @@ func (r *OperationDefinitionParameterBinding) Validate() error {
 	if r.ValueSet == emptyString {
 		return fmt.Errorf("field 'ValueSet' is required")
 	}
+	return nil
+}
+
+type OperationDefinitionParameterReferencedFrom struct {
+	Id       *string `json:"id,omitempty" bson:"id,omitempty"`              // Unique id for inter-element referencing
+	Source   string  `json:"source" bson:"source"`                          // Referencing parameter
+	SourceId *string `json:"sourceId,omitempty" bson:"source_id,omitempty"` // Element id of reference
+}
+
+func (r *OperationDefinitionParameterReferencedFrom) Validate() error {
+	var emptyString string
+	if r.Source == emptyString {
+		return fmt.Errorf("field 'Source' is required")
+	}
+	return nil
+}
+
+type OperationDefinitionOverload struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	ParameterName []string `json:"parameterName,omitempty" bson:"parameter_name,omitempty"` // Name of parameter to include in overload
+	Comment       *string  `json:"comment,omitempty" bson:"comment,omitempty"`              // Comments to go on overload
+}
+
+func (r *OperationDefinitionOverload) Validate() error {
 	return nil
 }

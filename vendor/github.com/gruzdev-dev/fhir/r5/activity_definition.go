@@ -23,7 +23,7 @@ type ActivityDefinition struct {
 	Title                        *string                          `json:"title,omitempty" bson:"title,omitempty"`                                                 // Name for this activity definition (human friendly)
 	Subtitle                     *string                          `json:"subtitle,omitempty" bson:"subtitle,omitempty"`                                           // Subordinate title of the activity definition
 	Status                       string                           `json:"status" bson:"status"`                                                                   // draft | active | retired | unknown
-	Experimental                 bool                             `json:"experimental,omitempty" bson:"experimental,omitempty"`                                   // For testing only - never for real usage
+	Experimental                 *bool                            `json:"experimental,omitempty" bson:"experimental,omitempty"`                                   // For testing only - never for real usage
 	SubjectCodeableConcept       *CodeableConcept                 `json:"subjectCodeableConcept,omitempty" bson:"subject_codeable_concept,omitempty"`             // Type of individual the activity definition is intended for
 	SubjectReference             *Reference                       `json:"subjectReference,omitempty" bson:"subject_reference,omitempty"`                          // Type of individual the activity definition is intended for
 	SubjectCanonical             *string                          `json:"subjectCanonical,omitempty" bson:"subject_canonical,omitempty"`                          // Type of individual the activity definition is intended for
@@ -52,7 +52,7 @@ type ActivityDefinition struct {
 	Code                         *CodeableConcept                 `json:"code,omitempty" bson:"code,omitempty"`                                                   // Detail type of activity
 	Intent                       *string                          `json:"intent,omitempty" bson:"intent,omitempty"`                                               // proposal | solicit-offer | offer-response | plan | directive | order | original-order | reflex-order | filler-order | instance-order | option
 	Priority                     *string                          `json:"priority,omitempty" bson:"priority,omitempty"`                                           // routine | urgent | asap | stat
-	DoNotPerform                 bool                             `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`                                 // True if the activity should not be performed
+	DoNotPerform                 *bool                            `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`                                 // True if the activity should not be performed
 	TimingTiming                 *Timing                          `json:"timingTiming,omitempty" bson:"timing_timing,omitempty"`                                  // When activity is to occur
 	TimingAge                    *Age                             `json:"timingAge,omitempty" bson:"timing_age,omitempty"`                                        // When activity is to occur
 	TimingRange                  *Range                           `json:"timingRange,omitempty" bson:"timing_range,omitempty"`                                    // When activity is to occur

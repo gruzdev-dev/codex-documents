@@ -24,7 +24,7 @@ type PlanDefinition struct {
 	Subtitle                *string                `json:"subtitle,omitempty" bson:"subtitle,omitempty"`                                  // Subordinate title of the plan definition
 	Type                    *CodeableConcept       `json:"type,omitempty" bson:"type,omitempty"`                                          // order-set | protocol | eca-rule | workflow-definition | etc.
 	Status                  string                 `json:"status" bson:"status"`                                                          // draft | active | retired | unknown
-	Experimental            bool                   `json:"experimental,omitempty" bson:"experimental,omitempty"`                          // For testing only - never for real usage
+	Experimental            *bool                  `json:"experimental,omitempty" bson:"experimental,omitempty"`                          // For testing only - never for real usage
 	SubjectCodeableConcept  *CodeableConcept       `json:"subjectCodeableConcept,omitempty" bson:"subject_codeable_concept,omitempty"`    // Type of individual the plan definition is focused on
 	SubjectReference        *Reference             `json:"subjectReference,omitempty" bson:"subject_reference,omitempty"`                 // Type of individual the plan definition is focused on
 	SubjectCanonical        *string                `json:"subjectCanonical,omitempty" bson:"subject_canonical,omitempty"`                 // Type of individual the plan definition is focused on
@@ -171,6 +171,50 @@ func (r *PlanDefinition) Validate() error {
 	return nil
 }
 
+type PlanDefinitionActionParticipant struct {
+	Id            *string          `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	ActorId       *string          `json:"actorId,omitempty" bson:"actor_id,omitempty"`             // What actor
+	Type          *string          `json:"type,omitempty" bson:"type,omitempty"`                    // careteam | device | group | healthcareservice | location | organization | patient | practitioner | practitionerrole | relatedperson
+	TypeCanonical *string          `json:"typeCanonical,omitempty" bson:"type_canonical,omitempty"` // Who or what can participate
+	TypeReference *Reference       `json:"typeReference,omitempty" bson:"type_reference,omitempty"` // Who or what can participate
+	Role          *CodeableConcept `json:"role,omitempty" bson:"role,omitempty"`                    // E.g. Nurse, Surgeon, Parent
+	Function      *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"`            // E.g. Author, Reviewer, Witness, etc
+}
+
+func (r *PlanDefinitionActionParticipant) Validate() error {
+	if r.TypeReference != nil {
+		if err := r.TypeReference.Validate(); err != nil {
+			return fmt.Errorf("TypeReference: %w", err)
+		}
+	}
+	if r.Role != nil {
+		if err := r.Role.Validate(); err != nil {
+			return fmt.Errorf("Role: %w", err)
+		}
+	}
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	return nil
+}
+
+type PlanDefinitionActionDynamicValue struct {
+	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Path       *string     `json:"path,omitempty" bson:"path,omitempty"`             // The path to the element to be set dynamically
+	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // An expression that provides the dynamic value for the customization
+}
+
+func (r *PlanDefinitionActionDynamicValue) Validate() error {
+	if r.Expression != nil {
+		if err := r.Expression.Validate(); err != nil {
+			return fmt.Errorf("Expression: %w", err)
+		}
+	}
+	return nil
+}
+
 type PlanDefinitionGoalTarget struct {
 	Id                    *string          `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
 	Measure               *CodeableConcept `json:"measure,omitempty" bson:"measure,omitempty"`                               // The parameter whose value is to be tracked
@@ -235,6 +279,159 @@ func (r *PlanDefinitionActorOption) Validate() error {
 	if r.Role != nil {
 		if err := r.Role.Validate(); err != nil {
 			return fmt.Errorf("Role: %w", err)
+		}
+	}
+	return nil
+}
+
+type PlanDefinitionActionCondition struct {
+	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Kind       string      `json:"kind" bson:"kind"`                                 // applicability | start | stop
+	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // Boolean-valued expression
+}
+
+func (r *PlanDefinitionActionCondition) Validate() error {
+	var emptyString string
+	if r.Kind == emptyString {
+		return fmt.Errorf("field 'Kind' is required")
+	}
+	if r.Expression != nil {
+		if err := r.Expression.Validate(); err != nil {
+			return fmt.Errorf("Expression: %w", err)
+		}
+	}
+	return nil
+}
+
+type PlanDefinitionActionInput struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
+	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
+	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
+}
+
+func (r *PlanDefinitionActionInput) Validate() error {
+	if r.Requirement != nil {
+		if err := r.Requirement.Validate(); err != nil {
+			return fmt.Errorf("Requirement: %w", err)
+		}
+	}
+	return nil
+}
+
+type PlanDefinitionActionOutput struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
+	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
+	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
+}
+
+func (r *PlanDefinitionActionOutput) Validate() error {
+	if r.Requirement != nil {
+		if err := r.Requirement.Validate(); err != nil {
+			return fmt.Errorf("Requirement: %w", err)
+		}
+	}
+	return nil
+}
+
+type PlanDefinitionActionRelatedAction struct {
+	Id              *string   `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
+	TargetId        string    `json:"targetId" bson:"target_id"`                                   // What action is this related to
+	Relationship    string    `json:"relationship" bson:"relationship"`                            // before | before-start | before-end | concurrent | concurrent-with-start | concurrent-with-end | after | after-start | after-end
+	EndRelationship *string   `json:"endRelationship,omitempty" bson:"end_relationship,omitempty"` // before | before-start | before-end | concurrent | concurrent-with-start | concurrent-with-end | after | after-start | after-end
+	OffsetDuration  *Duration `json:"offsetDuration,omitempty" bson:"offset_duration,omitempty"`   // Time offset for the relationship
+	OffsetRange     *Range    `json:"offsetRange,omitempty" bson:"offset_range,omitempty"`         // Time offset for the relationship
+}
+
+func (r *PlanDefinitionActionRelatedAction) Validate() error {
+	var emptyString string
+	if r.TargetId == emptyString {
+		return fmt.Errorf("field 'TargetId' is required")
+	}
+	if r.Relationship == emptyString {
+		return fmt.Errorf("field 'Relationship' is required")
+	}
+	if r.OffsetDuration != nil {
+		if err := r.OffsetDuration.Validate(); err != nil {
+			return fmt.Errorf("OffsetDuration: %w", err)
+		}
+	}
+	if r.OffsetRange != nil {
+		if err := r.OffsetRange.Validate(); err != nil {
+			return fmt.Errorf("OffsetRange: %w", err)
+		}
+	}
+	return nil
+}
+
+type PlanDefinitionGoal struct {
+	Id            *string                    `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Category      *CodeableConcept           `json:"category,omitempty" bson:"category,omitempty"`           // E.g. Treatment, dietary, behavioral
+	Description   *CodeableConcept           `json:"description" bson:"description"`                         // Code or text describing the goal
+	Priority      *CodeableConcept           `json:"priority,omitempty" bson:"priority,omitempty"`           // high-priority | medium-priority | low-priority
+	Start         *CodeableConcept           `json:"start,omitempty" bson:"start,omitempty"`                 // When goal pursuit begins
+	Addresses     []CodeableConcept          `json:"addresses,omitempty" bson:"addresses,omitempty"`         // What does the goal address
+	Documentation []RelatedArtifact          `json:"documentation,omitempty" bson:"documentation,omitempty"` // Supporting documentation for the goal
+	Target        []PlanDefinitionGoalTarget `json:"target,omitempty" bson:"target,omitempty"`               // Target outcome for the goal
+}
+
+func (r *PlanDefinitionGoal) Validate() error {
+	if r.Category != nil {
+		if err := r.Category.Validate(); err != nil {
+			return fmt.Errorf("Category: %w", err)
+		}
+	}
+	if r.Description == nil {
+		return fmt.Errorf("field 'Description' is required")
+	}
+	if r.Description != nil {
+		if err := r.Description.Validate(); err != nil {
+			return fmt.Errorf("Description: %w", err)
+		}
+	}
+	if r.Priority != nil {
+		if err := r.Priority.Validate(); err != nil {
+			return fmt.Errorf("Priority: %w", err)
+		}
+	}
+	if r.Start != nil {
+		if err := r.Start.Validate(); err != nil {
+			return fmt.Errorf("Start: %w", err)
+		}
+	}
+	for i, item := range r.Addresses {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Addresses[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Documentation {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Documentation[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Target {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Target[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type PlanDefinitionActor struct {
+	Id          *string                     `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Title       *string                     `json:"title,omitempty" bson:"title,omitempty"`             // User-visible title
+	Description *string                     `json:"description,omitempty" bson:"description,omitempty"` // Describes the actor
+	Option      []PlanDefinitionActorOption `json:"option" bson:"option"`                               // Who or what can be this actor
+}
+
+func (r *PlanDefinitionActor) Validate() error {
+	if len(r.Option) < 1 {
+		return fmt.Errorf("field 'Option' must have at least 1 elements")
+	}
+	for i, item := range r.Option {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Option[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -380,203 +577,6 @@ func (r *PlanDefinitionAction) Validate() error {
 	for i, item := range r.Action {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Action[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type PlanDefinitionActionRelatedAction struct {
-	Id              *string   `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
-	TargetId        string    `json:"targetId" bson:"target_id"`                                   // What action is this related to
-	Relationship    string    `json:"relationship" bson:"relationship"`                            // before | before-start | before-end | concurrent | concurrent-with-start | concurrent-with-end | after | after-start | after-end
-	EndRelationship *string   `json:"endRelationship,omitempty" bson:"end_relationship,omitempty"` // before | before-start | before-end | concurrent | concurrent-with-start | concurrent-with-end | after | after-start | after-end
-	OffsetDuration  *Duration `json:"offsetDuration,omitempty" bson:"offset_duration,omitempty"`   // Time offset for the relationship
-	OffsetRange     *Range    `json:"offsetRange,omitempty" bson:"offset_range,omitempty"`         // Time offset for the relationship
-}
-
-func (r *PlanDefinitionActionRelatedAction) Validate() error {
-	var emptyString string
-	if r.TargetId == emptyString {
-		return fmt.Errorf("field 'TargetId' is required")
-	}
-	if r.Relationship == emptyString {
-		return fmt.Errorf("field 'Relationship' is required")
-	}
-	if r.OffsetDuration != nil {
-		if err := r.OffsetDuration.Validate(); err != nil {
-			return fmt.Errorf("OffsetDuration: %w", err)
-		}
-	}
-	if r.OffsetRange != nil {
-		if err := r.OffsetRange.Validate(); err != nil {
-			return fmt.Errorf("OffsetRange: %w", err)
-		}
-	}
-	return nil
-}
-
-type PlanDefinitionActionParticipant struct {
-	Id            *string          `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	ActorId       *string          `json:"actorId,omitempty" bson:"actor_id,omitempty"`             // What actor
-	Type          *string          `json:"type,omitempty" bson:"type,omitempty"`                    // careteam | device | group | healthcareservice | location | organization | patient | practitioner | practitionerrole | relatedperson
-	TypeCanonical *string          `json:"typeCanonical,omitempty" bson:"type_canonical,omitempty"` // Who or what can participate
-	TypeReference *Reference       `json:"typeReference,omitempty" bson:"type_reference,omitempty"` // Who or what can participate
-	Role          *CodeableConcept `json:"role,omitempty" bson:"role,omitempty"`                    // E.g. Nurse, Surgeon, Parent
-	Function      *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"`            // E.g. Author, Reviewer, Witness, etc
-}
-
-func (r *PlanDefinitionActionParticipant) Validate() error {
-	if r.TypeReference != nil {
-		if err := r.TypeReference.Validate(); err != nil {
-			return fmt.Errorf("TypeReference: %w", err)
-		}
-	}
-	if r.Role != nil {
-		if err := r.Role.Validate(); err != nil {
-			return fmt.Errorf("Role: %w", err)
-		}
-	}
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	return nil
-}
-
-type PlanDefinitionActor struct {
-	Id          *string                     `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Title       *string                     `json:"title,omitempty" bson:"title,omitempty"`             // User-visible title
-	Description *string                     `json:"description,omitempty" bson:"description,omitempty"` // Describes the actor
-	Option      []PlanDefinitionActorOption `json:"option" bson:"option"`                               // Who or what can be this actor
-}
-
-func (r *PlanDefinitionActor) Validate() error {
-	if len(r.Option) < 1 {
-		return fmt.Errorf("field 'Option' must have at least 1 elements")
-	}
-	for i, item := range r.Option {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Option[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type PlanDefinitionActionCondition struct {
-	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Kind       string      `json:"kind" bson:"kind"`                                 // applicability | start | stop
-	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // Boolean-valued expression
-}
-
-func (r *PlanDefinitionActionCondition) Validate() error {
-	var emptyString string
-	if r.Kind == emptyString {
-		return fmt.Errorf("field 'Kind' is required")
-	}
-	if r.Expression != nil {
-		if err := r.Expression.Validate(); err != nil {
-			return fmt.Errorf("Expression: %w", err)
-		}
-	}
-	return nil
-}
-
-type PlanDefinitionActionInput struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
-	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
-	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
-}
-
-func (r *PlanDefinitionActionInput) Validate() error {
-	if r.Requirement != nil {
-		if err := r.Requirement.Validate(); err != nil {
-			return fmt.Errorf("Requirement: %w", err)
-		}
-	}
-	return nil
-}
-
-type PlanDefinitionActionOutput struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Title       *string          `json:"title,omitempty" bson:"title,omitempty"`              // User-visible title
-	Requirement *DataRequirement `json:"requirement,omitempty" bson:"requirement,omitempty"`  // What data is provided
-	RelatedData *string          `json:"relatedData,omitempty" bson:"related_data,omitempty"` // What data is provided
-}
-
-func (r *PlanDefinitionActionOutput) Validate() error {
-	if r.Requirement != nil {
-		if err := r.Requirement.Validate(); err != nil {
-			return fmt.Errorf("Requirement: %w", err)
-		}
-	}
-	return nil
-}
-
-type PlanDefinitionActionDynamicValue struct {
-	Id         *string     `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Path       *string     `json:"path,omitempty" bson:"path,omitempty"`             // The path to the element to be set dynamically
-	Expression *Expression `json:"expression,omitempty" bson:"expression,omitempty"` // An expression that provides the dynamic value for the customization
-}
-
-func (r *PlanDefinitionActionDynamicValue) Validate() error {
-	if r.Expression != nil {
-		if err := r.Expression.Validate(); err != nil {
-			return fmt.Errorf("Expression: %w", err)
-		}
-	}
-	return nil
-}
-
-type PlanDefinitionGoal struct {
-	Id            *string                    `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Category      *CodeableConcept           `json:"category,omitempty" bson:"category,omitempty"`           // E.g. Treatment, dietary, behavioral
-	Description   *CodeableConcept           `json:"description" bson:"description"`                         // Code or text describing the goal
-	Priority      *CodeableConcept           `json:"priority,omitempty" bson:"priority,omitempty"`           // high-priority | medium-priority | low-priority
-	Start         *CodeableConcept           `json:"start,omitempty" bson:"start,omitempty"`                 // When goal pursuit begins
-	Addresses     []CodeableConcept          `json:"addresses,omitempty" bson:"addresses,omitempty"`         // What does the goal address
-	Documentation []RelatedArtifact          `json:"documentation,omitempty" bson:"documentation,omitempty"` // Supporting documentation for the goal
-	Target        []PlanDefinitionGoalTarget `json:"target,omitempty" bson:"target,omitempty"`               // Target outcome for the goal
-}
-
-func (r *PlanDefinitionGoal) Validate() error {
-	if r.Category != nil {
-		if err := r.Category.Validate(); err != nil {
-			return fmt.Errorf("Category: %w", err)
-		}
-	}
-	if r.Description == nil {
-		return fmt.Errorf("field 'Description' is required")
-	}
-	if r.Description != nil {
-		if err := r.Description.Validate(); err != nil {
-			return fmt.Errorf("Description: %w", err)
-		}
-	}
-	if r.Priority != nil {
-		if err := r.Priority.Validate(); err != nil {
-			return fmt.Errorf("Priority: %w", err)
-		}
-	}
-	if r.Start != nil {
-		if err := r.Start.Validate(); err != nil {
-			return fmt.Errorf("Start: %w", err)
-		}
-	}
-	for i, item := range r.Addresses {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Addresses[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Documentation {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Documentation[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Target {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Target[%d]: %w", i, err)
 		}
 	}
 	return nil

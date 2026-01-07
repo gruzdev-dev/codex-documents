@@ -93,12 +93,71 @@ func (r *NutritionProduct) Validate() error {
 	return nil
 }
 
+type NutritionProductInstance struct {
+	Id                    *string      `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
+	Quantity              *Quantity    `json:"quantity,omitempty" bson:"quantity,omitempty"`                             // The amount of items or instances
+	Identifier            []Identifier `json:"identifier,omitempty" bson:"identifier,omitempty"`                         // The identifier for the physical instance, typically a serial number or manufacturer number
+	Name                  *string      `json:"name,omitempty" bson:"name,omitempty"`                                     // The name or brand for the specific product
+	LotNumber             *string      `json:"lotNumber,omitempty" bson:"lot_number,omitempty"`                          // The identification of the batch or lot of the product
+	Expiry                *string      `json:"expiry,omitempty" bson:"expiry,omitempty"`                                 // The expiry date or date and time for the product
+	UseBy                 *string      `json:"useBy,omitempty" bson:"use_by,omitempty"`                                  // The date until which the product is expected to be good for consumption
+	BiologicalSourceEvent *Identifier  `json:"biologicalSourceEvent,omitempty" bson:"biological_source_event,omitempty"` // An identifier of the donation, collection, or pooling event from which biological material in this nutrition product was derived
+}
+
+func (r *NutritionProductInstance) Validate() error {
+	if r.Quantity != nil {
+		if err := r.Quantity.Validate(); err != nil {
+			return fmt.Errorf("Quantity: %w", err)
+		}
+	}
+	for i, item := range r.Identifier {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Identifier[%d]: %w", i, err)
+		}
+	}
+	if r.BiologicalSourceEvent != nil {
+		if err := r.BiologicalSourceEvent.Validate(); err != nil {
+			return fmt.Errorf("BiologicalSourceEvent: %w", err)
+		}
+	}
+	return nil
+}
+
+type NutritionProductNutrient struct {
+	Id             *string            `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
+	Item           *CodeableReference `json:"item" bson:"item"`                                          // The (relevant) nutrients in the product
+	AmountRatio    *Ratio             `json:"amountRatio,omitempty" bson:"amount_ratio,omitempty"`       // The amount of nutrient present in the product
+	AmountQuantity *Quantity          `json:"amountQuantity,omitempty" bson:"amount_quantity,omitempty"` // The amount of nutrient present in the product
+}
+
+func (r *NutritionProductNutrient) Validate() error {
+	if r.Item == nil {
+		return fmt.Errorf("field 'Item' is required")
+	}
+	if r.Item != nil {
+		if err := r.Item.Validate(); err != nil {
+			return fmt.Errorf("Item: %w", err)
+		}
+	}
+	if r.AmountRatio != nil {
+		if err := r.AmountRatio.Validate(); err != nil {
+			return fmt.Errorf("AmountRatio: %w", err)
+		}
+	}
+	if r.AmountQuantity != nil {
+		if err := r.AmountQuantity.Validate(); err != nil {
+			return fmt.Errorf("AmountQuantity: %w", err)
+		}
+	}
+	return nil
+}
+
 type NutritionProductIngredient struct {
 	Id             *string            `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
 	Item           *CodeableReference `json:"item" bson:"item"`                                          // The ingredient contained in the product
 	AmountRatio    *Ratio             `json:"amountRatio,omitempty" bson:"amount_ratio,omitempty"`       // The amount of ingredient that is in the product
 	AmountQuantity *Quantity          `json:"amountQuantity,omitempty" bson:"amount_quantity,omitempty"` // The amount of ingredient that is in the product
-	Allergen       bool               `json:"allergen,omitempty" bson:"allergen,omitempty"`              // A known or suspected allergenic and/or substance that is associated with an intolerance
+	Allergen       *bool              `json:"allergen,omitempty" bson:"allergen,omitempty"`              // A known or suspected allergenic and/or substance that is associated with an intolerance
 }
 
 func (r *NutritionProductIngredient) Validate() error {
@@ -175,65 +234,6 @@ func (r *NutritionProductCharacteristic) Validate() error {
 	}
 	if r.ValueBoolean == nil {
 		return fmt.Errorf("field 'ValueBoolean' is required")
-	}
-	return nil
-}
-
-type NutritionProductInstance struct {
-	Id                    *string      `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
-	Quantity              *Quantity    `json:"quantity,omitempty" bson:"quantity,omitempty"`                             // The amount of items or instances
-	Identifier            []Identifier `json:"identifier,omitempty" bson:"identifier,omitempty"`                         // The identifier for the physical instance, typically a serial number or manufacturer number
-	Name                  *string      `json:"name,omitempty" bson:"name,omitempty"`                                     // The name or brand for the specific product
-	LotNumber             *string      `json:"lotNumber,omitempty" bson:"lot_number,omitempty"`                          // The identification of the batch or lot of the product
-	Expiry                *string      `json:"expiry,omitempty" bson:"expiry,omitempty"`                                 // The expiry date or date and time for the product
-	UseBy                 *string      `json:"useBy,omitempty" bson:"use_by,omitempty"`                                  // The date until which the product is expected to be good for consumption
-	BiologicalSourceEvent *Identifier  `json:"biologicalSourceEvent,omitempty" bson:"biological_source_event,omitempty"` // An identifier of the donation, collection, or pooling event from which biological material in this nutrition product was derived
-}
-
-func (r *NutritionProductInstance) Validate() error {
-	if r.Quantity != nil {
-		if err := r.Quantity.Validate(); err != nil {
-			return fmt.Errorf("Quantity: %w", err)
-		}
-	}
-	for i, item := range r.Identifier {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Identifier[%d]: %w", i, err)
-		}
-	}
-	if r.BiologicalSourceEvent != nil {
-		if err := r.BiologicalSourceEvent.Validate(); err != nil {
-			return fmt.Errorf("BiologicalSourceEvent: %w", err)
-		}
-	}
-	return nil
-}
-
-type NutritionProductNutrient struct {
-	Id             *string            `json:"id,omitempty" bson:"id,omitempty"`                          // Unique id for inter-element referencing
-	Item           *CodeableReference `json:"item" bson:"item"`                                          // The (relevant) nutrients in the product
-	AmountRatio    *Ratio             `json:"amountRatio,omitempty" bson:"amount_ratio,omitempty"`       // The amount of nutrient present in the product
-	AmountQuantity *Quantity          `json:"amountQuantity,omitempty" bson:"amount_quantity,omitempty"` // The amount of nutrient present in the product
-}
-
-func (r *NutritionProductNutrient) Validate() error {
-	if r.Item == nil {
-		return fmt.Errorf("field 'Item' is required")
-	}
-	if r.Item != nil {
-		if err := r.Item.Validate(); err != nil {
-			return fmt.Errorf("Item: %w", err)
-		}
-	}
-	if r.AmountRatio != nil {
-		if err := r.AmountRatio.Validate(); err != nil {
-			return fmt.Errorf("AmountRatio: %w", err)
-		}
-	}
-	if r.AmountQuantity != nil {
-		if err := r.AmountQuantity.Validate(); err != nil {
-			return fmt.Errorf("AmountQuantity: %w", err)
-		}
 	}
 	return nil
 }

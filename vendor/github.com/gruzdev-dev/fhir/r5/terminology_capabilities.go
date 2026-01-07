@@ -22,7 +22,7 @@ type TerminologyCapabilities struct {
 	Name                   *string                                `json:"name,omitempty" bson:"name,omitempty"`                                       // Name for this terminology capabilities (computer friendly)
 	Title                  *string                                `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this terminology capabilities (human friendly)
 	Status                 string                                 `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                                   `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                                  `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   string                                 `json:"date" bson:"date"`                                                           // Date last changed
 	Publisher              *string                                `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail                        `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -35,7 +35,7 @@ type TerminologyCapabilities struct {
 	Kind                   string                                 `json:"kind" bson:"kind"`                                                           // instance | capability | requirements
 	Software               *TerminologyCapabilitiesSoftware       `json:"software,omitempty" bson:"software,omitempty"`                               // Software that is covered by this terminology capability statement
 	Implementation         *TerminologyCapabilitiesImplementation `json:"implementation,omitempty" bson:"implementation,omitempty"`                   // If this describes a specific instance
-	LockedDate             bool                                   `json:"lockedDate,omitempty" bson:"locked_date,omitempty"`                          // Whether lockedDate is supported
+	LockedDate             *bool                                  `json:"lockedDate,omitempty" bson:"locked_date,omitempty"`                          // Whether lockedDate is supported
 	CodeSystem             []TerminologyCapabilitiesCodeSystem    `json:"codeSystem,omitempty" bson:"code_system,omitempty"`                          // A code system supported by the server
 	Supplements            *TerminologyCapabilitiesSupplements    `json:"supplements,omitempty" bson:"supplements,omitempty"`                         // Supplement Support Information
 	Expansion              *TerminologyCapabilitiesExpansion      `json:"expansion,omitempty" bson:"expansion,omitempty"`                             // Information about the [ValueSet/$expand](valueset-operation-expand.html) operation
@@ -137,7 +137,7 @@ type TerminologyCapabilitiesCodeSystem struct {
 	Supplement  []string                                   `json:"supplement,omitempty" bson:"supplement,omitempty"`   // Canonical identifier for a supported supplement to this code system (including supplement version)
 	Version     []TerminologyCapabilitiesCodeSystemVersion `json:"version,omitempty" bson:"version,omitempty"`         // Version of Code System supported
 	Content     string                                     `json:"content" bson:"content"`                             // not-present | example | fragment | complete | supplement
-	Subsumption bool                                       `json:"subsumption,omitempty" bson:"subsumption,omitempty"` // Whether subsumption is supported
+	Subsumption *bool                                      `json:"subsumption,omitempty" bson:"subsumption,omitempty"` // Whether subsumption is supported
 }
 
 func (r *TerminologyCapabilitiesCodeSystem) Validate() error {
@@ -156,9 +156,9 @@ func (r *TerminologyCapabilitiesCodeSystem) Validate() error {
 type TerminologyCapabilitiesCodeSystemVersion struct {
 	Id            *string                                          `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Code          *string                                          `json:"code,omitempty" bson:"code,omitempty"`                   // Version identifier for this version
-	IsDefault     bool                                             `json:"isDefault,omitempty" bson:"is_default,omitempty"`        // If this is the default version for this code system
+	IsDefault     *bool                                            `json:"isDefault,omitempty" bson:"is_default,omitempty"`        // If this is the default version for this code system
 	Supplement    []string                                         `json:"supplement,omitempty" bson:"supplement,omitempty"`       // Canonical identifier for a supported supplement to this code system version (including supplement version)
-	Compositional bool                                             `json:"compositional,omitempty" bson:"compositional,omitempty"` // If compositional grammar is supported
+	Compositional *bool                                            `json:"compositional,omitempty" bson:"compositional,omitempty"` // If compositional grammar is supported
 	Language      []string                                         `json:"language,omitempty" bson:"language,omitempty"`           // Language Displays supported
 	Filter        []TerminologyCapabilitiesCodeSystemVersionFilter `json:"filter,omitempty" bson:"filter,omitempty"`               // Filter Properties supported
 	Property      []string                                         `json:"property,omitempty" bson:"property,omitempty"`           // Properties supported for $lookup
@@ -170,33 +170,6 @@ func (r *TerminologyCapabilitiesCodeSystemVersion) Validate() error {
 			return fmt.Errorf("Filter[%d]: %w", i, err)
 		}
 	}
-	return nil
-}
-
-type TerminologyCapabilitiesExpansion struct {
-	Id           *string                                     `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Hierarchical bool                                        `json:"hierarchical,omitempty" bson:"hierarchical,omitempty"` // Whether the server can return nested value sets
-	Paging       bool                                        `json:"paging,omitempty" bson:"paging,omitempty"`             // Whether the server supports paging on expansion
-	Incomplete   bool                                        `json:"incomplete,omitempty" bson:"incomplete,omitempty"`     // Allow request for incomplete expansions?
-	Parameter    []TerminologyCapabilitiesExpansionParameter `json:"parameter,omitempty" bson:"parameter,omitempty"`       // Supported expansion parameter
-	TextFilter   *string                                     `json:"textFilter,omitempty" bson:"text_filter,omitempty"`    // Documentation about text searching works
-}
-
-func (r *TerminologyCapabilitiesExpansion) Validate() error {
-	for i, item := range r.Parameter {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Parameter[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type TerminologyCapabilitiesValidateCode struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Translations bool    `json:"translations" bson:"translations"` // Whether translations are validated
-}
-
-func (r *TerminologyCapabilitiesValidateCode) Validate() error {
 	return nil
 }
 
@@ -226,26 +199,30 @@ func (r *TerminologyCapabilitiesSupplements) Validate() error {
 	return nil
 }
 
-type TerminologyCapabilitiesExpansionParameter struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Name          string  `json:"name" bson:"name"`                                       // Name of the supported expansion parameter
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Description of support for parameter
+type TerminologyCapabilitiesExpansion struct {
+	Id           *string                                     `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Hierarchical *bool                                       `json:"hierarchical,omitempty" bson:"hierarchical,omitempty"` // Whether the server can return nested value sets
+	Paging       *bool                                       `json:"paging,omitempty" bson:"paging,omitempty"`             // Whether the server supports paging on expansion
+	Incomplete   *bool                                       `json:"incomplete,omitempty" bson:"incomplete,omitempty"`     // Allow request for incomplete expansions?
+	Parameter    []TerminologyCapabilitiesExpansionParameter `json:"parameter,omitempty" bson:"parameter,omitempty"`       // Supported expansion parameter
+	TextFilter   *string                                     `json:"textFilter,omitempty" bson:"text_filter,omitempty"`    // Documentation about text searching works
 }
 
-func (r *TerminologyCapabilitiesExpansionParameter) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
+func (r *TerminologyCapabilitiesExpansion) Validate() error {
+	for i, item := range r.Parameter {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Parameter[%d]: %w", i, err)
+		}
 	}
 	return nil
 }
 
-type TerminologyCapabilitiesTranslation struct {
-	Id       *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	NeedsMap bool    `json:"needsMap" bson:"needs_map"`        // Whether the client must identify the map
+type TerminologyCapabilitiesValidateCode struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Translations bool    `json:"translations" bson:"translations"` // Whether translations are validated
 }
 
-func (r *TerminologyCapabilitiesTranslation) Validate() error {
+func (r *TerminologyCapabilitiesValidateCode) Validate() error {
 	return nil
 }
 
@@ -274,5 +251,28 @@ func (r *TerminologyCapabilitiesImplementation) Validate() error {
 	if r.Description == emptyString {
 		return fmt.Errorf("field 'Description' is required")
 	}
+	return nil
+}
+
+type TerminologyCapabilitiesExpansionParameter struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Name          string  `json:"name" bson:"name"`                                       // Name of the supported expansion parameter
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Description of support for parameter
+}
+
+func (r *TerminologyCapabilitiesExpansionParameter) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	return nil
+}
+
+type TerminologyCapabilitiesTranslation struct {
+	Id       *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	NeedsMap bool    `json:"needsMap" bson:"needs_map"`        // Whether the client must identify the map
+}
+
+func (r *TerminologyCapabilitiesTranslation) Validate() error {
 	return nil
 }

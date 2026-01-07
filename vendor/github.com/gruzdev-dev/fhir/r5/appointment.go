@@ -44,7 +44,7 @@ type Appointment struct {
 	Subject                *Reference                      `json:"subject,omitempty" bson:"subject,omitempty"`                                // The patient or group associated with the appointment
 	Participant            []AppointmentParticipant        `json:"participant" bson:"participant"`                                            // Participants involved in appointment
 	RecurrenceId           *int                            `json:"recurrenceId,omitempty" bson:"recurrence_id,omitempty"`                     // The sequence number in the recurrence
-	OccurrenceChanged      bool                            `json:"occurrenceChanged,omitempty" bson:"occurrence_changed,omitempty"`           // Indicates that this appointment varies from a recurrence pattern
+	OccurrenceChanged      *bool                           `json:"occurrenceChanged,omitempty" bson:"occurrence_changed,omitempty"`           // Indicates that this appointment varies from a recurrence pattern
 	RecurrenceTemplate     []AppointmentRecurrenceTemplate `json:"recurrenceTemplate,omitempty" bson:"recurrence_template,omitempty"`         // Details of the recurrence pattern/template used to generate occurrences
 }
 
@@ -187,12 +187,24 @@ func (r *Appointment) Validate() error {
 	return nil
 }
 
+type AppointmentRecurrenceTemplateYearlyTemplate struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"`  // Unique id for inter-element referencing
+	YearInterval int     `json:"yearInterval" bson:"year_interval"` // Recurs every nth year
+}
+
+func (r *AppointmentRecurrenceTemplateYearlyTemplate) Validate() error {
+	if r.YearInterval == 0 {
+		return fmt.Errorf("field 'YearInterval' is required")
+	}
+	return nil
+}
+
 type AppointmentParticipant struct {
 	Id       *string           `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
 	Type     []CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // Role of participant in the appointment
 	Period   *Period           `json:"period,omitempty" bson:"period,omitempty"`     // Participation period of the actor
 	Actor    *Reference        `json:"actor,omitempty" bson:"actor,omitempty"`       // The individual, device, location, or service participating in the appointment
-	Required bool              `json:"required,omitempty" bson:"required,omitempty"` // The participant is required to attend (optional when false)
+	Required *bool             `json:"required,omitempty" bson:"required,omitempty"` // The participant is required to attend (optional when false)
 	Status   string            `json:"status" bson:"status"`                         // accepted | declined | tentative | needs-action
 }
 
@@ -267,13 +279,13 @@ func (r *AppointmentRecurrenceTemplate) Validate() error {
 
 type AppointmentRecurrenceTemplateWeeklyTemplate struct {
 	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Monday       bool    `json:"monday,omitempty" bson:"monday,omitempty"`              // Recurs on Mondays
-	Tuesday      bool    `json:"tuesday,omitempty" bson:"tuesday,omitempty"`            // Recurs on Tuesday
-	Wednesday    bool    `json:"wednesday,omitempty" bson:"wednesday,omitempty"`        // Recurs on Wednesday
-	Thursday     bool    `json:"thursday,omitempty" bson:"thursday,omitempty"`          // Recurs on Thursday
-	Friday       bool    `json:"friday,omitempty" bson:"friday,omitempty"`              // Recurs on Friday
-	Saturday     bool    `json:"saturday,omitempty" bson:"saturday,omitempty"`          // Recurs on Saturday
-	Sunday       bool    `json:"sunday,omitempty" bson:"sunday,omitempty"`              // Recurs on Sunday
+	Monday       *bool   `json:"monday,omitempty" bson:"monday,omitempty"`              // Recurs on Mondays
+	Tuesday      *bool   `json:"tuesday,omitempty" bson:"tuesday,omitempty"`            // Recurs on Tuesday
+	Wednesday    *bool   `json:"wednesday,omitempty" bson:"wednesday,omitempty"`        // Recurs on Wednesday
+	Thursday     *bool   `json:"thursday,omitempty" bson:"thursday,omitempty"`          // Recurs on Thursday
+	Friday       *bool   `json:"friday,omitempty" bson:"friday,omitempty"`              // Recurs on Friday
+	Saturday     *bool   `json:"saturday,omitempty" bson:"saturday,omitempty"`          // Recurs on Saturday
+	Sunday       *bool   `json:"sunday,omitempty" bson:"sunday,omitempty"`              // Recurs on Sunday
 	WeekInterval *int    `json:"weekInterval,omitempty" bson:"week_interval,omitempty"` // Recurs every nth week
 }
 
@@ -302,18 +314,6 @@ func (r *AppointmentRecurrenceTemplateMonthlyTemplate) Validate() error {
 	}
 	if r.MonthInterval == 0 {
 		return fmt.Errorf("field 'MonthInterval' is required")
-	}
-	return nil
-}
-
-type AppointmentRecurrenceTemplateYearlyTemplate struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"`  // Unique id for inter-element referencing
-	YearInterval int     `json:"yearInterval" bson:"year_interval"` // Recurs every nth year
-}
-
-func (r *AppointmentRecurrenceTemplateYearlyTemplate) Validate() error {
-	if r.YearInterval == 0 {
-		return fmt.Errorf("field 'YearInterval' is required")
 	}
 	return nil
 }

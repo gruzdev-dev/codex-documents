@@ -24,7 +24,7 @@ type MedicationRequest struct {
 	Intent                  string                            `json:"intent" bson:"intent"`                                                         // proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option (immutable)
 	Category                []CodeableConcept                 `json:"category,omitempty" bson:"category,omitempty"`                                 // Grouping or category of medication request
 	Priority                *string                           `json:"priority,omitempty" bson:"priority,omitempty"`                                 // routine | urgent | asap | stat
-	DoNotPerform            bool                              `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`                       // If true, indicates the provider is ordering a patient should not take the specified medication
+	DoNotPerform            *bool                             `json:"doNotPerform,omitempty" bson:"do_not_perform,omitempty"`                       // If true, indicates the provider is ordering a patient should not take the specified medication
 	Medication              *CodeableReference                `json:"medication" bson:"medication"`                                                 // Medication to be taken
 	Subject                 *Reference                        `json:"subject" bson:"subject"`                                                       // Individual or group for whom the medication has been requested
 	InformationSource       []Reference                       `json:"informationSource,omitempty" bson:"information_source,omitempty"`              // The person or organization who provided the information about this request, if the source is someone other than the requestor
@@ -32,7 +32,7 @@ type MedicationRequest struct {
 	SupportingInformation   []Reference                       `json:"supportingInformation,omitempty" bson:"supporting_information,omitempty"`      // Information to support fulfilling of the medication
 	AuthoredOn              *string                           `json:"authoredOn,omitempty" bson:"authored_on,omitempty"`                            // When request was initially authored
 	Requester               *Reference                        `json:"requester,omitempty" bson:"requester,omitempty"`                               // Who/What requested the Request
-	IsRecordOfRequest       bool                              `json:"isRecordOfRequest,omitempty" bson:"is_record_of_request,omitempty"`            // Whether this is record of a Medication Request or the actual request itself
+	IsRecordOfRequest       *bool                             `json:"isRecordOfRequest,omitempty" bson:"is_record_of_request,omitempty"`            // Whether this is record of a Medication Request or the actual request itself
 	PerformerType           *CodeableConcept                  `json:"performerType,omitempty" bson:"performer_type,omitempty"`                      // Desired kind of performer of the medication administration
 	Performer               []Reference                       `json:"performer,omitempty" bson:"performer,omitempty"`                               // Intended performer of administration
 	Device                  []CodeableReference               `json:"device,omitempty" bson:"device,omitempty"`                                     // Intended type of device for the administration
@@ -215,6 +215,33 @@ func (r *MedicationRequest) Validate() error {
 	return nil
 }
 
+type MedicationRequestSubstitution struct {
+	Id                     *string          `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	AllowedBoolean         *bool            `json:"allowedBoolean" bson:"allowed_boolean"`                  // Whether substitution is allowed or not
+	AllowedCodeableConcept *CodeableConcept `json:"allowedCodeableConcept" bson:"allowed_codeable_concept"` // Whether substitution is allowed or not
+	Reason                 *CodeableConcept `json:"reason,omitempty" bson:"reason,omitempty"`               // Why should (not) substitution be made
+}
+
+func (r *MedicationRequestSubstitution) Validate() error {
+	if r.AllowedBoolean == nil {
+		return fmt.Errorf("field 'AllowedBoolean' is required")
+	}
+	if r.AllowedCodeableConcept == nil {
+		return fmt.Errorf("field 'AllowedCodeableConcept' is required")
+	}
+	if r.AllowedCodeableConcept != nil {
+		if err := r.AllowedCodeableConcept.Validate(); err != nil {
+			return fmt.Errorf("AllowedCodeableConcept: %w", err)
+		}
+	}
+	if r.Reason != nil {
+		if err := r.Reason.Validate(); err != nil {
+			return fmt.Errorf("Reason: %w", err)
+		}
+	}
+	return nil
+}
+
 type MedicationRequestDispenseRequest struct {
 	Id                     *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                            // Unique id for inter-element referencing
 	InitialFill            *MedicationRequestDispenseRequestInitialFill `json:"initialFill,omitempty" bson:"initial_fill,omitempty"`                         // First fill details
@@ -293,33 +320,6 @@ func (r *MedicationRequestDispenseRequestInitialFill) Validate() error {
 	if r.Duration != nil {
 		if err := r.Duration.Validate(); err != nil {
 			return fmt.Errorf("Duration: %w", err)
-		}
-	}
-	return nil
-}
-
-type MedicationRequestSubstitution struct {
-	Id                     *string          `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	AllowedBoolean         *bool            `json:"allowedBoolean" bson:"allowed_boolean"`                  // Whether substitution is allowed or not
-	AllowedCodeableConcept *CodeableConcept `json:"allowedCodeableConcept" bson:"allowed_codeable_concept"` // Whether substitution is allowed or not
-	Reason                 *CodeableConcept `json:"reason,omitempty" bson:"reason,omitempty"`               // Why should (not) substitution be made
-}
-
-func (r *MedicationRequestSubstitution) Validate() error {
-	if r.AllowedBoolean == nil {
-		return fmt.Errorf("field 'AllowedBoolean' is required")
-	}
-	if r.AllowedCodeableConcept == nil {
-		return fmt.Errorf("field 'AllowedCodeableConcept' is required")
-	}
-	if r.AllowedCodeableConcept != nil {
-		if err := r.AllowedCodeableConcept.Validate(); err != nil {
-			return fmt.Errorf("AllowedCodeableConcept: %w", err)
-		}
-	}
-	if r.Reason != nil {
-		if err := r.Reason.Validate(); err != nil {
-			return fmt.Errorf("Reason: %w", err)
 		}
 	}
 	return nil

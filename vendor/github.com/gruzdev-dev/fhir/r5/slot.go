@@ -23,7 +23,7 @@ type Slot struct {
 	Status          string              `json:"status" bson:"status"`                                        // busy | free | busy-unavailable | busy-tentative | entered-in-error
 	Start           string              `json:"start" bson:"start"`                                          // Date/Time that the slot is to begin
 	End             string              `json:"end" bson:"end"`                                              // Date/Time that the slot is to conclude
-	Overbooked      bool                `json:"overbooked,omitempty" bson:"overbooked,omitempty"`            // This slot has already been overbooked, appointments are unlikely to be accepted for this time
+	Overbooked      *bool               `json:"overbooked,omitempty" bson:"overbooked,omitempty"`            // This slot has already been overbooked, appointments are unlikely to be accepted for this time
 	Comment         *string             `json:"comment,omitempty" bson:"comment,omitempty"`                  // Comments on the slot to describe any extended information. Such as custom constraints on the slot
 }
 

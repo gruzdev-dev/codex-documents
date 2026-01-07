@@ -30,7 +30,7 @@ type FamilyMemberHistory struct {
 	AgeAge           *Age                           `json:"ageAge,omitempty" bson:"age_age,omitempty"`                      // (approximate) age
 	AgeRange         *Range                         `json:"ageRange,omitempty" bson:"age_range,omitempty"`                  // (approximate) age
 	AgeString        *string                        `json:"ageString,omitempty" bson:"age_string,omitempty"`                // (approximate) age
-	EstimatedAge     bool                           `json:"estimatedAge,omitempty" bson:"estimated_age,omitempty"`          // Age is estimated?
+	EstimatedAge     *bool                          `json:"estimatedAge,omitempty" bson:"estimated_age,omitempty"`          // Age is estimated?
 	DeceasedBoolean  *bool                          `json:"deceasedBoolean,omitempty" bson:"deceased_boolean,omitempty"`    // Dead? How old/when?
 	DeceasedAge      *Age                           `json:"deceasedAge,omitempty" bson:"deceased_age,omitempty"`            // Dead? How old/when?
 	DeceasedRange    *Range                         `json:"deceasedRange,omitempty" bson:"deceased_range,omitempty"`        // Dead? How old/when?
@@ -153,7 +153,7 @@ type FamilyMemberHistoryCondition struct {
 	Id                 *string          `json:"id,omitempty" bson:"id,omitempty"`                                   // Unique id for inter-element referencing
 	Code               *CodeableConcept `json:"code" bson:"code"`                                                   // Condition, allergy, or intolerance suffered by relation
 	Outcome            *CodeableConcept `json:"outcome,omitempty" bson:"outcome,omitempty"`                         // deceased | permanent disability | etc
-	ContributedToDeath bool             `json:"contributedToDeath,omitempty" bson:"contributed_to_death,omitempty"` // Whether the condition contributed to the cause of death
+	ContributedToDeath *bool            `json:"contributedToDeath,omitempty" bson:"contributed_to_death,omitempty"` // Whether the condition contributed to the cause of death
 	OnsetAge           *Age             `json:"onsetAge,omitempty" bson:"onset_age,omitempty"`                      // When condition first manifested
 	OnsetRange         *Range           `json:"onsetRange,omitempty" bson:"onset_range,omitempty"`                  // When condition first manifested
 	OnsetPeriod        *Period          `json:"onsetPeriod,omitempty" bson:"onset_period,omitempty"`                // When condition first manifested
@@ -202,7 +202,7 @@ type FamilyMemberHistoryProcedure struct {
 	Id                 *string          `json:"id,omitempty" bson:"id,omitempty"`                                   // Unique id for inter-element referencing
 	Code               *CodeableConcept `json:"code" bson:"code"`                                                   // Procedures performed on the related person
 	Outcome            *CodeableConcept `json:"outcome,omitempty" bson:"outcome,omitempty"`                         // What happened following the procedure
-	ContributedToDeath bool             `json:"contributedToDeath,omitempty" bson:"contributed_to_death,omitempty"` // Whether the procedure contributed to the cause of death
+	ContributedToDeath *bool            `json:"contributedToDeath,omitempty" bson:"contributed_to_death,omitempty"` // Whether the procedure contributed to the cause of death
 	PerformedAge       *Age             `json:"performedAge,omitempty" bson:"performed_age,omitempty"`              // When the procedure was performed
 	PerformedRange     *Range           `json:"performedRange,omitempty" bson:"performed_range,omitempty"`          // When the procedure was performed
 	PerformedPeriod    *Period          `json:"performedPeriod,omitempty" bson:"performed_period,omitempty"`        // When the procedure was performed

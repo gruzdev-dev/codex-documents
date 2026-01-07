@@ -15,7 +15,7 @@ type HealthcareService struct {
 	Text                 *Narrative                     `json:"text,omitempty" bson:"text,omitempty"`                                   // Text summary of the resource, for human interpretation
 	Contained            []json.RawMessage              `json:"contained,omitempty" bson:"contained,omitempty"`                         // Contained, inline Resources
 	Identifier           []Identifier                   `json:"identifier,omitempty" bson:"identifier,omitempty"`                       // External identifiers for this item
-	Active               bool                           `json:"active,omitempty" bson:"active,omitempty"`                               // Whether this HealthcareService record is in active use
+	Active               *bool                          `json:"active,omitempty" bson:"active,omitempty"`                               // Whether this HealthcareService record is in active use
 	ProvidedBy           *Reference                     `json:"providedBy,omitempty" bson:"provided_by,omitempty"`                      // Organization that provides this service
 	OfferedIn            []Reference                    `json:"offeredIn,omitempty" bson:"offered_in,omitempty"`                        // The service within which this service is offered
 	Category             []CodeableConcept              `json:"category,omitempty" bson:"category,omitempty"`                           // Broad category of service being performed or delivered
@@ -34,8 +34,8 @@ type HealthcareService struct {
 	Characteristic       []CodeableConcept              `json:"characteristic,omitempty" bson:"characteristic,omitempty"`               // Collection of characteristics (attributes)
 	Communication        []CodeableConcept              `json:"communication,omitempty" bson:"communication,omitempty"`                 // The language that this service is offered in
 	ReferralMethod       []CodeableConcept              `json:"referralMethod,omitempty" bson:"referral_method,omitempty"`              // Ways that the service accepts referrals
-	ReferralRequired     bool                           `json:"referralRequired,omitempty" bson:"referral_required,omitempty"`          // A referral is required for access to this service
-	AppointmentRequired  bool                           `json:"appointmentRequired,omitempty" bson:"appointment_required,omitempty"`    // An appointment is required for access to this service
+	ReferralRequired     *bool                          `json:"referralRequired,omitempty" bson:"referral_required,omitempty"`          // A referral is required for access to this service
+	AppointmentRequired  *bool                          `json:"appointmentRequired,omitempty" bson:"appointment_required,omitempty"`    // An appointment is required for access to this service
 	Availability         *Availability                  `json:"availability,omitempty" bson:"availability,omitempty"`                   // Times the healthcare service is available (including exceptions)
 	Endpoint             []Reference                    `json:"endpoint,omitempty" bson:"endpoint,omitempty"`                           // Technical endpoints providing access to electronic services operated for the healthcare service
 }

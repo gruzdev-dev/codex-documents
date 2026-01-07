@@ -16,14 +16,14 @@ type AppointmentResponse struct {
 	Contained         []json.RawMessage `json:"contained,omitempty" bson:"contained,omitempty"`               // Contained, inline Resources
 	Identifier        []Identifier      `json:"identifier,omitempty" bson:"identifier,omitempty"`             // External Ids for this item
 	Appointment       *Reference        `json:"appointment" bson:"appointment"`                               // Appointment this response relates to
-	ProposedNewTime   bool              `json:"proposedNewTime,omitempty" bson:"proposed_new_time,omitempty"` // Indicator for a counter proposal
+	ProposedNewTime   *bool             `json:"proposedNewTime,omitempty" bson:"proposed_new_time,omitempty"` // Indicator for a counter proposal
 	Start             *string           `json:"start,omitempty" bson:"start,omitempty"`                       // Time from appointment, or requested new start time
 	End               *string           `json:"end,omitempty" bson:"end,omitempty"`                           // Time from appointment, or requested new end time
 	ParticipantType   []CodeableConcept `json:"participantType,omitempty" bson:"participant_type,omitempty"`  // Role of participant in the appointment
 	Actor             *Reference        `json:"actor,omitempty" bson:"actor,omitempty"`                       // Person(s), Location, HealthcareService, or Device
 	ParticipantStatus string            `json:"participantStatus" bson:"participant_status"`                  // accepted | declined | tentative | needs-action | entered-in-error
 	Comment           *string           `json:"comment,omitempty" bson:"comment,omitempty"`                   // Additional comments
-	Recurring         bool              `json:"recurring,omitempty" bson:"recurring,omitempty"`               // This response is for all occurrences in a recurring request
+	Recurring         *bool             `json:"recurring,omitempty" bson:"recurring,omitempty"`               // This response is for all occurrences in a recurring request
 	OccurrenceDate    *string           `json:"occurrenceDate,omitempty" bson:"occurrence_date,omitempty"`    // Original date within a recurring request
 	RecurrenceId      *int              `json:"recurrenceId,omitempty" bson:"recurrence_id,omitempty"`        // The recurrence ID of the specific recurring request
 }

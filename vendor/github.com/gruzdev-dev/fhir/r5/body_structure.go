@@ -15,7 +15,7 @@ type BodyStructure struct {
 	Text              *Narrative                       `json:"text,omitempty" bson:"text,omitempty"`                            // Text summary of the resource, for human interpretation
 	Contained         []json.RawMessage                `json:"contained,omitempty" bson:"contained,omitempty"`                  // Contained, inline Resources
 	Identifier        []Identifier                     `json:"identifier,omitempty" bson:"identifier,omitempty"`                // Bodystructure identifier
-	Active            bool                             `json:"active,omitempty" bson:"active,omitempty"`                        // Whether this record is in active use
+	Active            *bool                            `json:"active,omitempty" bson:"active,omitempty"`                        // Whether this record is in active use
 	IncludedStructure []BodyStructureIncludedStructure `json:"includedStructure" bson:"included_structure"`                     // Included anatomic location(s)
 	ExcludedStructure []BodyStructureIncludedStructure `json:"excludedStructure,omitempty" bson:"excluded_structure,omitempty"` // Excluded anatomic locations(s)
 	Description       *string                          `json:"description,omitempty" bson:"description,omitempty"`              // Text description

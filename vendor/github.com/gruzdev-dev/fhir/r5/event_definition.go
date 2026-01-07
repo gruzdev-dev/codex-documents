@@ -23,7 +23,7 @@ type EventDefinition struct {
 	Title                  *string             `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this event definition (human friendly)
 	Subtitle               *string             `json:"subtitle,omitempty" bson:"subtitle,omitempty"`                               // Subordinate title of the event definition
 	Status                 string              `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool               `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	SubjectCodeableConcept *CodeableConcept    `json:"subjectCodeableConcept,omitempty" bson:"subject_codeable_concept,omitempty"` // Type of individual the event definition is focused on
 	SubjectReference       *Reference          `json:"subjectReference,omitempty" bson:"subject_reference,omitempty"`              // Type of individual the event definition is focused on
 	Date                   *string             `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed

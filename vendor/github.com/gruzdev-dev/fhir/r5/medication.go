@@ -105,7 +105,7 @@ func (r *MedicationPackageSize) Validate() error {
 type MedicationIngredient struct {
 	Id                      *string            `json:"id,omitempty" bson:"id,omitempty"`                                             // Unique id for inter-element referencing
 	Item                    *CodeableReference `json:"item" bson:"item"`                                                             // The specific substance or medication that is the ingredient
-	IsActive                bool               `json:"isActive,omitempty" bson:"is_active,omitempty"`                                // Active ingredient indicator
+	IsActive                *bool              `json:"isActive,omitempty" bson:"is_active,omitempty"`                                // Active ingredient indicator
 	Role                    *CodeableConcept   `json:"role,omitempty" bson:"role,omitempty"`                                         // A code that defines the type of ingredient, active, base, etc.
 	StrengthRatio           *Ratio             `json:"strengthRatio,omitempty" bson:"strength_ratio,omitempty"`                      // Quantity of ingredient present
 	StrengthCodeableConcept *CodeableConcept   `json:"strengthCodeableConcept,omitempty" bson:"strength_codeable_concept,omitempty"` // Quantity of ingredient present

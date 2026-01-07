@@ -22,7 +22,7 @@ type ConceptMap struct {
 	Name                   *string                         `json:"name,omitempty" bson:"name,omitempty"`                                       // Name for this concept map (computer friendly)
 	Title                  *string                         `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this concept map (human friendly)
 	Status                 string                          `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                            `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                           `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   *string                         `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string                         `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail                 `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -166,35 +166,6 @@ func (r *ConceptMapProperty) Validate() error {
 	return nil
 }
 
-type ConceptMapGroupElementTargetDependsOn struct {
-	Id            *string   `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	Attribute     string    `json:"attribute" bson:"attribute"`                              // A reference to a mapping attribute defined in ConceptMap.additionalAttribute
-	ValueCode     *string   `json:"valueCode,omitempty" bson:"value_code,omitempty"`         // Value of the referenced data element
-	ValueCoding   *Coding   `json:"valueCoding,omitempty" bson:"value_coding,omitempty"`     // Value of the referenced data element
-	ValueString   *string   `json:"valueString,omitempty" bson:"value_string,omitempty"`     // Value of the referenced data element
-	ValueBoolean  *bool     `json:"valueBoolean,omitempty" bson:"value_boolean,omitempty"`   // Value of the referenced data element
-	ValueQuantity *Quantity `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"` // Value of the referenced data element
-	ValueSet      *string   `json:"valueSet,omitempty" bson:"value_set,omitempty"`           // The mapping depends on a data element with a value from this value set
-}
-
-func (r *ConceptMapGroupElementTargetDependsOn) Validate() error {
-	var emptyString string
-	if r.Attribute == emptyString {
-		return fmt.Errorf("field 'Attribute' is required")
-	}
-	if r.ValueCoding != nil {
-		if err := r.ValueCoding.Validate(); err != nil {
-			return fmt.Errorf("ValueCoding: %w", err)
-		}
-	}
-	if r.ValueQuantity != nil {
-		if err := r.ValueQuantity.Validate(); err != nil {
-			return fmt.Errorf("ValueQuantity: %w", err)
-		}
-	}
-	return nil
-}
-
 type ConceptMapAdditionalAttribute struct {
 	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Code        string  `json:"code" bson:"code"`                                   // Identifies this additional attribute through this resource
@@ -239,12 +210,60 @@ func (r *ConceptMapGroup) Validate() error {
 	return nil
 }
 
+type ConceptMapGroupElementTargetDependsOn struct {
+	Id            *string   `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	Attribute     string    `json:"attribute" bson:"attribute"`                              // A reference to a mapping attribute defined in ConceptMap.additionalAttribute
+	ValueCode     *string   `json:"valueCode,omitempty" bson:"value_code,omitempty"`         // Value of the referenced data element
+	ValueCoding   *Coding   `json:"valueCoding,omitempty" bson:"value_coding,omitempty"`     // Value of the referenced data element
+	ValueString   *string   `json:"valueString,omitempty" bson:"value_string,omitempty"`     // Value of the referenced data element
+	ValueBoolean  *bool     `json:"valueBoolean,omitempty" bson:"value_boolean,omitempty"`   // Value of the referenced data element
+	ValueQuantity *Quantity `json:"valueQuantity,omitempty" bson:"value_quantity,omitempty"` // Value of the referenced data element
+	ValueSet      *string   `json:"valueSet,omitempty" bson:"value_set,omitempty"`           // The mapping depends on a data element with a value from this value set
+}
+
+func (r *ConceptMapGroupElementTargetDependsOn) Validate() error {
+	var emptyString string
+	if r.Attribute == emptyString {
+		return fmt.Errorf("field 'Attribute' is required")
+	}
+	if r.ValueCoding != nil {
+		if err := r.ValueCoding.Validate(); err != nil {
+			return fmt.Errorf("ValueCoding: %w", err)
+		}
+	}
+	if r.ValueQuantity != nil {
+		if err := r.ValueQuantity.Validate(); err != nil {
+			return fmt.Errorf("ValueQuantity: %w", err)
+		}
+	}
+	return nil
+}
+
+type ConceptMapGroupUnmapped struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Mode         string  `json:"mode" bson:"mode"`                                     // use-source-code | fixed | other-map
+	Code         *string `json:"code,omitempty" bson:"code,omitempty"`                 // Fixed code when mode = fixed
+	Display      *string `json:"display,omitempty" bson:"display,omitempty"`           // Display for the code
+	Comment      *string `json:"comment,omitempty" bson:"comment,omitempty"`           // Comments related to the choice of how to handle unmapped elements
+	ValueSet     *string `json:"valueSet,omitempty" bson:"value_set,omitempty"`        // Fixed code set when mode = fixed
+	Relationship *string `json:"relationship,omitempty" bson:"relationship,omitempty"` // related-to | equivalent | source-is-narrower-than-target | source-is-broader-than-target | not-related-to
+	OtherMap     *string `json:"otherMap,omitempty" bson:"other_map,omitempty"`        // canonical reference to an additional ConceptMap to use for mapping if the source concept is unmapped
+}
+
+func (r *ConceptMapGroupUnmapped) Validate() error {
+	var emptyString string
+	if r.Mode == emptyString {
+		return fmt.Errorf("field 'Mode' is required")
+	}
+	return nil
+}
+
 type ConceptMapGroupElement struct {
 	Id       *string                        `json:"id,omitempty" bson:"id,omitempty"`              // Unique id for inter-element referencing
 	Code     *string                        `json:"code,omitempty" bson:"code,omitempty"`          // Identifies element being mapped
 	Display  *string                        `json:"display,omitempty" bson:"display,omitempty"`    // Display for the code
 	ValueSet *string                        `json:"valueSet,omitempty" bson:"value_set,omitempty"` // Identifies the set of concepts being mapped
-	NoMap    bool                           `json:"noMap,omitempty" bson:"no_map,omitempty"`       // No mapping to a target concept for this source concept
+	NoMap    *bool                          `json:"noMap,omitempty" bson:"no_map,omitempty"`       // No mapping to a target concept for this source concept
 	Comment  *string                        `json:"comment,omitempty" bson:"comment,omitempty"`    // Comments related to the mapping of the source element
 	Target   []ConceptMapGroupElementTarget `json:"target,omitempty" bson:"target,omitempty"`      // Concept in target system for element
 }
@@ -335,25 +354,6 @@ func (r *ConceptMapGroupElementTargetProperty) Validate() error {
 	}
 	if r.ValueCode == nil {
 		return fmt.Errorf("field 'ValueCode' is required")
-	}
-	return nil
-}
-
-type ConceptMapGroupUnmapped struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Mode         string  `json:"mode" bson:"mode"`                                     // use-source-code | fixed | other-map
-	Code         *string `json:"code,omitempty" bson:"code,omitempty"`                 // Fixed code when mode = fixed
-	Display      *string `json:"display,omitempty" bson:"display,omitempty"`           // Display for the code
-	Comment      *string `json:"comment,omitempty" bson:"comment,omitempty"`           // Comments related to the choice of how to handle unmapped elements
-	ValueSet     *string `json:"valueSet,omitempty" bson:"value_set,omitempty"`        // Fixed code set when mode = fixed
-	Relationship *string `json:"relationship,omitempty" bson:"relationship,omitempty"` // related-to | equivalent | source-is-narrower-than-target | source-is-broader-than-target | not-related-to
-	OtherMap     *string `json:"otherMap,omitempty" bson:"other_map,omitempty"`        // canonical reference to an additional ConceptMap to use for mapping if the source concept is unmapped
-}
-
-func (r *ConceptMapGroupUnmapped) Validate() error {
-	var emptyString string
-	if r.Mode == emptyString {
-		return fmt.Errorf("field 'Mode' is required")
 	}
 	return nil
 }

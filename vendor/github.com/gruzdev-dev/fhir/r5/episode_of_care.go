@@ -113,6 +113,26 @@ func (r *EpisodeOfCare) Validate() error {
 	return nil
 }
 
+type EpisodeOfCareDiagnosis struct {
+	Id        *string             `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Condition []CodeableReference `json:"condition,omitempty" bson:"condition,omitempty"` // The medical condition that was addressed during the episode of care
+	Use       []CodeableConcept   `json:"use,omitempty" bson:"use,omitempty"`             // Role that this diagnosis has within the episode of care (e.g. admission, billing, discharge …)
+}
+
+func (r *EpisodeOfCareDiagnosis) Validate() error {
+	for i, item := range r.Condition {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Condition[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Use {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Use[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type EpisodeOfCareStatusHistory struct {
 	Id     *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
 	Status string  `json:"status" bson:"status"`             // planned | waitlist | active | onhold | finished | cancelled | entered-in-error
@@ -150,26 +170,6 @@ func (r *EpisodeOfCareReason) Validate() error {
 	for i, item := range r.Value {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Value[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type EpisodeOfCareDiagnosis struct {
-	Id        *string             `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Condition []CodeableReference `json:"condition,omitempty" bson:"condition,omitempty"` // The medical condition that was addressed during the episode of care
-	Use       []CodeableConcept   `json:"use,omitempty" bson:"use,omitempty"`             // Role that this diagnosis has within the episode of care (e.g. admission, billing, discharge …)
-}
-
-func (r *EpisodeOfCareDiagnosis) Validate() error {
-	for i, item := range r.Condition {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Condition[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Use {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Use[%d]: %w", i, err)
 		}
 	}
 	return nil

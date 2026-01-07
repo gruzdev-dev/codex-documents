@@ -15,7 +15,7 @@ type Practitioner struct {
 	Text             *Narrative                  `json:"text,omitempty" bson:"text,omitempty"`                           // Text summary of the resource, for human interpretation
 	Contained        []json.RawMessage           `json:"contained,omitempty" bson:"contained,omitempty"`                 // Contained, inline Resources
 	Identifier       []Identifier                `json:"identifier,omitempty" bson:"identifier,omitempty"`               // An identifier for the person as this agent
-	Active           bool                        `json:"active,omitempty" bson:"active,omitempty"`                       // Whether this practitioner's record is in active use
+	Active           *bool                       `json:"active,omitempty" bson:"active,omitempty"`                       // Whether this practitioner's record is in active use
 	Name             []HumanName                 `json:"name,omitempty" bson:"name,omitempty"`                           // The name(s) associated with the practitioner
 	Telecom          []ContactPoint              `json:"telecom,omitempty" bson:"telecom,omitempty"`                     // A contact detail for the practitioner (that apply to all roles)
 	Gender           *string                     `json:"gender,omitempty" bson:"gender,omitempty"`                       // male | female | other | unknown
@@ -124,7 +124,7 @@ func (r *PractitionerQualification) Validate() error {
 type PractitionerCommunication struct {
 	Id        *string          `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	Language  *CodeableConcept `json:"language" bson:"language"`                       // The language code used to communicate with the practitioner
-	Preferred bool             `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
+	Preferred *bool            `json:"preferred,omitempty" bson:"preferred,omitempty"` // Language preference indicator
 }
 
 func (r *PractitionerCommunication) Validate() error {

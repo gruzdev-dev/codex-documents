@@ -24,7 +24,7 @@ type SpecimenDefinition struct {
 	DerivedFromCanonical   []string                       `json:"derivedFromCanonical,omitempty" bson:"derived_from_canonical,omitempty"`     // Based on FHIR definition of another SpecimenDefinition
 	DerivedFromUri         []string                       `json:"derivedFromUri,omitempty" bson:"derived_from_uri,omitempty"`                 // Based on external definition
 	Status                 string                         `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                           `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // If this SpecimenDefinition is not for real usage
+	Experimental           *bool                          `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // If this SpecimenDefinition is not for real usage
 	SubjectCodeableConcept *CodeableConcept               `json:"subjectCodeableConcept,omitempty" bson:"subject_codeable_concept,omitempty"` // Type of subject for specimen collection
 	SubjectReference       *Reference                     `json:"subjectReference,omitempty" bson:"subject_reference,omitempty"`              // Type of subject for specimen collection
 	Date                   *string                        `json:"date,omitempty" bson:"date,omitempty"`                                       // Date status first applied
@@ -127,42 +127,15 @@ func (r *SpecimenDefinition) Validate() error {
 	return nil
 }
 
-type SpecimenDefinitionTypeTestedHandling struct {
-	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
-	TemperatureQualifier *CodeableConcept `json:"temperatureQualifier,omitempty" bson:"temperature_qualifier,omitempty"` // Qualifies the interval of temperature
-	TemperatureRange     *Range           `json:"temperatureRange,omitempty" bson:"temperature_range,omitempty"`         // Temperature range for these handling instructions
-	MaxDuration          *Duration        `json:"maxDuration,omitempty" bson:"max_duration,omitempty"`                   // Maximum preservation time
-	Instruction          *string          `json:"instruction,omitempty" bson:"instruction,omitempty"`                    // Preservation instruction
-}
-
-func (r *SpecimenDefinitionTypeTestedHandling) Validate() error {
-	if r.TemperatureQualifier != nil {
-		if err := r.TemperatureQualifier.Validate(); err != nil {
-			return fmt.Errorf("TemperatureQualifier: %w", err)
-		}
-	}
-	if r.TemperatureRange != nil {
-		if err := r.TemperatureRange.Validate(); err != nil {
-			return fmt.Errorf("TemperatureRange: %w", err)
-		}
-	}
-	if r.MaxDuration != nil {
-		if err := r.MaxDuration.Validate(); err != nil {
-			return fmt.Errorf("MaxDuration: %w", err)
-		}
-	}
-	return nil
-}
-
 type SpecimenDefinitionTypeTested struct {
 	Id                 *string                                `json:"id,omitempty" bson:"id,omitempty"`                                  // Unique id for inter-element referencing
-	IsDerived          bool                                   `json:"isDerived,omitempty" bson:"is_derived,omitempty"`                   // Primary or secondary specimen
+	IsDerived          *bool                                  `json:"isDerived,omitempty" bson:"is_derived,omitempty"`                   // Primary or secondary specimen
 	Type               *CodeableConcept                       `json:"type,omitempty" bson:"type,omitempty"`                              // Type of intended specimen
 	Preference         string                                 `json:"preference" bson:"preference"`                                      // preferred | alternate
 	Container          *SpecimenDefinitionTypeTestedContainer `json:"container,omitempty" bson:"container,omitempty"`                    // The specimen's container
 	Requirement        *string                                `json:"requirement,omitempty" bson:"requirement,omitempty"`                // Requirements for specimen delivery and special handling
 	RetentionTime      *Duration                              `json:"retentionTime,omitempty" bson:"retention_time,omitempty"`           // The usual time for retaining this kind of specimen
-	SingleUse          bool                                   `json:"singleUse,omitempty" bson:"single_use,omitempty"`                   // Specimen for single use only
+	SingleUse          *bool                                  `json:"singleUse,omitempty" bson:"single_use,omitempty"`                   // Specimen for single use only
 	RejectionCriterion []CodeableConcept                      `json:"rejectionCriterion,omitempty" bson:"rejection_criterion,omitempty"` // Criterion specified for specimen rejection
 	Handling           []SpecimenDefinitionTypeTestedHandling `json:"handling,omitempty" bson:"handling,omitempty"`                      // Specimen handling before testing
 	TestingDestination []CodeableConcept                      `json:"testingDestination,omitempty" bson:"testing_destination,omitempty"` // Where the specimen will be tested
@@ -274,6 +247,33 @@ func (r *SpecimenDefinitionTypeTestedContainerAdditive) Validate() error {
 	if r.AdditiveReference != nil {
 		if err := r.AdditiveReference.Validate(); err != nil {
 			return fmt.Errorf("AdditiveReference: %w", err)
+		}
+	}
+	return nil
+}
+
+type SpecimenDefinitionTypeTestedHandling struct {
+	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
+	TemperatureQualifier *CodeableConcept `json:"temperatureQualifier,omitempty" bson:"temperature_qualifier,omitempty"` // Qualifies the interval of temperature
+	TemperatureRange     *Range           `json:"temperatureRange,omitempty" bson:"temperature_range,omitempty"`         // Temperature range for these handling instructions
+	MaxDuration          *Duration        `json:"maxDuration,omitempty" bson:"max_duration,omitempty"`                   // Maximum preservation time
+	Instruction          *string          `json:"instruction,omitempty" bson:"instruction,omitempty"`                    // Preservation instruction
+}
+
+func (r *SpecimenDefinitionTypeTestedHandling) Validate() error {
+	if r.TemperatureQualifier != nil {
+		if err := r.TemperatureQualifier.Validate(); err != nil {
+			return fmt.Errorf("TemperatureQualifier: %w", err)
+		}
+	}
+	if r.TemperatureRange != nil {
+		if err := r.TemperatureRange.Validate(); err != nil {
+			return fmt.Errorf("TemperatureRange: %w", err)
+		}
+	}
+	if r.MaxDuration != nil {
+		if err := r.MaxDuration.Validate(); err != nil {
+			return fmt.Errorf("MaxDuration: %w", err)
 		}
 	}
 	return nil

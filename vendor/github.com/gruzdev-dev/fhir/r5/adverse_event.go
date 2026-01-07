@@ -32,7 +32,7 @@ type AdverseEvent struct {
 	Recorder                *Reference                  `json:"recorder,omitempty" bson:"recorder,omitempty"`                                  // Who recorded the adverse event
 	Participant             []AdverseEventParticipant   `json:"participant,omitempty" bson:"participant,omitempty"`                            // Who was involved in the adverse event or the potential adverse event and what they did
 	Study                   []Reference                 `json:"study,omitempty" bson:"study,omitempty"`                                        // Research study that the subject is enrolled in
-	ExpectedInResearchStudy bool                        `json:"expectedInResearchStudy,omitempty" bson:"expected_in_research_study,omitempty"` // Considered likely or probable or anticipated in the research study
+	ExpectedInResearchStudy *bool                       `json:"expectedInResearchStudy,omitempty" bson:"expected_in_research_study,omitempty"` // Considered likely or probable or anticipated in the research study
 	SuspectEntity           []AdverseEventSuspectEntity `json:"suspectEntity,omitempty" bson:"suspect_entity,omitempty"`                       // The suspected agent causing the adverse event
 	ContributingFactor      []CodeableReference         `json:"contributingFactor,omitempty" bson:"contributing_factor,omitempty"`             // Contributing factors suspected to have increased the probability or severity of the adverse event
 	PreventiveAction        []CodeableReference         `json:"preventiveAction,omitempty" bson:"preventive_action,omitempty"`                 // Preventive actions that contributed to avoiding the adverse event
@@ -163,6 +163,29 @@ func (r *AdverseEvent) Validate() error {
 	return nil
 }
 
+type AdverseEventParticipant struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of involvement
+	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who was involved in the adverse event or the potential adverse event
+}
+
+func (r *AdverseEventParticipant) Validate() error {
+	if r.Function != nil {
+		if err := r.Function.Validate(); err != nil {
+			return fmt.Errorf("Function: %w", err)
+		}
+	}
+	if r.Actor == nil {
+		return fmt.Errorf("field 'Actor' is required")
+	}
+	if r.Actor != nil {
+		if err := r.Actor.Validate(); err != nil {
+			return fmt.Errorf("Actor: %w", err)
+		}
+	}
+	return nil
+}
+
 type AdverseEventSuspectEntity struct {
 	Id                 *string                             `json:"id,omitempty" bson:"id,omitempty"`                                   // Unique id for inter-element referencing
 	Instance           *CodeableReference                  `json:"instance" bson:"instance"`                                           // Refers to the specific entity that caused the adverse event
@@ -214,29 +237,6 @@ func (r *AdverseEventSuspectEntityCausality) Validate() error {
 	if r.Author != nil {
 		if err := r.Author.Validate(); err != nil {
 			return fmt.Errorf("Author: %w", err)
-		}
-	}
-	return nil
-}
-
-type AdverseEventParticipant struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Function *CodeableConcept `json:"function,omitempty" bson:"function,omitempty"` // Type of involvement
-	Actor    *Reference       `json:"actor" bson:"actor"`                           // Who was involved in the adverse event or the potential adverse event
-}
-
-func (r *AdverseEventParticipant) Validate() error {
-	if r.Function != nil {
-		if err := r.Function.Validate(); err != nil {
-			return fmt.Errorf("Function: %w", err)
-		}
-	}
-	if r.Actor == nil {
-		return fmt.Errorf("field 'Actor' is required")
-	}
-	if r.Actor != nil {
-		if err := r.Actor.Validate(); err != nil {
-			return fmt.Errorf("Actor: %w", err)
 		}
 	}
 	return nil

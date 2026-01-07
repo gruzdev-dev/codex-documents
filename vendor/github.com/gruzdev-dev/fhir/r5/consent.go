@@ -130,6 +130,34 @@ func (r *Consent) Validate() error {
 	return nil
 }
 
+type ConsentVerification struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Verified     bool             `json:"verified" bson:"verified"`                              // Has been verified
+	Type         *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                  // Business case of verification
+	VerifiedBy   *Reference       `json:"verifiedBy,omitempty" bson:"verified_by,omitempty"`     // Person conducting verification
+	VerifiedWith *Reference       `json:"verifiedWith,omitempty" bson:"verified_with,omitempty"` // Person who verified
+	Date         []string         `json:"date,omitempty" bson:"date,omitempty"`                  // When consent verified
+}
+
+func (r *ConsentVerification) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.VerifiedBy != nil {
+		if err := r.VerifiedBy.Validate(); err != nil {
+			return fmt.Errorf("VerifiedBy: %w", err)
+		}
+	}
+	if r.VerifiedWith != nil {
+		if err := r.VerifiedWith.Validate(); err != nil {
+			return fmt.Errorf("VerifiedWith: %w", err)
+		}
+	}
+	return nil
+}
+
 type ConsentProvision struct {
 	Id            *string                 `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
 	Period        *Period                 `json:"period,omitempty" bson:"period,omitempty"`                // Timeframe for this provision
@@ -262,34 +290,6 @@ func (r *ConsentPolicyBasis) Validate() error {
 	if r.Reference != nil {
 		if err := r.Reference.Validate(); err != nil {
 			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ConsentVerification struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Verified     bool             `json:"verified" bson:"verified"`                              // Has been verified
-	Type         *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                  // Business case of verification
-	VerifiedBy   *Reference       `json:"verifiedBy,omitempty" bson:"verified_by,omitempty"`     // Person conducting verification
-	VerifiedWith *Reference       `json:"verifiedWith,omitempty" bson:"verified_with,omitempty"` // Person who verified
-	Date         []string         `json:"date,omitempty" bson:"date,omitempty"`                  // When consent verified
-}
-
-func (r *ConsentVerification) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.VerifiedBy != nil {
-		if err := r.VerifiedBy.Validate(); err != nil {
-			return fmt.Errorf("VerifiedBy: %w", err)
-		}
-	}
-	if r.VerifiedWith != nil {
-		if err := r.VerifiedWith.Validate(); err != nil {
-			return fmt.Errorf("VerifiedWith: %w", err)
 		}
 	}
 	return nil

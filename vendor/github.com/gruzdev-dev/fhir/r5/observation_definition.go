@@ -22,7 +22,7 @@ type ObservationDefinition struct {
 	Name                   *string                               `json:"name,omitempty" bson:"name,omitempty"`                                       // Name for this ObservationDefinition (computer friendly)
 	Title                  *string                               `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this ObservationDefinition (human friendly)
 	Status                 string                                `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                                  `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // If For testing only - never for real usage
+	Experimental           *bool                                 `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // If For testing only - never for real usage
 	Date                   *string                               `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string                               `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // The name of the individual or organization that published the ObservationDefinition
 	Contact                []ContactDetail                       `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -42,7 +42,7 @@ type ObservationDefinition struct {
 	Category               []CodeableConcept                     `json:"category,omitempty" bson:"category,omitempty"`                               // General type of observation
 	Code                   *CodeableConcept                      `json:"code" bson:"code"`                                                           // Type of observation
 	PermittedDataType      []string                              `json:"permittedDataType,omitempty" bson:"permitted_data_type,omitempty"`           // Quantity | CodeableConcept | string | boolean | integer | Range | Ratio | SampledData | time | dateTime | Period
-	MultipleResultsAllowed bool                                  `json:"multipleResultsAllowed,omitempty" bson:"multiple_results_allowed,omitempty"` // Multiple results allowed for conforming observations
+	MultipleResultsAllowed *bool                                 `json:"multipleResultsAllowed,omitempty" bson:"multiple_results_allowed,omitempty"` // Multiple results allowed for conforming observations
 	BodyStructure          *CodeableReference                    `json:"bodyStructure,omitempty" bson:"body_structure,omitempty"`                    // Body structure to be observed
 	Method                 *CodeableConcept                      `json:"method,omitempty" bson:"method,omitempty"`                                   // Method used to produce the observation
 	Specimen               []Reference                           `json:"specimen,omitempty" bson:"specimen,omitempty"`                               // Kind of specimen used by this type of observation

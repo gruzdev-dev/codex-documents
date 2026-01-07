@@ -101,7 +101,7 @@ func (r *List) Validate() error {
 type ListEntry struct {
 	Id      *string          `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
 	Flag    *CodeableConcept `json:"flag,omitempty" bson:"flag,omitempty"`       // Status/Workflow information about this item
-	Deleted bool             `json:"deleted,omitempty" bson:"deleted,omitempty"` // If this item is actually marked as deleted
+	Deleted *bool            `json:"deleted,omitempty" bson:"deleted,omitempty"` // If this item is actually marked as deleted
 	Date    *string          `json:"date,omitempty" bson:"date,omitempty"`       // When item added to list
 	Item    *Reference       `json:"item" bson:"item"`                           // Actual entry
 }

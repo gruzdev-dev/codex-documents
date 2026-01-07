@@ -15,7 +15,7 @@ type Schedule struct {
 	Text            *Narrative          `json:"text,omitempty" bson:"text,omitempty"`                        // Text summary of the resource, for human interpretation
 	Contained       []json.RawMessage   `json:"contained,omitempty" bson:"contained,omitempty"`              // Contained, inline Resources
 	Identifier      []Identifier        `json:"identifier,omitempty" bson:"identifier,omitempty"`            // External Ids for this item
-	Active          bool                `json:"active,omitempty" bson:"active,omitempty"`                    // Whether this schedule is in active use
+	Active          *bool               `json:"active,omitempty" bson:"active,omitempty"`                    // Whether this schedule is in active use
 	ServiceCategory []CodeableConcept   `json:"serviceCategory,omitempty" bson:"service_category,omitempty"` // High-level category
 	ServiceType     []CodeableReference `json:"serviceType,omitempty" bson:"service_type,omitempty"`         // Specific service
 	Specialty       []CodeableConcept   `json:"specialty,omitempty" bson:"specialty,omitempty"`              // Type of specialty needed

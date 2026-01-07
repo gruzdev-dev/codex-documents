@@ -23,7 +23,7 @@ type NamingSystem struct {
 	Title                  *string                `json:"title,omitempty" bson:"title,omitempty"`                                     // Title for this naming system (human friendly)
 	Status                 string                 `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
 	Kind                   string                 `json:"kind" bson:"kind"`                                                           // codesystem | identifier | root
-	Experimental           bool                   `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                  `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   string                 `json:"date" bson:"date"`                                                           // Date last changed
 	Publisher              *string                `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail        `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -155,10 +155,10 @@ type NamingSystemUniqueId struct {
 	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Type          string  `json:"type" bson:"type"`                                       // oid | uuid | uri | iri-stem | v2csmnemonic | other
 	Value         string  `json:"value" bson:"value"`                                     // The unique identifier
-	Preferred     bool    `json:"preferred,omitempty" bson:"preferred,omitempty"`         // Is this the id that should be used for this type
+	Preferred     *bool   `json:"preferred,omitempty" bson:"preferred,omitempty"`         // Is this the id that should be used for this type
 	Comment       *string `json:"comment,omitempty" bson:"comment,omitempty"`             // Notes about identifier usage
 	Period        *Period `json:"period,omitempty" bson:"period,omitempty"`               // When is identifier valid?
-	Authoritative bool    `json:"authoritative,omitempty" bson:"authoritative,omitempty"` // Whether the identifier is authoritative
+	Authoritative *bool   `json:"authoritative,omitempty" bson:"authoritative,omitempty"` // Whether the identifier is authoritative
 }
 
 func (r *NamingSystemUniqueId) Validate() error {

@@ -106,7 +106,7 @@ github.com/google/uuid
 # github.com/gorilla/mux v1.8.1
 ## explicit; go 1.20
 github.com/gorilla/mux
-# github.com/gruzdev-dev/fhir v0.0.4
+# github.com/gruzdev-dev/fhir v0.0.5
 ## explicit; go 1.25.5
 github.com/gruzdev-dev/fhir/r5
 # github.com/klauspost/compress v1.18.0

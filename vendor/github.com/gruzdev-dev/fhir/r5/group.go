@@ -22,7 +22,7 @@ type Group struct {
 	Name                   *string               `json:"name,omitempty" bson:"name,omitempty"`                                       // Label for Group
 	Title                  *string               `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this Group (human friendly)
 	Status                 *string               `json:"status,omitempty" bson:"status,omitempty"`                                   // draft | active | retired | unknown
-	Experimental           bool                  `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool                 `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	Date                   *string               `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string               `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
 	Contact                []ContactDetail       `json:"contact,omitempty" bson:"contact,omitempty"`                                 // Contact details for the publisher
@@ -235,7 +235,7 @@ type GroupMember struct {
 	Entity      *Reference        `json:"entity" bson:"entity"`                               // Reference to the group member
 	Involvement []CodeableConcept `json:"involvement,omitempty" bson:"involvement,omitempty"` // Code that describes how user is part of the group
 	Period      *Period           `json:"period,omitempty" bson:"period,omitempty"`           // Period member belonged to the group
-	Inactive    bool              `json:"inactive,omitempty" bson:"inactive,omitempty"`       // If member is no longer in group
+	Inactive    *bool             `json:"inactive,omitempty" bson:"inactive,omitempty"`       // If member is no longer in group
 }
 
 func (r *GroupMember) Validate() error {

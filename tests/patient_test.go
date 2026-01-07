@@ -15,6 +15,122 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	CREATE_JSON = `{
+		"resourceType": "Patient",
+		"active": true,
+		"name": [
+			{
+				"use": "official",
+				"family": "Ivanov",
+				"given": ["Ivan", "Sergeevich"]
+			}
+		],
+		"telecom": [
+			{
+				"system": "phone",
+				"value": "+79001234567",
+				"use": "mobile"
+			},
+			{
+				"system": "email",
+				"value": "ivan@example.com"
+			}
+		],
+		"gender": "male",
+		"birthDate": "1985-10-25",
+		"deceasedBoolean": false,
+		"address": [
+			{
+				"use": "home",
+				"line": ["ul. Lenina, 1"],
+				"city": "Moscow",
+				"postalCode": "101000"
+			}
+		],
+		"maritalStatus": {
+			"coding": [
+				{
+					"system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+					"code": "U",
+					"display": "unmarried"
+				}
+			]
+		},
+		"communication": [
+			{
+				"language": {
+					"coding": [
+						{
+							"system": "urn:ietf:bcp:47",
+							"code": "ru",
+							"display": "Russian"
+						}
+					]
+				},
+				"preferred": true
+			}
+		]
+	}`
+	UPDATE_JSON = `{
+		"resourceType": "Patient",
+		"id": "%s",
+		"active": false,
+		"name": [
+			{
+				"use": "official",
+				"family": "Ivanov",
+				"given": ["Ivan", "Sergeevich"]
+			}
+		],
+		"telecom": [
+			{
+				"system": "phone",
+				"value": "+79001234567",
+				"use": "mobile"
+			},
+			{
+				"system": "email",
+				"value": "ivan@example.com"
+			}
+		],
+		"gender": "female",
+		"birthDate": "1985-10-25",
+		"deceasedBoolean": false,
+		"address": [
+			{
+				"use": "home",
+				"line": ["ul. Lenina, 1"],
+				"city": "Moscow",
+				"postalCode": "101000"
+			}
+		],
+		"maritalStatus": {
+			"coding": [
+				{
+					"system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+					"code": "M",
+					"display": "Married"
+				}
+			]
+		},
+		"communication": [
+			{
+				"language": {
+					"coding": [
+						{
+							"system": "urn:ietf:bcp:47",
+							"code": "ru",
+							"display": "Russian"
+						}
+					]
+				},
+				"preferred": true
+			}
+		]
+	}`
+)
+
 func createTestJWTToken(secret string, patientID string) (string, error) {
 	claims := jwt.MapClaims{
 		"sub":        "test-user",
@@ -38,26 +154,7 @@ func TestPatientIntegration(t *testing.T) {
 	var token string
 
 	t.Run("Create Patient", func(t *testing.T) {
-		createJSON := `{
-			"resourceType": "Patient",
-			"active": true,
-			"name": [
-				{
-					"family": "Ivanov",
-					"given": ["Ivan"]
-				}
-			],
-			"gender": "male",
-			"birthDate": "1990-01-01",
-			"telecom": [
-				{
-					"system": "email",
-					"value": "ivan.ivanov@example.com"
-				}
-			]
-		}`
-
-		req, err := nethttp.NewRequest("POST", ts.URL+"/api/v1/Patient", bytes.NewBufferString(createJSON))
+		req, err := nethttp.NewRequest("POST", ts.URL+"/api/v1/Patient", bytes.NewBufferString(CREATE_JSON))
 		require.NoError(t, err)
 		req.Header.Set("Content-Type", "application/fhir+json")
 
@@ -85,28 +182,7 @@ func TestPatientIntegration(t *testing.T) {
 	t.Run("Update Patient", func(t *testing.T) {
 		require.NotEmpty(t, patientID, "Patient ID should be set from Create step")
 
-		updateJSON := `{
-			"resourceType": "Patient",
-			"active": false,
-			"name": [
-				{
-					"family": "Ivanov",
-					"given": ["Ivan"]
-				},
-				{
-					"family": "Petrov",
-					"given": ["Ivan"]
-				}
-			],
-			"gender": "male",
-			"birthDate": "1990-01-01",
-			"telecom": [
-				{
-					"system": "email",
-					"value": "ivan.ivanov@example.com"
-				}
-			]
-		}`
+		updateJSON := fmt.Sprintf(UPDATE_JSON, patientID)
 
 		req, err := nethttp.NewRequest("PUT", ts.URL+"/api/v1/Patient/"+patientID, bytes.NewBufferString(updateJSON))
 		require.NoError(t, err)
@@ -136,29 +212,7 @@ func TestPatientIntegration(t *testing.T) {
 		body, err := io.ReadAll(resp.Body)
 		require.NoError(t, err)
 
-		expectedJSON := fmt.Sprintf(`{
-			"resourceType": "Patient",
-			"id": "%s",
-			"active": false,
-			"name": [
-				{
-					"family": "Ivanov",
-					"given": ["Ivan"]
-				},
-				{
-					"family": "Petrov",
-					"given": ["Ivan"]
-				}
-			],
-			"gender": "male",
-			"birthDate": "1990-01-01",
-			"telecom": [
-				{
-					"system": "email",
-					"value": "ivan.ivanov@example.com"
-				}
-			]
-		}`, patientID)
+		expectedJSON := fmt.Sprintf(UPDATE_JSON, patientID)
 
 		assert.JSONEq(t, expectedJSON, string(body), "Response JSON should match expected structure")
 	})

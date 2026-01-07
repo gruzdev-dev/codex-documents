@@ -23,7 +23,7 @@ type Questionnaire struct {
 	Title                  *string             `json:"title,omitempty" bson:"title,omitempty"`                                     // Name for this questionnaire (human friendly)
 	DerivedFrom            []string            `json:"derivedFrom,omitempty" bson:"derived_from,omitempty"`                        // Based on Questionnaire
 	Status                 string              `json:"status" bson:"status"`                                                       // draft | active | retired | unknown
-	Experimental           bool                `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
+	Experimental           *bool               `json:"experimental,omitempty" bson:"experimental,omitempty"`                       // For testing only - never for real usage
 	SubjectType            []string            `json:"subjectType,omitempty" bson:"subject_type,omitempty"`                        // Resource that can be subject of QuestionnaireResponse
 	Date                   *string             `json:"date,omitempty" bson:"date,omitempty"`                                       // Date last changed
 	Publisher              *string             `json:"publisher,omitempty" bson:"publisher,omitempty"`                             // Name of the publisher/steward (organization or individual)
@@ -113,9 +113,9 @@ type QuestionnaireItem struct {
 	EnableWhen       []QuestionnaireItemEnableWhen   `json:"enableWhen,omitempty" bson:"enable_when,omitempty"`             // Only allow data when
 	EnableBehavior   *string                         `json:"enableBehavior,omitempty" bson:"enable_behavior,omitempty"`     // all | any
 	DisabledDisplay  *string                         `json:"disabledDisplay,omitempty" bson:"disabled_display,omitempty"`   // hidden | protected
-	Required         bool                            `json:"required,omitempty" bson:"required,omitempty"`                  // Whether the item must be included in data results
-	Repeats          bool                            `json:"repeats,omitempty" bson:"repeats,omitempty"`                    // Whether the item may repeat
-	ReadOnly         bool                            `json:"readOnly,omitempty" bson:"read_only,omitempty"`                 // Don't allow human editing
+	Required         *bool                           `json:"required,omitempty" bson:"required,omitempty"`                  // Whether the item must be included in data results
+	Repeats          *bool                           `json:"repeats,omitempty" bson:"repeats,omitempty"`                    // Whether the item may repeat
+	ReadOnly         *bool                           `json:"readOnly,omitempty" bson:"read_only,omitempty"`                 // Don't allow human editing
 	MaxLength        *int                            `json:"maxLength,omitempty" bson:"max_length,omitempty"`               // No more than these many characters
 	AnswerConstraint *string                         `json:"answerConstraint,omitempty" bson:"answer_constraint,omitempty"` // optionsOnly | optionsOrType | optionsOrString
 	AnswerValueSet   *string                         `json:"answerValueSet,omitempty" bson:"answer_value_set,omitempty"`    // ValueSet containing permitted answers
@@ -257,7 +257,7 @@ type QuestionnaireItemAnswerOption struct {
 	ValueCoding     *Coding    `json:"valueCoding" bson:"value_coding"`                             // Answer value
 	ValueQuantity   *Quantity  `json:"valueQuantity" bson:"value_quantity"`                         // Answer value
 	ValueReference  *Reference `json:"valueReference" bson:"value_reference"`                       // Answer value
-	InitialSelected bool       `json:"initialSelected,omitempty" bson:"initial_selected,omitempty"` // Whether option is selected by default
+	InitialSelected *bool      `json:"initialSelected,omitempty" bson:"initial_selected,omitempty"` // Whether option is selected by default
 }
 
 func (r *QuestionnaireItemAnswerOption) Validate() error {

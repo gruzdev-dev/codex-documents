@@ -10,7 +10,7 @@ type ElementDefinition struct {
 	Path                              string                        `json:"path" bson:"path"`                                                                                   // Path of the element in the hierarchy of elements
 	Representation                    []string                      `json:"representation,omitempty" bson:"representation,omitempty"`                                           // xmlAttr | xmlText | typeAttr | cdaText | xhtml
 	SliceName                         *string                       `json:"sliceName,omitempty" bson:"slice_name,omitempty"`                                                    // Name for this particular element (in a set of slices)
-	SliceIsConstraining               bool                          `json:"sliceIsConstraining,omitempty" bson:"slice_is_constraining,omitempty"`                               // If this slice definition constrains an inherited slice definition (or not)
+	SliceIsConstraining               *bool                         `json:"sliceIsConstraining,omitempty" bson:"slice_is_constraining,omitempty"`                               // If this slice definition constrains an inherited slice definition (or not)
 	Label                             *string                       `json:"label,omitempty" bson:"label,omitempty"`                                                             // String to display with or prompt for element
 	Code                              []Coding                      `json:"code,omitempty" bson:"code,omitempty"`                                                               // Corresponding codes in terminologies
 	Slicing                           *ElementDefinitionSlicing     `json:"slicing,omitempty" bson:"slicing,omitempty"`                                                         // This element is sliced - slices follow
@@ -215,12 +215,12 @@ type ElementDefinition struct {
 	MaxLength                         *int                          `json:"maxLength,omitempty" bson:"max_length,omitempty"`                                                    // Max length for string type data
 	Condition                         []string                      `json:"condition,omitempty" bson:"condition,omitempty"`                                                     // Reference to invariant about presence
 	Constraint                        []ElementDefinitionConstraint `json:"constraint,omitempty" bson:"constraint,omitempty"`                                                   // Condition that must evaluate to true
-	MustHaveValue                     bool                          `json:"mustHaveValue,omitempty" bson:"must_have_value,omitempty"`                                           // For primitives, that a value must be present - not replaced by an extension
+	MustHaveValue                     *bool                         `json:"mustHaveValue,omitempty" bson:"must_have_value,omitempty"`                                           // For primitives, that a value must be present - not replaced by an extension
 	ValueAlternatives                 []string                      `json:"valueAlternatives,omitempty" bson:"value_alternatives,omitempty"`                                    // Extensions that are allowed to replace a primitive value
-	MustSupport                       bool                          `json:"mustSupport,omitempty" bson:"must_support,omitempty"`                                                // If the element must be supported (discouraged - see obligations)
-	IsModifier                        bool                          `json:"isModifier,omitempty" bson:"is_modifier,omitempty"`                                                  // If this modifies the meaning of other elements
+	MustSupport                       *bool                         `json:"mustSupport,omitempty" bson:"must_support,omitempty"`                                                // If the element must be supported (discouraged - see obligations)
+	IsModifier                        *bool                         `json:"isModifier,omitempty" bson:"is_modifier,omitempty"`                                                  // If this modifies the meaning of other elements
 	IsModifierReason                  *string                       `json:"isModifierReason,omitempty" bson:"is_modifier_reason,omitempty"`                                     // Reason that this element is marked as a modifier
-	IsSummary                         bool                          `json:"isSummary,omitempty" bson:"is_summary,omitempty"`                                                    // Include when _summary = true?
+	IsSummary                         *bool                         `json:"isSummary,omitempty" bson:"is_summary,omitempty"`                                                    // Include when _summary = true?
 	Binding                           *ElementDefinitionBinding     `json:"binding,omitempty" bson:"binding,omitempty"`                                                         // ValueSet details if this is coded
 	Mapping                           []ElementDefinitionMapping    `json:"mapping,omitempty" bson:"mapping,omitempty"`                                                         // Map element to another set of definitions
 }
@@ -827,7 +827,7 @@ type ElementDefinitionSlicing struct {
 	Id            *string                                 `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Discriminator []ElementDefinitionSlicingDiscriminator `json:"discriminator,omitempty" bson:"discriminator,omitempty"` // Element values that are used to distinguish the slices
 	Description   *string                                 `json:"description,omitempty" bson:"description,omitempty"`     // Text description of how slicing works (or not)
-	Ordered       bool                                    `json:"ordered,omitempty" bson:"ordered,omitempty"`             // If elements must be in same order as slices
+	Ordered       *bool                                   `json:"ordered,omitempty" bson:"ordered,omitempty"`             // If elements must be in same order as slices
 	Rules         string                                  `json:"rules" bson:"rules"`                                     // closed | open | openAtEnd
 }
 
@@ -840,6 +840,100 @@ func (r *ElementDefinitionSlicing) Validate() error {
 	var emptyString string
 	if r.Rules == emptyString {
 		return fmt.Errorf("field 'Rules' is required")
+	}
+	return nil
+}
+
+type ElementDefinitionBase struct {
+	Id   *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Path string  `json:"path" bson:"path"`                 // Path that identifies the base element
+	Min  int     `json:"min" bson:"min"`                   // Min cardinality of the base element
+	Max  string  `json:"max" bson:"max"`                   // Max cardinality of the base element
+}
+
+func (r *ElementDefinitionBase) Validate() error {
+	var emptyString string
+	if r.Path == emptyString {
+		return fmt.Errorf("field 'Path' is required")
+	}
+	if r.Min == 0 {
+		return fmt.Errorf("field 'Min' is required")
+	}
+	if r.Max == emptyString {
+		return fmt.Errorf("field 'Max' is required")
+	}
+	return nil
+}
+
+type ElementDefinitionConstraint struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Key          string  `json:"key" bson:"key"`                                       // Target of 'condition' reference above
+	Requirements *string `json:"requirements,omitempty" bson:"requirements,omitempty"` // Why this constraint is necessary or appropriate
+	Severity     string  `json:"severity" bson:"severity"`                             // error | warning
+	Suppress     *bool   `json:"suppress,omitempty" bson:"suppress,omitempty"`         // Suppress warning or hint in profile
+	Human        string  `json:"human" bson:"human"`                                   // Human description of constraint
+	Expression   *string `json:"expression,omitempty" bson:"expression,omitempty"`     // FHIRPath expression of constraint
+	Source       *string `json:"source,omitempty" bson:"source,omitempty"`             // Reference to original source of constraint
+}
+
+func (r *ElementDefinitionConstraint) Validate() error {
+	var emptyString string
+	if r.Key == emptyString {
+		return fmt.Errorf("field 'Key' is required")
+	}
+	if r.Severity == emptyString {
+		return fmt.Errorf("field 'Severity' is required")
+	}
+	if r.Human == emptyString {
+		return fmt.Errorf("field 'Human' is required")
+	}
+	return nil
+}
+
+type ElementDefinitionBinding struct {
+	Id          *string                              `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Strength    string                               `json:"strength" bson:"strength"`                           // required | extensible | preferred | example | descriptive
+	Description *string                              `json:"description,omitempty" bson:"description,omitempty"` // Guidance on the codes to be used
+	ValueSet    *string                              `json:"valueSet,omitempty" bson:"value_set,omitempty"`      // Source of value set
+	Additional  []ElementDefinitionBindingAdditional `json:"additional,omitempty" bson:"additional,omitempty"`   // Additional Bindings - more rules about the binding
+}
+
+func (r *ElementDefinitionBinding) Validate() error {
+	var emptyString string
+	if r.Strength == emptyString {
+		return fmt.Errorf("field 'Strength' is required")
+	}
+	for i, item := range r.Additional {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Additional[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ElementDefinitionBindingAdditional struct {
+	Id            *string        `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Key           *string        `json:"key,omitempty" bson:"key,omitempty"`                     // Unique identifier so additional bindings to be matched across profiles
+	Purpose       string         `json:"purpose" bson:"purpose"`                                 // maximum | minimum | required | extensible | candidate | current | current-extensible | best-practice | preferred | ui | starter | component
+	ValueSet      string         `json:"valueSet" bson:"value_set"`                              // The value set for the additional binding
+	Documentation *string        `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation of the purpose of use of the binding
+	ShortDoco     *string        `json:"shortDoco,omitempty" bson:"short_doco,omitempty"`        // Concise documentation - for summary tables
+	Usage         []UsageContext `json:"usage,omitempty" bson:"usage,omitempty"`                 // Qualifies the usage - jurisdiction, gender, workflow status etc.
+	Any           *bool          `json:"any,omitempty" bson:"any,omitempty"`                     // Whether binding can applies to all repeats, or just one
+}
+
+func (r *ElementDefinitionBindingAdditional) Validate() error {
+	var emptyString string
+	if r.Purpose == emptyString {
+		return fmt.Errorf("field 'Purpose' is required")
+	}
+	if r.ValueSet == emptyString {
+		return fmt.Errorf("field 'ValueSet' is required")
+	}
+	for i, item := range r.Usage {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Usage[%d]: %w", i, err)
+		}
 	}
 	return nil
 }
@@ -1286,100 +1380,6 @@ func (r *ElementDefinitionExample) Validate() error {
 	if r.ValueMeta != nil {
 		if err := r.ValueMeta.Validate(); err != nil {
 			return fmt.Errorf("ValueMeta: %w", err)
-		}
-	}
-	return nil
-}
-
-type ElementDefinitionBase struct {
-	Id   *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Path string  `json:"path" bson:"path"`                 // Path that identifies the base element
-	Min  int     `json:"min" bson:"min"`                   // Min cardinality of the base element
-	Max  string  `json:"max" bson:"max"`                   // Max cardinality of the base element
-}
-
-func (r *ElementDefinitionBase) Validate() error {
-	var emptyString string
-	if r.Path == emptyString {
-		return fmt.Errorf("field 'Path' is required")
-	}
-	if r.Min == 0 {
-		return fmt.Errorf("field 'Min' is required")
-	}
-	if r.Max == emptyString {
-		return fmt.Errorf("field 'Max' is required")
-	}
-	return nil
-}
-
-type ElementDefinitionConstraint struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Key          string  `json:"key" bson:"key"`                                       // Target of 'condition' reference above
-	Requirements *string `json:"requirements,omitempty" bson:"requirements,omitempty"` // Why this constraint is necessary or appropriate
-	Severity     string  `json:"severity" bson:"severity"`                             // error | warning
-	Suppress     bool    `json:"suppress,omitempty" bson:"suppress,omitempty"`         // Suppress warning or hint in profile
-	Human        string  `json:"human" bson:"human"`                                   // Human description of constraint
-	Expression   *string `json:"expression,omitempty" bson:"expression,omitempty"`     // FHIRPath expression of constraint
-	Source       *string `json:"source,omitempty" bson:"source,omitempty"`             // Reference to original source of constraint
-}
-
-func (r *ElementDefinitionConstraint) Validate() error {
-	var emptyString string
-	if r.Key == emptyString {
-		return fmt.Errorf("field 'Key' is required")
-	}
-	if r.Severity == emptyString {
-		return fmt.Errorf("field 'Severity' is required")
-	}
-	if r.Human == emptyString {
-		return fmt.Errorf("field 'Human' is required")
-	}
-	return nil
-}
-
-type ElementDefinitionBinding struct {
-	Id          *string                              `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Strength    string                               `json:"strength" bson:"strength"`                           // required | extensible | preferred | example | descriptive
-	Description *string                              `json:"description,omitempty" bson:"description,omitempty"` // Guidance on the codes to be used
-	ValueSet    *string                              `json:"valueSet,omitempty" bson:"value_set,omitempty"`      // Source of value set
-	Additional  []ElementDefinitionBindingAdditional `json:"additional,omitempty" bson:"additional,omitempty"`   // Additional Bindings - more rules about the binding
-}
-
-func (r *ElementDefinitionBinding) Validate() error {
-	var emptyString string
-	if r.Strength == emptyString {
-		return fmt.Errorf("field 'Strength' is required")
-	}
-	for i, item := range r.Additional {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Additional[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ElementDefinitionBindingAdditional struct {
-	Id            *string        `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Key           *string        `json:"key,omitempty" bson:"key,omitempty"`                     // Unique identifier so additional bindings to be matched across profiles
-	Purpose       string         `json:"purpose" bson:"purpose"`                                 // maximum | minimum | required | extensible | candidate | current | current-extensible | best-practice | preferred | ui | starter | component
-	ValueSet      string         `json:"valueSet" bson:"value_set"`                              // The value set for the additional binding
-	Documentation *string        `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation of the purpose of use of the binding
-	ShortDoco     *string        `json:"shortDoco,omitempty" bson:"short_doco,omitempty"`        // Concise documentation - for summary tables
-	Usage         []UsageContext `json:"usage,omitempty" bson:"usage,omitempty"`                 // Qualifies the usage - jurisdiction, gender, workflow status etc.
-	Any           bool           `json:"any,omitempty" bson:"any,omitempty"`                     // Whether binding can applies to all repeats, or just one
-}
-
-func (r *ElementDefinitionBindingAdditional) Validate() error {
-	var emptyString string
-	if r.Purpose == emptyString {
-		return fmt.Errorf("field 'Purpose' is required")
-	}
-	if r.ValueSet == emptyString {
-		return fmt.Errorf("field 'ValueSet' is required")
-	}
-	for i, item := range r.Usage {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Usage[%d]: %w", i, err)
 		}
 	}
 	return nil

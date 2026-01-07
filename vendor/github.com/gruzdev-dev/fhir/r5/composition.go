@@ -145,68 +145,6 @@ func (r *Composition) Validate() error {
 	return nil
 }
 
-type CompositionParticipant struct {
-	Id       *string           `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Type     []CodeableConcept `json:"type" bson:"type"`                 // AUT | AUTHEN | CST | LA | RCT | SBJ
-	Function []CodeableConcept `json:"function,omitempty" bson:"function,omitempty"`
-	Time     *Period           `json:"time,omitempty" bson:"time,omitempty"` // Time period of participation
-	Party    *Reference        `json:"party" bson:"party"`                   // Who the participant is
-}
-
-func (r *CompositionParticipant) Validate() error {
-	if len(r.Type) < 1 {
-		return fmt.Errorf("field 'Type' must have at least 1 elements")
-	}
-	for i, item := range r.Type {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Type[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Function {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Function[%d]: %w", i, err)
-		}
-	}
-	if r.Time != nil {
-		if err := r.Time.Validate(); err != nil {
-			return fmt.Errorf("Time: %w", err)
-		}
-	}
-	if r.Party == nil {
-		return fmt.Errorf("field 'Party' is required")
-	}
-	if r.Party != nil {
-		if err := r.Party.Validate(); err != nil {
-			return fmt.Errorf("Party: %w", err)
-		}
-	}
-	return nil
-}
-
-type CompositionAttester struct {
-	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Mode  *CodeableConcept `json:"mode" bson:"mode"`                       // personal | professional | legal | official
-	Time  *string          `json:"time,omitempty" bson:"time,omitempty"`   // When the composition was attested
-	Party *Reference       `json:"party,omitempty" bson:"party,omitempty"` // Who attested the composition
-}
-
-func (r *CompositionAttester) Validate() error {
-	if r.Mode == nil {
-		return fmt.Errorf("field 'Mode' is required")
-	}
-	if r.Mode != nil {
-		if err := r.Mode.Validate(); err != nil {
-			return fmt.Errorf("Mode: %w", err)
-		}
-	}
-	if r.Party != nil {
-		if err := r.Party.Validate(); err != nil {
-			return fmt.Errorf("Party: %w", err)
-		}
-	}
-	return nil
-}
-
 type CompositionRelatesTo struct {
 	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
 	Type             *CodeableConcept `json:"type" bson:"type"`                          // documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with | documents | specification-of | created-with | cite-as | reprint | reprint-of | summarizes
@@ -332,6 +270,68 @@ func (r *CompositionSection) Validate() error {
 	for i, item := range r.Section {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Section[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type CompositionParticipant struct {
+	Id       *string           `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Type     []CodeableConcept `json:"type" bson:"type"`                 // AUT | AUTHEN | CST | LA | RCT | SBJ
+	Function []CodeableConcept `json:"function,omitempty" bson:"function,omitempty"`
+	Time     *Period           `json:"time,omitempty" bson:"time,omitempty"` // Time period of participation
+	Party    *Reference        `json:"party" bson:"party"`                   // Who the participant is
+}
+
+func (r *CompositionParticipant) Validate() error {
+	if len(r.Type) < 1 {
+		return fmt.Errorf("field 'Type' must have at least 1 elements")
+	}
+	for i, item := range r.Type {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Type[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Function {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Function[%d]: %w", i, err)
+		}
+	}
+	if r.Time != nil {
+		if err := r.Time.Validate(); err != nil {
+			return fmt.Errorf("Time: %w", err)
+		}
+	}
+	if r.Party == nil {
+		return fmt.Errorf("field 'Party' is required")
+	}
+	if r.Party != nil {
+		if err := r.Party.Validate(); err != nil {
+			return fmt.Errorf("Party: %w", err)
+		}
+	}
+	return nil
+}
+
+type CompositionAttester struct {
+	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Mode  *CodeableConcept `json:"mode" bson:"mode"`                       // personal | professional | legal | official
+	Time  *string          `json:"time,omitempty" bson:"time,omitempty"`   // When the composition was attested
+	Party *Reference       `json:"party,omitempty" bson:"party,omitempty"` // Who attested the composition
+}
+
+func (r *CompositionAttester) Validate() error {
+	if r.Mode == nil {
+		return fmt.Errorf("field 'Mode' is required")
+	}
+	if r.Mode != nil {
+		if err := r.Mode.Validate(); err != nil {
+			return fmt.Errorf("Mode: %w", err)
+		}
+	}
+	if r.Party != nil {
+		if err := r.Party.Validate(); err != nil {
+			return fmt.Errorf("Party: %w", err)
 		}
 	}
 	return nil
