@@ -7,6 +7,7 @@ import (
 
 // A record of a healthcare consumer’s  choices  or choices made on their behalf by a third party, which permits or denies identified recipient(s) or recipient role(s) to perform one or more actions within a given policy context, for specific purposes and periods of time.
 type Consent struct {
+	ResourceType     string                `json:"resourceType" bson:"resource_type"`                             // Type of resource
 	Id               *string               `json:"id,omitempty" bson:"id,omitempty"`                              // Logical id of this artifact
 	Meta             *Meta                 `json:"meta,omitempty" bson:"meta,omitempty"`                          // Metadata about the resource
 	ImplicitRules    *string               `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`       // A set of rules under which this content was created
@@ -34,6 +35,9 @@ type Consent struct {
 }
 
 func (r *Consent) Validate() error {
+	if r.ResourceType != "Consent" {
+		return fmt.Errorf("invalid resourceType: expected 'Consent', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -121,71 +125,6 @@ func (r *Consent) Validate() error {
 	for i, item := range r.Provision {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Provision[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ConsentProvisionData struct {
-	Id        *string    `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Meaning   string     `json:"meaning" bson:"meaning"`           // instance | related | dependents | authoredby
-	Reference *Reference `json:"reference" bson:"reference"`       // The actual data reference
-}
-
-func (r *ConsentProvisionData) Validate() error {
-	var emptyString string
-	if r.Meaning == emptyString {
-		return fmt.Errorf("field 'Meaning' is required")
-	}
-	if r.Reference == nil {
-		return fmt.Errorf("field 'Reference' is required")
-	}
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ConsentPolicyBasis struct {
-	Id        *string    `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Reference *Reference `json:"reference,omitempty" bson:"reference,omitempty"` // Reference backing policy resource
-	Uri       *string    `json:"uri,omitempty" bson:"uri,omitempty"`             // URI to a computable backing policy
-}
-
-func (r *ConsentPolicyBasis) Validate() error {
-	if r.Reference != nil {
-		if err := r.Reference.Validate(); err != nil {
-			return fmt.Errorf("Reference: %w", err)
-		}
-	}
-	return nil
-}
-
-type ConsentVerification struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Verified     bool             `json:"verified" bson:"verified"`                              // Has been verified
-	Type         *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                  // Business case of verification
-	VerifiedBy   *Reference       `json:"verifiedBy,omitempty" bson:"verified_by,omitempty"`     // Person conducting verification
-	VerifiedWith *Reference       `json:"verifiedWith,omitempty" bson:"verified_with,omitempty"` // Person who verified
-	Date         []string         `json:"date,omitempty" bson:"date,omitempty"`                  // When consent verified
-}
-
-func (r *ConsentVerification) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.VerifiedBy != nil {
-		if err := r.VerifiedBy.Validate(); err != nil {
-			return fmt.Errorf("VerifiedBy: %w", err)
-		}
-	}
-	if r.VerifiedWith != nil {
-		if err := r.VerifiedWith.Validate(); err != nil {
-			return fmt.Errorf("VerifiedWith: %w", err)
 		}
 	}
 	return nil
@@ -286,6 +225,71 @@ func (r *ConsentProvisionActor) Validate() error {
 	if r.Reference != nil {
 		if err := r.Reference.Validate(); err != nil {
 			return fmt.Errorf("Reference: %w", err)
+		}
+	}
+	return nil
+}
+
+type ConsentProvisionData struct {
+	Id        *string    `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Meaning   string     `json:"meaning" bson:"meaning"`           // instance | related | dependents | authoredby
+	Reference *Reference `json:"reference" bson:"reference"`       // The actual data reference
+}
+
+func (r *ConsentProvisionData) Validate() error {
+	var emptyString string
+	if r.Meaning == emptyString {
+		return fmt.Errorf("field 'Meaning' is required")
+	}
+	if r.Reference == nil {
+		return fmt.Errorf("field 'Reference' is required")
+	}
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
+		}
+	}
+	return nil
+}
+
+type ConsentPolicyBasis struct {
+	Id        *string    `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Reference *Reference `json:"reference,omitempty" bson:"reference,omitempty"` // Reference backing policy resource
+	Uri       *string    `json:"uri,omitempty" bson:"uri,omitempty"`             // URI to a computable backing policy
+}
+
+func (r *ConsentPolicyBasis) Validate() error {
+	if r.Reference != nil {
+		if err := r.Reference.Validate(); err != nil {
+			return fmt.Errorf("Reference: %w", err)
+		}
+	}
+	return nil
+}
+
+type ConsentVerification struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Verified     bool             `json:"verified" bson:"verified"`                              // Has been verified
+	Type         *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`                  // Business case of verification
+	VerifiedBy   *Reference       `json:"verifiedBy,omitempty" bson:"verified_by,omitempty"`     // Person conducting verification
+	VerifiedWith *Reference       `json:"verifiedWith,omitempty" bson:"verified_with,omitempty"` // Person who verified
+	Date         []string         `json:"date,omitempty" bson:"date,omitempty"`                  // When consent verified
+}
+
+func (r *ConsentVerification) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.VerifiedBy != nil {
+		if err := r.VerifiedBy.Validate(); err != nil {
+			return fmt.Errorf("VerifiedBy: %w", err)
+		}
+	}
+	if r.VerifiedWith != nil {
+		if err := r.VerifiedWith.Validate(); err != nil {
+			return fmt.Errorf("VerifiedWith: %w", err)
 		}
 	}
 	return nil

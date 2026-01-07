@@ -7,6 +7,7 @@ import (
 
 // Provenance of a resource is a record that describes entities and processes involved in producing and delivering or otherwise influencing that resource. Provenance provides a critical foundation for assessing authenticity, enabling trust, and allowing reproducibility. Provenance assertions are a form of contextual metadata and can themselves become important records with their own provenance. Provenance statement indicates clinical significance in terms of confidence in authenticity, reliability, and trustworthiness, integrity, and stage in lifecycle (e.g. Document Completion - has the artifact been legally authenticated), all of which MAY impact security, privacy, and trust policies.
 type Provenance struct {
+	ResourceType     string              `json:"resourceType" bson:"resource_type"`                              // Type of resource
 	Id               *string             `json:"id,omitempty" bson:"id,omitempty"`                               // Logical id of this artifact
 	Meta             *Meta               `json:"meta,omitempty" bson:"meta,omitempty"`                           // Metadata about the resource
 	ImplicitRules    *string             `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`        // A set of rules under which this content was created
@@ -31,6 +32,9 @@ type Provenance struct {
 }
 
 func (r *Provenance) Validate() error {
+	if r.ResourceType != "Provenance" {
+		return fmt.Errorf("invalid resourceType: expected 'Provenance', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

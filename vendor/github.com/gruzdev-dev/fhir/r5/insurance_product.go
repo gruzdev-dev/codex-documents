@@ -7,6 +7,7 @@ import (
 
 // Details of a Health Insurance product provided by an organization.
 type InsuranceProduct struct {
+	ResourceType   string                     `json:"resourceType" bson:"resource_type"`                         // Type of resource
 	Id             *string                    `json:"id,omitempty" bson:"id,omitempty"`                          // Logical id of this artifact
 	Meta           *Meta                      `json:"meta,omitempty" bson:"meta,omitempty"`                      // Metadata about the resource
 	ImplicitRules  *string                    `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`   // A set of rules under which this content was created
@@ -30,6 +31,9 @@ type InsuranceProduct struct {
 }
 
 func (r *InsuranceProduct) Validate() error {
+	if r.ResourceType != "InsuranceProduct" {
+		return fmt.Errorf("invalid resourceType: expected 'InsuranceProduct', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -98,52 +102,6 @@ func (r *InsuranceProduct) Validate() error {
 	return nil
 }
 
-type InsuranceProductCoverageBenefitLimit struct {
-	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Value *Quantity        `json:"value,omitempty" bson:"value,omitempty"` // Maximum value allowed
-	Code  *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`   // Benefit limit details
-}
-
-func (r *InsuranceProductCoverageBenefitLimit) Validate() error {
-	if r.Value != nil {
-		if err := r.Value.Validate(); err != nil {
-			return fmt.Errorf("Value: %w", err)
-		}
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	return nil
-}
-
-type InsuranceProductRelated struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Product      *Reference       `json:"product,omitempty" bson:"product,omitempty"`           // Related Product reference
-	Relationship *CodeableConcept `json:"relationship,omitempty" bson:"relationship,omitempty"` // Relationship of this product to the related product
-	Period       *Period          `json:"period,omitempty" bson:"period,omitempty"`             // Period that this Relationship is valid
-}
-
-func (r *InsuranceProductRelated) Validate() error {
-	if r.Product != nil {
-		if err := r.Product.Validate(); err != nil {
-			return fmt.Errorf("Product: %w", err)
-		}
-	}
-	if r.Relationship != nil {
-		if err := r.Relationship.Validate(); err != nil {
-			return fmt.Errorf("Relationship: %w", err)
-		}
-	}
-	if r.Period != nil {
-		if err := r.Period.Validate(); err != nil {
-			return fmt.Errorf("Period: %w", err)
-		}
-	}
-	return nil
-}
-
 type InsuranceProductCoverage struct {
 	Id      *string                           `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
 	Type    *CodeableConcept                  `json:"type" bson:"type"`                           // Classification of Coverage
@@ -195,6 +153,52 @@ func (r *InsuranceProductCoverageBenefit) Validate() error {
 	for i, item := range r.Limit {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Limit[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type InsuranceProductCoverageBenefitLimit struct {
+	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Value *Quantity        `json:"value,omitempty" bson:"value,omitempty"` // Maximum value allowed
+	Code  *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`   // Benefit limit details
+}
+
+func (r *InsuranceProductCoverageBenefitLimit) Validate() error {
+	if r.Value != nil {
+		if err := r.Value.Validate(); err != nil {
+			return fmt.Errorf("Value: %w", err)
+		}
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	return nil
+}
+
+type InsuranceProductRelated struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Product      *Reference       `json:"product,omitempty" bson:"product,omitempty"`           // Related Product reference
+	Relationship *CodeableConcept `json:"relationship,omitempty" bson:"relationship,omitempty"` // Relationship of this product to the related product
+	Period       *Period          `json:"period,omitempty" bson:"period,omitempty"`             // Period that this Relationship is valid
+}
+
+func (r *InsuranceProductRelated) Validate() error {
+	if r.Product != nil {
+		if err := r.Product.Validate(); err != nil {
+			return fmt.Errorf("Product: %w", err)
+		}
+	}
+	if r.Relationship != nil {
+		if err := r.Relationship.Validate(); err != nil {
+			return fmt.Errorf("Relationship: %w", err)
+		}
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
 		}
 	}
 	return nil

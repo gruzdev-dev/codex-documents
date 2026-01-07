@@ -7,6 +7,7 @@ import (
 
 // Measurements and simple assertions made about a patient, device or other subject.
 type Observation struct {
+	ResourceType          string                      `json:"resourceType" bson:"resource_type"`                                       // Type of resource
 	Id                    *string                     `json:"id,omitempty" bson:"id,omitempty"`                                        // Logical id of this artifact
 	Meta                  *Meta                       `json:"meta,omitempty" bson:"meta,omitempty"`                                    // Metadata about the resource
 	ImplicitRules         *string                     `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                 // A set of rules under which this content was created
@@ -58,6 +59,9 @@ type Observation struct {
 }
 
 func (r *Observation) Validate() error {
+	if r.ResourceType != "Observation" {
+		return fmt.Errorf("invalid resourceType: expected 'Observation', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -238,29 +242,6 @@ func (r *Observation) Validate() error {
 	return nil
 }
 
-type ObservationTriggeredBy struct {
-	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Observation *Reference `json:"observation" bson:"observation"`           // Triggering observation
-	Type        string     `json:"type" bson:"type"`                         // reflex | repeat | re-run
-	Reason      *string    `json:"reason,omitempty" bson:"reason,omitempty"` // Reason that the observation was triggered
-}
-
-func (r *ObservationTriggeredBy) Validate() error {
-	if r.Observation == nil {
-		return fmt.Errorf("field 'Observation' is required")
-	}
-	if r.Observation != nil {
-		if err := r.Observation.Validate(); err != nil {
-			return fmt.Errorf("Observation: %w", err)
-		}
-	}
-	var emptyString string
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	return nil
-}
-
 type ObservationReferenceRange struct {
 	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
 	Low         *Quantity         `json:"low,omitempty" bson:"low,omitempty"`                  // Low Range, if relevant
@@ -384,6 +365,29 @@ func (r *ObservationComponent) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("ReferenceRange[%d]: %w", i, err)
 		}
+	}
+	return nil
+}
+
+type ObservationTriggeredBy struct {
+	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Observation *Reference `json:"observation" bson:"observation"`           // Triggering observation
+	Type        string     `json:"type" bson:"type"`                         // reflex | repeat | re-run
+	Reason      *string    `json:"reason,omitempty" bson:"reason,omitempty"` // Reason that the observation was triggered
+}
+
+func (r *ObservationTriggeredBy) Validate() error {
+	if r.Observation == nil {
+		return fmt.Errorf("field 'Observation' is required")
+	}
+	if r.Observation != nil {
+		if err := r.Observation.Validate(); err != nil {
+			return fmt.Errorf("Observation: %w", err)
+		}
+	}
+	var emptyString string
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
 	}
 	return nil
 }

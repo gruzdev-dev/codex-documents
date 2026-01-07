@@ -7,6 +7,7 @@ import (
 
 // The Library resource is a general-purpose container for knowledge artifact definitions. It can be used to describe and expose existing knowledge artifacts such as logic libraries and information model descriptions, as well as to describe a collection of knowledge artifacts.
 type Library struct {
+	ResourceType           string                `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string               `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                 `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string               `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -51,6 +52,9 @@ type Library struct {
 }
 
 func (r *Library) Validate() error {
+	if r.ResourceType != "Library" {
+		return fmt.Errorf("invalid resourceType: expected 'Library', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

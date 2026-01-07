@@ -7,6 +7,7 @@ import (
 
 // A TerminologyCapabilities resource documents a set of capabilities (behaviors) of a FHIR Terminology Server that may be used as a statement of actual server functionality or a statement of required or desired server implementation.
 type TerminologyCapabilities struct {
+	ResourceType           string                                 `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                                `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                                  `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                                `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -44,6 +45,9 @@ type TerminologyCapabilities struct {
 }
 
 func (r *TerminologyCapabilities) Validate() error {
+	if r.ResourceType != "TerminologyCapabilities" {
+		return fmt.Errorf("invalid resourceType: expected 'TerminologyCapabilities', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -149,19 +153,22 @@ func (r *TerminologyCapabilitiesCodeSystem) Validate() error {
 	return nil
 }
 
-type TerminologyCapabilitiesCodeSystemVersionFilter struct {
-	Id   *string  `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Code string   `json:"code" bson:"code"`                 // Code of the property supported
-	Op   []string `json:"op" bson:"op"`                     // Operations supported for the property
+type TerminologyCapabilitiesCodeSystemVersion struct {
+	Id            *string                                          `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Code          *string                                          `json:"code,omitempty" bson:"code,omitempty"`                   // Version identifier for this version
+	IsDefault     bool                                             `json:"isDefault,omitempty" bson:"is_default,omitempty"`        // If this is the default version for this code system
+	Supplement    []string                                         `json:"supplement,omitempty" bson:"supplement,omitempty"`       // Canonical identifier for a supported supplement to this code system version (including supplement version)
+	Compositional bool                                             `json:"compositional,omitempty" bson:"compositional,omitempty"` // If compositional grammar is supported
+	Language      []string                                         `json:"language,omitempty" bson:"language,omitempty"`           // Language Displays supported
+	Filter        []TerminologyCapabilitiesCodeSystemVersionFilter `json:"filter,omitempty" bson:"filter,omitempty"`               // Filter Properties supported
+	Property      []string                                         `json:"property,omitempty" bson:"property,omitempty"`           // Properties supported for $lookup
 }
 
-func (r *TerminologyCapabilitiesCodeSystemVersionFilter) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if len(r.Op) < 1 {
-		return fmt.Errorf("field 'Op' must have at least 1 elements")
+func (r *TerminologyCapabilitiesCodeSystemVersion) Validate() error {
+	for i, item := range r.Filter {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Filter[%d]: %w", i, err)
+		}
 	}
 	return nil
 }
@@ -184,6 +191,41 @@ func (r *TerminologyCapabilitiesExpansion) Validate() error {
 	return nil
 }
 
+type TerminologyCapabilitiesValidateCode struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Translations bool    `json:"translations" bson:"translations"` // Whether translations are validated
+}
+
+func (r *TerminologyCapabilitiesValidateCode) Validate() error {
+	return nil
+}
+
+type TerminologyCapabilitiesCodeSystemVersionFilter struct {
+	Id   *string  `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Code string   `json:"code" bson:"code"`                 // Code of the property supported
+	Op   []string `json:"op" bson:"op"`                     // Operations supported for the property
+}
+
+func (r *TerminologyCapabilitiesCodeSystemVersionFilter) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if len(r.Op) < 1 {
+		return fmt.Errorf("field 'Op' must have at least 1 elements")
+	}
+	return nil
+}
+
+type TerminologyCapabilitiesSupplements struct {
+	Id      *string `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
+	Globals *string `json:"globals,omitempty" bson:"globals,omitempty"` // not-supported | explicit | implicit
+}
+
+func (r *TerminologyCapabilitiesSupplements) Validate() error {
+	return nil
+}
+
 type TerminologyCapabilitiesExpansionParameter struct {
 	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Name          string  `json:"name" bson:"name"`                                       // Name of the supported expansion parameter
@@ -195,44 +237,6 @@ func (r *TerminologyCapabilitiesExpansionParameter) Validate() error {
 	if r.Name == emptyString {
 		return fmt.Errorf("field 'Name' is required")
 	}
-	return nil
-}
-
-type TerminologyCapabilitiesValidateCode struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Translations bool    `json:"translations" bson:"translations"` // Whether translations are validated
-}
-
-func (r *TerminologyCapabilitiesValidateCode) Validate() error {
-	return nil
-}
-
-type TerminologyCapabilitiesCodeSystemVersion struct {
-	Id            *string                                          `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Code          *string                                          `json:"code,omitempty" bson:"code,omitempty"`                   // Version identifier for this version
-	IsDefault     bool                                             `json:"isDefault,omitempty" bson:"is_default,omitempty"`        // If this is the default version for this code system
-	Supplement    []string                                         `json:"supplement,omitempty" bson:"supplement,omitempty"`       // Canonical identifier for a supported supplement to this code system version (including supplement version)
-	Compositional bool                                             `json:"compositional,omitempty" bson:"compositional,omitempty"` // If compositional grammar is supported
-	Language      []string                                         `json:"language,omitempty" bson:"language,omitempty"`           // Language Displays supported
-	Filter        []TerminologyCapabilitiesCodeSystemVersionFilter `json:"filter,omitempty" bson:"filter,omitempty"`               // Filter Properties supported
-	Property      []string                                         `json:"property,omitempty" bson:"property,omitempty"`           // Properties supported for $lookup
-}
-
-func (r *TerminologyCapabilitiesCodeSystemVersion) Validate() error {
-	for i, item := range r.Filter {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Filter[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type TerminologyCapabilitiesSupplements struct {
-	Id      *string `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
-	Globals *string `json:"globals,omitempty" bson:"globals,omitempty"` // not-supported | explicit | implicit
-}
-
-func (r *TerminologyCapabilitiesSupplements) Validate() error {
 	return nil
 }
 

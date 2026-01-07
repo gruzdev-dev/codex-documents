@@ -7,6 +7,7 @@ import (
 
 // A guidance response is the formal response to a guidance request, including any output parameters returned by the evaluation, as well as the description of any proposed actions to be taken.
 type GuidanceResponse struct {
+	ResourceType          string              `json:"resourceType" bson:"resource_type"`                                  // Type of resource
 	Id                    *string             `json:"id,omitempty" bson:"id,omitempty"`                                   // Logical id of this artifact
 	Meta                  *Meta               `json:"meta,omitempty" bson:"meta,omitempty"`                               // Metadata about the resource
 	ImplicitRules         *string             `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`            // A set of rules under which this content was created
@@ -33,6 +34,9 @@ type GuidanceResponse struct {
 }
 
 func (r *GuidanceResponse) Validate() error {
+	if r.ResourceType != "GuidanceResponse" {
+		return fmt.Errorf("invalid resourceType: expected 'GuidanceResponse', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

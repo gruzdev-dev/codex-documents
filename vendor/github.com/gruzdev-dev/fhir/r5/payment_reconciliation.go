@@ -7,6 +7,7 @@ import (
 
 // This resource provides the details including amount of a payment and allocates the payment items being paid.
 type PaymentReconciliation struct {
+	ResourceType      string                             `json:"resourceType" bson:"resource_type"`                               // Type of resource
 	Id                *string                            `json:"id,omitempty" bson:"id,omitempty"`                                // Logical id of this artifact
 	Meta              *Meta                              `json:"meta,omitempty" bson:"meta,omitempty"`                            // Metadata about the resource
 	ImplicitRules     *string                            `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`         // A set of rules under which this content was created
@@ -46,6 +47,9 @@ type PaymentReconciliation struct {
 }
 
 func (r *PaymentReconciliation) Validate() error {
+	if r.ResourceType != "PaymentReconciliation" {
+		return fmt.Errorf("invalid resourceType: expected 'PaymentReconciliation', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

@@ -7,6 +7,7 @@ import (
 
 // An assessment of the likely outcome(s) for a patient or other subject as well as the likelihood of each outcome.
 type RiskAssessment struct {
+	ResourceType       string                     `json:"resourceType" bson:"resource_type"`                                  // Type of resource
 	Id                 *string                    `json:"id,omitempty" bson:"id,omitempty"`                                   // Logical id of this artifact
 	Meta               *Meta                      `json:"meta,omitempty" bson:"meta,omitempty"`                               // Metadata about the resource
 	ImplicitRules      *string                    `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`            // A set of rules under which this content was created
@@ -33,6 +34,9 @@ type RiskAssessment struct {
 }
 
 func (r *RiskAssessment) Validate() error {
+	if r.ResourceType != "RiskAssessment" {
+		return fmt.Errorf("invalid resourceType: expected 'RiskAssessment', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

@@ -7,6 +7,7 @@ import (
 
 // This resource provides eligibility and plan details from the processing of an CoverageEligibilityRequest resource.
 type CoverageEligibilityResponse struct {
+	ResourceType   string                                 `json:"resourceType" bson:"resource_type"`                         // Type of resource
 	Id             *string                                `json:"id,omitempty" bson:"id,omitempty"`                          // Logical id of this artifact
 	Meta           *Meta                                  `json:"meta,omitempty" bson:"meta,omitempty"`                      // Metadata about the resource
 	ImplicitRules  *string                                `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`   // A set of rules under which this content was created
@@ -34,6 +35,9 @@ type CoverageEligibilityResponse struct {
 }
 
 func (r *CoverageEligibilityResponse) Validate() error {
+	if r.ResourceType != "CoverageEligibilityResponse" {
+		return fmt.Errorf("invalid resourceType: expected 'CoverageEligibilityResponse', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -111,66 +115,6 @@ func (r *CoverageEligibilityResponse) Validate() error {
 	for i, item := range r.Error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Error[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type CoverageEligibilityResponseEvent struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
-	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
-	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
-	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
-}
-
-func (r *CoverageEligibilityResponseEvent) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.WhenDateTime == nil {
-		return fmt.Errorf("field 'WhenDateTime' is required")
-	}
-	if r.WhenPeriod == nil {
-		return fmt.Errorf("field 'WhenPeriod' is required")
-	}
-	if r.WhenPeriod != nil {
-		if err := r.WhenPeriod.Validate(); err != nil {
-			return fmt.Errorf("WhenPeriod: %w", err)
-		}
-	}
-	return nil
-}
-
-type CoverageEligibilityResponseInsurance struct {
-	Id            *string                                    `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	Coverage      *Reference                                 `json:"coverage" bson:"coverage"`                                // Insurance information
-	Inforce       bool                                       `json:"inforce,omitempty" bson:"inforce,omitempty"`              // Coverage inforce indicator
-	BenefitPeriod *Period                                    `json:"benefitPeriod,omitempty" bson:"benefit_period,omitempty"` // When the benefits are applicable
-	Item          []CoverageEligibilityResponseInsuranceItem `json:"item,omitempty" bson:"item,omitempty"`                    // Benefits and authorization details
-}
-
-func (r *CoverageEligibilityResponseInsurance) Validate() error {
-	if r.Coverage == nil {
-		return fmt.Errorf("field 'Coverage' is required")
-	}
-	if r.Coverage != nil {
-		if err := r.Coverage.Validate(); err != nil {
-			return fmt.Errorf("Coverage: %w", err)
-		}
-	}
-	if r.BenefitPeriod != nil {
-		if err := r.BenefitPeriod.Validate(); err != nil {
-			return fmt.Errorf("BenefitPeriod: %w", err)
-		}
-	}
-	for i, item := range r.Item {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Item[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -289,6 +233,66 @@ func (r *CoverageEligibilityResponseError) Validate() error {
 	if r.Code != nil {
 		if err := r.Code.Validate(); err != nil {
 			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	return nil
+}
+
+type CoverageEligibilityResponseEvent struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
+	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
+	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
+	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
+}
+
+func (r *CoverageEligibilityResponseEvent) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.WhenDateTime == nil {
+		return fmt.Errorf("field 'WhenDateTime' is required")
+	}
+	if r.WhenPeriod == nil {
+		return fmt.Errorf("field 'WhenPeriod' is required")
+	}
+	if r.WhenPeriod != nil {
+		if err := r.WhenPeriod.Validate(); err != nil {
+			return fmt.Errorf("WhenPeriod: %w", err)
+		}
+	}
+	return nil
+}
+
+type CoverageEligibilityResponseInsurance struct {
+	Id            *string                                    `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	Coverage      *Reference                                 `json:"coverage" bson:"coverage"`                                // Insurance information
+	Inforce       bool                                       `json:"inforce,omitempty" bson:"inforce,omitempty"`              // Coverage inforce indicator
+	BenefitPeriod *Period                                    `json:"benefitPeriod,omitempty" bson:"benefit_period,omitempty"` // When the benefits are applicable
+	Item          []CoverageEligibilityResponseInsuranceItem `json:"item,omitempty" bson:"item,omitempty"`                    // Benefits and authorization details
+}
+
+func (r *CoverageEligibilityResponseInsurance) Validate() error {
+	if r.Coverage == nil {
+		return fmt.Errorf("field 'Coverage' is required")
+	}
+	if r.Coverage != nil {
+		if err := r.Coverage.Validate(); err != nil {
+			return fmt.Errorf("Coverage: %w", err)
+		}
+	}
+	if r.BenefitPeriod != nil {
+		if err := r.BenefitPeriod.Validate(); err != nil {
+			return fmt.Errorf("BenefitPeriod: %w", err)
+		}
+	}
+	for i, item := range r.Item {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Item[%d]: %w", i, err)
 		}
 	}
 	return nil

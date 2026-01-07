@@ -7,6 +7,7 @@ import (
 
 // Information about a person that is involved in a patient's health or the care for a patient, but who is not the primary target of healthcare.
 type RelatedPerson struct {
+	ResourceType  string                       `json:"resourceType" bson:"resource_type"`                       // Type of resource
 	Id            *string                      `json:"id,omitempty" bson:"id,omitempty"`                        // Logical id of this artifact
 	Meta          *Meta                        `json:"meta,omitempty" bson:"meta,omitempty"`                    // Metadata about the resource
 	ImplicitRules *string                      `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"` // A set of rules under which this content was created
@@ -29,6 +30,9 @@ type RelatedPerson struct {
 }
 
 func (r *RelatedPerson) Validate() error {
+	if r.ResourceType != "RelatedPerson" {
+		return fmt.Errorf("invalid resourceType: expected 'RelatedPerson', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

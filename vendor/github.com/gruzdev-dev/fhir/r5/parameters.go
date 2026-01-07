@@ -7,6 +7,7 @@ import (
 
 // This resource is used to pass information into and back from an operation (whether invoked directly from REST or within a messaging environment).  It is not persisted or allowed to be referenced by other resources except as described in the definition of the Parameters resource.
 type Parameters struct {
+	ResourceType  string                `json:"resourceType" bson:"resource_type"`                       // Type of resource
 	Id            *string               `json:"id,omitempty" bson:"id,omitempty"`                        // Logical id of this artifact
 	Meta          *Meta                 `json:"meta,omitempty" bson:"meta,omitempty"`                    // Metadata about the resource
 	ImplicitRules *string               `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"` // A set of rules under which this content was created
@@ -15,6 +16,9 @@ type Parameters struct {
 }
 
 func (r *Parameters) Validate() error {
+	if r.ResourceType != "Parameters" {
+		return fmt.Errorf("invalid resourceType: expected 'Parameters', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

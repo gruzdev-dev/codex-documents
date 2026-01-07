@@ -7,6 +7,7 @@ import (
 
 // Describes the intention of how one or more practitioners intend to deliver care for a particular patient, group or community for a period of time, possibly limited to care for a specific condition or set of conditions.
 type CarePlan struct {
+	ResourceType   string              `json:"resourceType" bson:"resource_type"`                         // Type of resource
 	Id             *string             `json:"id,omitempty" bson:"id,omitempty"`                          // Logical id of this artifact
 	Meta           *Meta               `json:"meta,omitempty" bson:"meta,omitempty"`                      // Metadata about the resource
 	ImplicitRules  *string             `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`   // A set of rules under which this content was created
@@ -37,6 +38,9 @@ type CarePlan struct {
 }
 
 func (r *CarePlan) Validate() error {
+	if r.ResourceType != "CarePlan" {
+		return fmt.Errorf("invalid resourceType: expected 'CarePlan', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

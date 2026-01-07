@@ -7,6 +7,7 @@ import (
 
 // Indicates that a medication product is to be or has been dispensed for a named person/patient.  This includes a description of the medication product (supply) provided and the instructions for administering the medication.  The medication dispense is the result of a pharmacy system responding to a medication order.
 type MedicationDispense struct {
+	ResourceType            string                          `json:"resourceType" bson:"resource_type"`                                           // Type of resource
 	Id                      *string                         `json:"id,omitempty" bson:"id,omitempty"`                                            // Logical id of this artifact
 	Meta                    *Meta                           `json:"meta,omitempty" bson:"meta,omitempty"`                                        // Metadata about the resource
 	ImplicitRules           *string                         `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                     // A set of rules under which this content was created
@@ -44,6 +45,9 @@ type MedicationDispense struct {
 }
 
 func (r *MedicationDispense) Validate() error {
+	if r.ResourceType != "MedicationDispense" {
+		return fmt.Errorf("invalid resourceType: expected 'MedicationDispense', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

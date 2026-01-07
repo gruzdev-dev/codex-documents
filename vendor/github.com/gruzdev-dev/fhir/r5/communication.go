@@ -7,6 +7,7 @@ import (
 
 // A clinical or business level record of information being transmitted or shared; e.g. an alert that was sent to a responsible provider, a public health agency communication to a provider/reporter in response to a case report for a reportable condition.
 type Communication struct {
+	ResourceType  string                 `json:"resourceType" bson:"resource_type"`                       // Type of resource
 	Id            *string                `json:"id,omitempty" bson:"id,omitempty"`                        // Logical id of this artifact
 	Meta          *Meta                  `json:"meta,omitempty" bson:"meta,omitempty"`                    // Metadata about the resource
 	ImplicitRules *string                `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"` // A set of rules under which this content was created
@@ -36,6 +37,9 @@ type Communication struct {
 }
 
 func (r *Communication) Validate() error {
+	if r.ResourceType != "Communication" {
+		return fmt.Errorf("invalid resourceType: expected 'Communication', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

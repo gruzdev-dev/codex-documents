@@ -7,6 +7,7 @@ import (
 
 // Represents a defined collection of entities that may be discussed or acted upon collectively but which are not typically expected to act collectively*. These collections are also not typically formally or legally recognized.\r\n\r\n*NOTE: Group may be used to define families or households, which in some circumstances may act collectively or have a degree of legal or formal recognition. This should be considered an exception. When Group is used for types of entities other than Patient or RelatedPerson, the expectation remains that the Group will not act collectively or have formal recognition - use Organization if these behaviors are needed. See more discussion [below](group.html#group-usage)
 type Group struct {
+	ResourceType           string                `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string               `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                 `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string               `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -42,6 +43,9 @@ type Group struct {
 }
 
 func (r *Group) Validate() error {
+	if r.ResourceType != "Group" {
+		return fmt.Errorf("invalid resourceType: expected 'Group', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -94,36 +98,6 @@ func (r *Group) Validate() error {
 	for i, item := range r.Member {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Member[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type GroupMember struct {
-	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Entity      *Reference        `json:"entity" bson:"entity"`                               // Reference to the group member
-	Involvement []CodeableConcept `json:"involvement,omitempty" bson:"involvement,omitempty"` // Code that describes how user is part of the group
-	Period      *Period           `json:"period,omitempty" bson:"period,omitempty"`           // Period member belonged to the group
-	Inactive    bool              `json:"inactive,omitempty" bson:"inactive,omitempty"`       // If member is no longer in group
-}
-
-func (r *GroupMember) Validate() error {
-	if r.Entity == nil {
-		return fmt.Errorf("field 'Entity' is required")
-	}
-	if r.Entity != nil {
-		if err := r.Entity.Validate(); err != nil {
-			return fmt.Errorf("Entity: %w", err)
-		}
-	}
-	for i, item := range r.Involvement {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Involvement[%d]: %w", i, err)
-		}
-	}
-	if r.Period != nil {
-		if err := r.Period.Validate(); err != nil {
-			return fmt.Errorf("Period: %w", err)
 		}
 	}
 	return nil
@@ -251,6 +225,36 @@ func (r *GroupCharacteristic) Validate() error {
 	for i, item := range r.Timing {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Timing[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type GroupMember struct {
+	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Entity      *Reference        `json:"entity" bson:"entity"`                               // Reference to the group member
+	Involvement []CodeableConcept `json:"involvement,omitempty" bson:"involvement,omitempty"` // Code that describes how user is part of the group
+	Period      *Period           `json:"period,omitempty" bson:"period,omitempty"`           // Period member belonged to the group
+	Inactive    bool              `json:"inactive,omitempty" bson:"inactive,omitempty"`       // If member is no longer in group
+}
+
+func (r *GroupMember) Validate() error {
+	if r.Entity == nil {
+		return fmt.Errorf("field 'Entity' is required")
+	}
+	if r.Entity != nil {
+		if err := r.Entity.Validate(); err != nil {
+			return fmt.Errorf("Entity: %w", err)
+		}
+	}
+	for i, item := range r.Involvement {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Involvement[%d]: %w", i, err)
+		}
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
 		}
 	}
 	return nil

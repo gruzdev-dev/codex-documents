@@ -7,6 +7,7 @@ import (
 
 // This resource is primarily used for the identification and definition of a medication, including ingredients, for the purposes of prescribing, dispensing, and administering a medication as well as for making statements about medication use.
 type Medication struct {
+	ResourceType                 string                 `json:"resourceType" bson:"resource_type"`                                                      // Type of resource
 	Id                           *string                `json:"id,omitempty" bson:"id,omitempty"`                                                       // Logical id of this artifact
 	Meta                         *Meta                  `json:"meta,omitempty" bson:"meta,omitempty"`                                                   // Metadata about the resource
 	ImplicitRules                *string                `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                                // A set of rules under which this content was created
@@ -25,6 +26,9 @@ type Medication struct {
 }
 
 func (r *Medication) Validate() error {
+	if r.ResourceType != "Medication" {
+		return fmt.Errorf("invalid resourceType: expected 'Medication', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

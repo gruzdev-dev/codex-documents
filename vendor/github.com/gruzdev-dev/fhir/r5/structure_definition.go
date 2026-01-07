@@ -7,6 +7,7 @@ import (
 
 // A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types.
 type StructureDefinition struct {
+	ResourceType           string                           `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                          `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                            `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                          `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -46,6 +47,9 @@ type StructureDefinition struct {
 }
 
 func (r *StructureDefinition) Validate() error {
+	if r.ResourceType != "StructureDefinition" {
+		return fmt.Errorf("invalid resourceType: expected 'StructureDefinition', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

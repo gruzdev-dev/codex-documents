@@ -7,6 +7,7 @@ import (
 
 // An order or request for both supply of the medication and the instructions for administration of the medication to a patient. The resource is called "MedicationRequest" rather than "MedicationPrescription" or "MedicationOrder" to generalize the use across inpatient and outpatient settings, including care plans, etc., and to harmonize with workflow patterns.
 type MedicationRequest struct {
+	ResourceType            string                            `json:"resourceType" bson:"resource_type"`                                            // Type of resource
 	Id                      *string                           `json:"id,omitempty" bson:"id,omitempty"`                                             // Logical id of this artifact
 	Meta                    *Meta                             `json:"meta,omitempty" bson:"meta,omitempty"`                                         // Metadata about the resource
 	ImplicitRules           *string                           `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                      // A set of rules under which this content was created
@@ -50,6 +51,9 @@ type MedicationRequest struct {
 }
 
 func (r *MedicationRequest) Validate() error {
+	if r.ResourceType != "MedicationRequest" {
+		return fmt.Errorf("invalid resourceType: expected 'MedicationRequest', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

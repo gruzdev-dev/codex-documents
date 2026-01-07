@@ -7,6 +7,7 @@ import (
 
 // A set of rules of how a particular interoperability or standards problem is solved - typically through the use of FHIR resources. This resource is used to gather all the parts of an implementation guide into a logical whole and to publish a computable definition of all the parts.
 type ImplementationGuide struct {
+	ResourceType           string                         `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                        `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                          `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                        `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -41,6 +42,9 @@ type ImplementationGuide struct {
 }
 
 func (r *ImplementationGuide) Validate() error {
+	if r.ResourceType != "ImplementationGuide" {
+		return fmt.Errorf("invalid resourceType: expected 'ImplementationGuide', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -167,24 +171,6 @@ func (r *ImplementationGuideDefinitionParameter) Validate() error {
 	return nil
 }
 
-type ImplementationGuideDefinitionTemplate struct {
-	Id     *string `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
-	Code   string  `json:"code" bson:"code"`                       // Type of template specified
-	Source string  `json:"source" bson:"source"`                   // The source location for the template
-	Scope  *string `json:"scope,omitempty" bson:"scope,omitempty"` // The scope in which the template applies
-}
-
-func (r *ImplementationGuideDefinitionTemplate) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Source == emptyString {
-		return fmt.Errorf("field 'Source' is required")
-	}
-	return nil
-}
-
 type ImplementationGuideManifest struct {
 	Id        *string                               `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	Rendering *string                               `json:"rendering,omitempty" bson:"rendering,omitempty"` // Location of rendered implementation guide
@@ -211,16 +197,20 @@ func (r *ImplementationGuideManifest) Validate() error {
 	return nil
 }
 
-type ImplementationGuideDefinitionGrouping struct {
-	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Name        string  `json:"name" bson:"name"`                                   // Descriptive name for the package
-	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Human readable text describing the package
+type ImplementationGuideDefinitionTemplate struct {
+	Id     *string `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
+	Code   string  `json:"code" bson:"code"`                       // Type of template specified
+	Source string  `json:"source" bson:"source"`                   // The source location for the template
+	Scope  *string `json:"scope,omitempty" bson:"scope,omitempty"` // The scope in which the template applies
 }
 
-func (r *ImplementationGuideDefinitionGrouping) Validate() error {
+func (r *ImplementationGuideDefinitionTemplate) Validate() error {
 	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Source == emptyString {
+		return fmt.Errorf("field 'Source' is required")
 	}
 	return nil
 }
@@ -327,6 +317,20 @@ func (r *ImplementationGuideDefinition) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Template[%d]: %w", i, err)
 		}
+	}
+	return nil
+}
+
+type ImplementationGuideDefinitionGrouping struct {
+	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Name        string  `json:"name" bson:"name"`                                   // Descriptive name for the package
+	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Human readable text describing the package
+}
+
+func (r *ImplementationGuideDefinitionGrouping) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
 	}
 	return nil
 }

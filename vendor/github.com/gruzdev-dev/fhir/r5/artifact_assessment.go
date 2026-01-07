@@ -7,6 +7,7 @@ import (
 
 // This Resource provides one or more comments, classifiers or ratings about a Resource and supports attribution and rights management metadata for the added content.
 type ArtifactAssessment struct {
+	ResourceType      string                        `json:"resourceType" bson:"resource_type"`                          // Type of resource
 	Id                *string                       `json:"id,omitempty" bson:"id,omitempty"`                           // Logical id of this artifact
 	Meta              *Meta                         `json:"meta,omitempty" bson:"meta,omitempty"`                       // Metadata about the resource
 	ImplicitRules     *string                       `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`    // A set of rules under which this content was created
@@ -30,6 +31,9 @@ type ArtifactAssessment struct {
 }
 
 func (r *ArtifactAssessment) Validate() error {
+	if r.ResourceType != "ArtifactAssessment" {
+		return fmt.Errorf("invalid resourceType: expected 'ArtifactAssessment', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

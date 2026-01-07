@@ -7,6 +7,7 @@ import (
 
 // A record of a medication consumed by a patient.  A MedicationStatement may indicate that the patient may be taking the medication now or has taken the medication in the past or will be taking the medication in the future. The source of this information can be the patient, patient representative (e.g., spouse, significant other, family member, caregiver), or a clinician. A common scenario where this information is captured is during the history taking process during a patient encounter or stay. The medication information may come from sources such as the patient's memory, from a prescription bottle, or from a list of medications the patient, clinician or other party maintains. The primary difference between a MedicationStatement and a MedicationAdministration is that the medication administration has complete administration information and is based on actual administration information from the person who administered the medication. A MedicationStatement is often, if not always, less specific. There is no required date/time when the medication was administered, in fact we only know that a source has reported the patient is taking this medication, where details such as time, quantity, or rate or even medication product may be incomplete or missing or less precise. As stated earlier, the MedicationStatement information may come from the patient's memory, from a prescription bottle or from a list of medications the patient, clinician or other party. MedicationAdministration is more formal and is not missing detailed information.
 type MedicationStatement struct {
+	ResourceType               string                        `json:"resourceType" bson:"resource_type"`                                                  // Type of resource
 	Id                         *string                       `json:"id,omitempty" bson:"id,omitempty"`                                                   // Logical id of this artifact
 	Meta                       *Meta                         `json:"meta,omitempty" bson:"meta,omitempty"`                                               // Metadata about the resource
 	ImplicitRules              *string                       `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                            // A set of rules under which this content was created
@@ -35,6 +36,9 @@ type MedicationStatement struct {
 }
 
 func (r *MedicationStatement) Validate() error {
+	if r.ResourceType != "MedicationStatement" {
+		return fmt.Errorf("invalid resourceType: expected 'MedicationStatement', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

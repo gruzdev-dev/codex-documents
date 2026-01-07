@@ -31,6 +31,18 @@ func (r *Availability) Validate() error {
 	return nil
 }
 
+type AvailabilityAvailableTime struct {
+	Id                 *string  `json:"id,omitempty" bson:"id,omitempty"`                                   // Unique id for inter-element referencing
+	DaysOfWeek         []string `json:"daysOfWeek,omitempty" bson:"days_of_week,omitempty"`                 // mon | tue | wed | thu | fri | sat | sun
+	AllDay             bool     `json:"allDay,omitempty" bson:"all_day,omitempty"`                          // Always available? i.e. 24 hour service
+	AvailableStartTime *string  `json:"availableStartTime,omitempty" bson:"available_start_time,omitempty"` // Opening time of day (ignored if allDay = true)
+	AvailableEndTime   *string  `json:"availableEndTime,omitempty" bson:"available_end_time,omitempty"`     // Closing time of day (ignored if allDay = true)
+}
+
+func (r *AvailabilityAvailableTime) Validate() error {
+	return nil
+}
+
 type AvailabilityNotAvailableTime struct {
 	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Reason presented to the user explaining why time not available
@@ -43,17 +55,5 @@ func (r *AvailabilityNotAvailableTime) Validate() error {
 			return fmt.Errorf("During: %w", err)
 		}
 	}
-	return nil
-}
-
-type AvailabilityAvailableTime struct {
-	Id                 *string  `json:"id,omitempty" bson:"id,omitempty"`                                   // Unique id for inter-element referencing
-	DaysOfWeek         []string `json:"daysOfWeek,omitempty" bson:"days_of_week,omitempty"`                 // mon | tue | wed | thu | fri | sat | sun
-	AllDay             bool     `json:"allDay,omitempty" bson:"all_day,omitempty"`                          // Always available? i.e. 24 hour service
-	AvailableStartTime *string  `json:"availableStartTime,omitempty" bson:"available_start_time,omitempty"` // Opening time of day (ignored if allDay = true)
-	AvailableEndTime   *string  `json:"availableEndTime,omitempty" bson:"available_end_time,omitempty"`     // Closing time of day (ignored if allDay = true)
-}
-
-func (r *AvailabilityAvailableTime) Validate() error {
 	return nil
 }

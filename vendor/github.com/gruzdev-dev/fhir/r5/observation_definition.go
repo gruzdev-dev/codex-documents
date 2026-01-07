@@ -7,6 +7,7 @@ import (
 
 // Set of definitional characteristics for a kind of observation or measurement produced or consumed by an orderable health care service.
 type ObservationDefinition struct {
+	ResourceType           string                                `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                               `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                                 `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                               `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -55,6 +56,9 @@ type ObservationDefinition struct {
 }
 
 func (r *ObservationDefinition) Validate() error {
+	if r.ResourceType != "ObservationDefinition" {
+		return fmt.Errorf("invalid resourceType: expected 'ObservationDefinition', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

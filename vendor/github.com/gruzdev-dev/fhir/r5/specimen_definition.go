@@ -7,6 +7,7 @@ import (
 
 // A kind of specimen with associated set of requirements.
 type SpecimenDefinition struct {
+	ResourceType           string                         `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                        `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                          `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                        `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -46,6 +47,9 @@ type SpecimenDefinition struct {
 }
 
 func (r *SpecimenDefinition) Validate() error {
+	if r.ResourceType != "SpecimenDefinition" {
+		return fmt.Errorf("invalid resourceType: expected 'SpecimenDefinition', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -118,6 +122,33 @@ func (r *SpecimenDefinition) Validate() error {
 	for i, item := range r.TypeTested {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("TypeTested[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type SpecimenDefinitionTypeTestedHandling struct {
+	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
+	TemperatureQualifier *CodeableConcept `json:"temperatureQualifier,omitempty" bson:"temperature_qualifier,omitempty"` // Qualifies the interval of temperature
+	TemperatureRange     *Range           `json:"temperatureRange,omitempty" bson:"temperature_range,omitempty"`         // Temperature range for these handling instructions
+	MaxDuration          *Duration        `json:"maxDuration,omitempty" bson:"max_duration,omitempty"`                   // Maximum preservation time
+	Instruction          *string          `json:"instruction,omitempty" bson:"instruction,omitempty"`                    // Preservation instruction
+}
+
+func (r *SpecimenDefinitionTypeTestedHandling) Validate() error {
+	if r.TemperatureQualifier != nil {
+		if err := r.TemperatureQualifier.Validate(); err != nil {
+			return fmt.Errorf("TemperatureQualifier: %w", err)
+		}
+	}
+	if r.TemperatureRange != nil {
+		if err := r.TemperatureRange.Validate(); err != nil {
+			return fmt.Errorf("TemperatureRange: %w", err)
+		}
+	}
+	if r.MaxDuration != nil {
+		if err := r.MaxDuration.Validate(); err != nil {
+			return fmt.Errorf("MaxDuration: %w", err)
 		}
 	}
 	return nil
@@ -243,33 +274,6 @@ func (r *SpecimenDefinitionTypeTestedContainerAdditive) Validate() error {
 	if r.AdditiveReference != nil {
 		if err := r.AdditiveReference.Validate(); err != nil {
 			return fmt.Errorf("AdditiveReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type SpecimenDefinitionTypeTestedHandling struct {
-	Id                   *string          `json:"id,omitempty" bson:"id,omitempty"`                                      // Unique id for inter-element referencing
-	TemperatureQualifier *CodeableConcept `json:"temperatureQualifier,omitempty" bson:"temperature_qualifier,omitempty"` // Qualifies the interval of temperature
-	TemperatureRange     *Range           `json:"temperatureRange,omitempty" bson:"temperature_range,omitempty"`         // Temperature range for these handling instructions
-	MaxDuration          *Duration        `json:"maxDuration,omitempty" bson:"max_duration,omitempty"`                   // Maximum preservation time
-	Instruction          *string          `json:"instruction,omitempty" bson:"instruction,omitempty"`                    // Preservation instruction
-}
-
-func (r *SpecimenDefinitionTypeTestedHandling) Validate() error {
-	if r.TemperatureQualifier != nil {
-		if err := r.TemperatureQualifier.Validate(); err != nil {
-			return fmt.Errorf("TemperatureQualifier: %w", err)
-		}
-	}
-	if r.TemperatureRange != nil {
-		if err := r.TemperatureRange.Validate(); err != nil {
-			return fmt.Errorf("TemperatureRange: %w", err)
-		}
-	}
-	if r.MaxDuration != nil {
-		if err := r.MaxDuration.Validate(); err != nil {
-			return fmt.Errorf("MaxDuration: %w", err)
 		}
 	}
 	return nil

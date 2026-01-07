@@ -823,71 +823,6 @@ func (r *ElementDefinition) Validate() error {
 	return nil
 }
 
-type ElementDefinitionBase struct {
-	Id   *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Path string  `json:"path" bson:"path"`                 // Path that identifies the base element
-	Min  int     `json:"min" bson:"min"`                   // Min cardinality of the base element
-	Max  string  `json:"max" bson:"max"`                   // Max cardinality of the base element
-}
-
-func (r *ElementDefinitionBase) Validate() error {
-	var emptyString string
-	if r.Path == emptyString {
-		return fmt.Errorf("field 'Path' is required")
-	}
-	if r.Min == 0 {
-		return fmt.Errorf("field 'Min' is required")
-	}
-	if r.Max == emptyString {
-		return fmt.Errorf("field 'Max' is required")
-	}
-	return nil
-}
-
-type ElementDefinitionType struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	Code          string   `json:"code" bson:"code"`                                        // Data type or Resource (reference to definition)
-	Profile       []string `json:"profile,omitempty" bson:"profile,omitempty"`              // Profiles (StructureDefinition or IG) - one must apply
-	TargetProfile []string `json:"targetProfile,omitempty" bson:"target_profile,omitempty"` // Profile (StructureDefinition or IG) on the Reference/canonical target - one must apply
-	Aggregation   []string `json:"aggregation,omitempty" bson:"aggregation,omitempty"`      // contained | referenced | bundled - how aggregated
-	Versioning    *string  `json:"versioning,omitempty" bson:"versioning,omitempty"`        // either | independent | specific
-}
-
-func (r *ElementDefinitionType) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	return nil
-}
-
-type ElementDefinitionBindingAdditional struct {
-	Id            *string        `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Key           *string        `json:"key,omitempty" bson:"key,omitempty"`                     // Unique identifier so additional bindings to be matched across profiles
-	Purpose       string         `json:"purpose" bson:"purpose"`                                 // maximum | minimum | required | extensible | candidate | current | current-extensible | best-practice | preferred | ui | starter | component
-	ValueSet      string         `json:"valueSet" bson:"value_set"`                              // The value set for the additional binding
-	Documentation *string        `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation of the purpose of use of the binding
-	ShortDoco     *string        `json:"shortDoco,omitempty" bson:"short_doco,omitempty"`        // Concise documentation - for summary tables
-	Usage         []UsageContext `json:"usage,omitempty" bson:"usage,omitempty"`                 // Qualifies the usage - jurisdiction, gender, workflow status etc.
-	Any           bool           `json:"any,omitempty" bson:"any,omitempty"`                     // Whether binding can applies to all repeats, or just one
-}
-
-func (r *ElementDefinitionBindingAdditional) Validate() error {
-	var emptyString string
-	if r.Purpose == emptyString {
-		return fmt.Errorf("field 'Purpose' is required")
-	}
-	if r.ValueSet == emptyString {
-		return fmt.Errorf("field 'ValueSet' is required")
-	}
-	for i, item := range r.Usage {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Usage[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type ElementDefinitionSlicing struct {
 	Id            *string                                 `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Discriminator []ElementDefinitionSlicingDiscriminator `json:"discriminator,omitempty" bson:"discriminator,omitempty"` // Element values that are used to distinguish the slices
@@ -922,6 +857,23 @@ func (r *ElementDefinitionSlicingDiscriminator) Validate() error {
 	}
 	if r.Path == emptyString {
 		return fmt.Errorf("field 'Path' is required")
+	}
+	return nil
+}
+
+type ElementDefinitionType struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	Code          string   `json:"code" bson:"code"`                                        // Data type or Resource (reference to definition)
+	Profile       []string `json:"profile,omitempty" bson:"profile,omitempty"`              // Profiles (StructureDefinition or IG) - one must apply
+	TargetProfile []string `json:"targetProfile,omitempty" bson:"target_profile,omitempty"` // Profile (StructureDefinition or IG) on the Reference/canonical target - one must apply
+	Aggregation   []string `json:"aggregation,omitempty" bson:"aggregation,omitempty"`      // contained | referenced | bundled - how aggregated
+	Versioning    *string  `json:"versioning,omitempty" bson:"versioning,omitempty"`        // either | independent | specific
+}
+
+func (r *ElementDefinitionType) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
 	}
 	return nil
 }
@@ -1339,6 +1291,27 @@ func (r *ElementDefinitionExample) Validate() error {
 	return nil
 }
 
+type ElementDefinitionBase struct {
+	Id   *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Path string  `json:"path" bson:"path"`                 // Path that identifies the base element
+	Min  int     `json:"min" bson:"min"`                   // Min cardinality of the base element
+	Max  string  `json:"max" bson:"max"`                   // Max cardinality of the base element
+}
+
+func (r *ElementDefinitionBase) Validate() error {
+	var emptyString string
+	if r.Path == emptyString {
+		return fmt.Errorf("field 'Path' is required")
+	}
+	if r.Min == 0 {
+		return fmt.Errorf("field 'Min' is required")
+	}
+	if r.Max == emptyString {
+		return fmt.Errorf("field 'Max' is required")
+	}
+	return nil
+}
+
 type ElementDefinitionConstraint struct {
 	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
 	Key          string  `json:"key" bson:"key"`                                       // Target of 'condition' reference above
@@ -1380,6 +1353,33 @@ func (r *ElementDefinitionBinding) Validate() error {
 	for i, item := range r.Additional {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Additional[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ElementDefinitionBindingAdditional struct {
+	Id            *string        `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Key           *string        `json:"key,omitempty" bson:"key,omitempty"`                     // Unique identifier so additional bindings to be matched across profiles
+	Purpose       string         `json:"purpose" bson:"purpose"`                                 // maximum | minimum | required | extensible | candidate | current | current-extensible | best-practice | preferred | ui | starter | component
+	ValueSet      string         `json:"valueSet" bson:"value_set"`                              // The value set for the additional binding
+	Documentation *string        `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation of the purpose of use of the binding
+	ShortDoco     *string        `json:"shortDoco,omitempty" bson:"short_doco,omitempty"`        // Concise documentation - for summary tables
+	Usage         []UsageContext `json:"usage,omitempty" bson:"usage,omitempty"`                 // Qualifies the usage - jurisdiction, gender, workflow status etc.
+	Any           bool           `json:"any,omitempty" bson:"any,omitempty"`                     // Whether binding can applies to all repeats, or just one
+}
+
+func (r *ElementDefinitionBindingAdditional) Validate() error {
+	var emptyString string
+	if r.Purpose == emptyString {
+		return fmt.Errorf("field 'Purpose' is required")
+	}
+	if r.ValueSet == emptyString {
+		return fmt.Errorf("field 'ValueSet' is required")
+	}
+	for i, item := range r.Usage {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Usage[%d]: %w", i, err)
 		}
 	}
 	return nil

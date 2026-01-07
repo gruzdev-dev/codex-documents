@@ -7,6 +7,7 @@ import (
 
 // A structured set of questions and their answers. The questions are ordered and grouped into coherent subsets, corresponding to the structure of the grouping of the questionnaire being responded to.
 type QuestionnaireResponse struct {
+	ResourceType  string                      `json:"resourceType" bson:"resource_type"`                       // Type of resource
 	Id            *string                     `json:"id,omitempty" bson:"id,omitempty"`                        // Logical id of this artifact
 	Meta          *Meta                       `json:"meta,omitempty" bson:"meta,omitempty"`                    // Metadata about the resource
 	ImplicitRules *string                     `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"` // A set of rules under which this content was created
@@ -27,6 +28,9 @@ type QuestionnaireResponse struct {
 }
 
 func (r *QuestionnaireResponse) Validate() error {
+	if r.ResourceType != "QuestionnaireResponse" {
+		return fmt.Errorf("invalid resourceType: expected 'QuestionnaireResponse', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

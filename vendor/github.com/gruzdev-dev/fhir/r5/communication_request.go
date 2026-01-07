@@ -7,6 +7,7 @@ import (
 
 // A request to convey information from a sender to a recipient.
 type CommunicationRequest struct {
+	ResourceType        string                        `json:"resourceType" bson:"resource_type"`                                   // Type of resource
 	Id                  *string                       `json:"id,omitempty" bson:"id,omitempty"`                                    // Logical id of this artifact
 	Meta                *Meta                         `json:"meta,omitempty" bson:"meta,omitempty"`                                // Metadata about the resource
 	ImplicitRules       *string                       `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`             // A set of rules under which this content was created
@@ -39,6 +40,9 @@ type CommunicationRequest struct {
 }
 
 func (r *CommunicationRequest) Validate() error {
+	if r.ResourceType != "CommunicationRequest" {
+		return fmt.Errorf("invalid resourceType: expected 'CommunicationRequest', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

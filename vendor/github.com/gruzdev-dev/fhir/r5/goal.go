@@ -7,6 +7,7 @@ import (
 
 // Describes the intended objective(s) for a patient, group, or organizational care.  Examples include a patient's weight loss, restoration of an activity of daily living for a patient, obtaining herd immunity via immunization for a group, meeting a process improvement objective for an organization, etc.
 type Goal struct {
+	ResourceType         string            `json:"resourceType" bson:"resource_type"`                                      // Type of resource
 	Id                   *string           `json:"id,omitempty" bson:"id,omitempty"`                                       // Logical id of this artifact
 	Meta                 *Meta             `json:"meta,omitempty" bson:"meta,omitempty"`                                   // Metadata about the resource
 	ImplicitRules        *string           `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                // A set of rules under which this content was created
@@ -34,6 +35,9 @@ type Goal struct {
 }
 
 func (r *Goal) Validate() error {
+	if r.ResourceType != "Goal" {
+		return fmt.Errorf("invalid resourceType: expected 'Goal', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -127,30 +131,6 @@ func (r *Goal) Validate() error {
 	return nil
 }
 
-type GoalAcceptance struct {
-	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Participant *Reference       `json:"participant" bson:"participant"`               // Individual or organization whose acceptance is reflected
-	Status      *string          `json:"status,omitempty" bson:"status,omitempty"`     // agree | disagree | pending
-	Priority    *CodeableConcept `json:"priority,omitempty" bson:"priority,omitempty"` // Priority of goal for individual
-}
-
-func (r *GoalAcceptance) Validate() error {
-	if r.Participant == nil {
-		return fmt.Errorf("field 'Participant' is required")
-	}
-	if r.Participant != nil {
-		if err := r.Participant.Validate(); err != nil {
-			return fmt.Errorf("Participant: %w", err)
-		}
-	}
-	if r.Priority != nil {
-		if err := r.Priority.Validate(); err != nil {
-			return fmt.Errorf("Priority: %w", err)
-		}
-	}
-	return nil
-}
-
 type GoalTarget struct {
 	Id                    *string          `json:"id,omitempty" bson:"id,omitempty"`                                         // Unique id for inter-element referencing
 	Measure               *CodeableConcept `json:"measure,omitempty" bson:"measure,omitempty"`                               // The parameter whose value is being tracked
@@ -194,6 +174,30 @@ func (r *GoalTarget) Validate() error {
 	if r.DueDuration != nil {
 		if err := r.DueDuration.Validate(); err != nil {
 			return fmt.Errorf("DueDuration: %w", err)
+		}
+	}
+	return nil
+}
+
+type GoalAcceptance struct {
+	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Participant *Reference       `json:"participant" bson:"participant"`               // Individual or organization whose acceptance is reflected
+	Status      *string          `json:"status,omitempty" bson:"status,omitempty"`     // agree | disagree | pending
+	Priority    *CodeableConcept `json:"priority,omitempty" bson:"priority,omitempty"` // Priority of goal for individual
+}
+
+func (r *GoalAcceptance) Validate() error {
+	if r.Participant == nil {
+		return fmt.Errorf("field 'Participant' is required")
+	}
+	if r.Participant != nil {
+		if err := r.Participant.Validate(); err != nil {
+			return fmt.Errorf("Participant: %w", err)
+		}
+	}
+	if r.Priority != nil {
+		if err := r.Priority.Validate(); err != nil {
+			return fmt.Errorf("Priority: %w", err)
 		}
 	}
 	return nil

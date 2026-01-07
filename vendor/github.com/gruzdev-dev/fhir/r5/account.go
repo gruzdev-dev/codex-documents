@@ -7,6 +7,7 @@ import (
 
 // A financial tool for tracking value accrued for a particular purpose.  In the healthcare field, used to track charges for a patient, cost centers, etc.
 type Account struct {
+	ResourceType  string             `json:"resourceType" bson:"resource_type"`                       // Type of resource
 	Id            *string            `json:"id,omitempty" bson:"id,omitempty"`                        // Logical id of this artifact
 	Meta          *Meta              `json:"meta,omitempty" bson:"meta,omitempty"`                    // Metadata about the resource
 	ImplicitRules *string            `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"` // A set of rules under which this content was created
@@ -34,6 +35,9 @@ type Account struct {
 }
 
 func (r *Account) Validate() error {
+	if r.ResourceType != "Account" {
+		return fmt.Errorf("invalid resourceType: expected 'Account', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

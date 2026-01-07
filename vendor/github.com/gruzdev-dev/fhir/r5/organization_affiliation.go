@@ -7,6 +7,7 @@ import (
 
 // Defines an affiliation/assotiation/relationship between 2 distinct organizations, that is not a part-of relationship/sub-division relationship.
 type OrganizationAffiliation struct {
+	ResourceType              string                  `json:"resourceType" bson:"resource_type"`                                               // Type of resource
 	Id                        *string                 `json:"id,omitempty" bson:"id,omitempty"`                                                // Logical id of this artifact
 	Meta                      *Meta                   `json:"meta,omitempty" bson:"meta,omitempty"`                                            // Metadata about the resource
 	ImplicitRules             *string                 `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                         // A set of rules under which this content was created
@@ -28,6 +29,9 @@ type OrganizationAffiliation struct {
 }
 
 func (r *OrganizationAffiliation) Validate() error {
+	if r.ResourceType != "OrganizationAffiliation" {
+		return fmt.Errorf("invalid resourceType: expected 'OrganizationAffiliation', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

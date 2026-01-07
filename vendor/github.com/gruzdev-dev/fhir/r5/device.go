@@ -7,6 +7,7 @@ import (
 
 // This resource describes the properties (regulated, has real time clock, etc.), administrative (manufacturer name, model number, serial number, firmware, etc.), and type (knee replacement, blood pressure cuff, MRI, etc.) of a physical unit (these values do not change much within a given module, for example the serial number, manufacturer name, and model number). An actual unit may consist of several modules in a distinct hierarchy and these are represented by multiple Device resources and bound through the 'parent' element.
 type Device struct {
+	ResourceType          string                `json:"resourceType" bson:"resource_type"`                                        // Type of resource
 	Id                    *string               `json:"id,omitempty" bson:"id,omitempty"`                                         // Logical id of this artifact
 	Meta                  *Meta                 `json:"meta,omitempty" bson:"meta,omitempty"`                                     // Metadata about the resource
 	ImplicitRules         *string               `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                  // A set of rules under which this content was created
@@ -41,6 +42,9 @@ type Device struct {
 }
 
 func (r *Device) Validate() error {
+	if r.ResourceType != "Device" {
+		return fmt.Errorf("invalid resourceType: expected 'Device', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -130,28 +134,6 @@ func (r *Device) Validate() error {
 		if err := r.Parent.Validate(); err != nil {
 			return fmt.Errorf("Parent: %w", err)
 		}
-	}
-	return nil
-}
-
-type DeviceUdiCarrier struct {
-	Id                     *string `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
-	DeviceIdentifier       string  `json:"deviceIdentifier" bson:"device_identifier"`                                  // Mandatory fixed portion of UDI
-	DeviceIdentifierSystem *string `json:"deviceIdentifierSystem,omitempty" bson:"device_identifier_system,omitempty"` // The namespace for the device identifier value
-	Issuer                 string  `json:"issuer" bson:"issuer"`                                                       // UDI Issuing Organization
-	Jurisdiction           *string `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"`                       // Regional UDI authority
-	CarrierAIDC            *string `json:"carrierAIDC,omitempty" bson:"carrier_a_i_d_c,omitempty"`                     // UDI Machine Readable value
-	CarrierHRF             *string `json:"carrierHRF,omitempty" bson:"carrier_h_r_f,omitempty"`                        // UDI Human Readable value
-	EntryType              *string `json:"entryType,omitempty" bson:"entry_type,omitempty"`                            // barcode | rfid | manual | card | self-reported | electronic-transmission | unknown
-}
-
-func (r *DeviceUdiCarrier) Validate() error {
-	var emptyString string
-	if r.DeviceIdentifier == emptyString {
-		return fmt.Errorf("field 'DeviceIdentifier' is required")
-	}
-	if r.Issuer == emptyString {
-		return fmt.Errorf("field 'Issuer' is required")
 	}
 	return nil
 }
@@ -313,6 +295,28 @@ func (r *DeviceAdditive) Validate() error {
 		if err := r.Quantity.Validate(); err != nil {
 			return fmt.Errorf("Quantity: %w", err)
 		}
+	}
+	return nil
+}
+
+type DeviceUdiCarrier struct {
+	Id                     *string `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
+	DeviceIdentifier       string  `json:"deviceIdentifier" bson:"device_identifier"`                                  // Mandatory fixed portion of UDI
+	DeviceIdentifierSystem *string `json:"deviceIdentifierSystem,omitempty" bson:"device_identifier_system,omitempty"` // The namespace for the device identifier value
+	Issuer                 string  `json:"issuer" bson:"issuer"`                                                       // UDI Issuing Organization
+	Jurisdiction           *string `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"`                       // Regional UDI authority
+	CarrierAIDC            *string `json:"carrierAIDC,omitempty" bson:"carrier_a_i_d_c,omitempty"`                     // UDI Machine Readable value
+	CarrierHRF             *string `json:"carrierHRF,omitempty" bson:"carrier_h_r_f,omitempty"`                        // UDI Human Readable value
+	EntryType              *string `json:"entryType,omitempty" bson:"entry_type,omitempty"`                            // barcode | rfid | manual | card | self-reported | electronic-transmission | unknown
+}
+
+func (r *DeviceUdiCarrier) Validate() error {
+	var emptyString string
+	if r.DeviceIdentifier == emptyString {
+		return fmt.Errorf("field 'DeviceIdentifier' is required")
+	}
+	if r.Issuer == emptyString {
+		return fmt.Errorf("field 'Issuer' is required")
 	}
 	return nil
 }

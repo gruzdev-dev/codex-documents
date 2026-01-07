@@ -7,6 +7,7 @@ import (
 
 // The Requirements resource is used to describe an actor - a human or an application that plays a role in data exchange, and that may have obligations associated with the role the actor plays.
 type Requirements struct {
+	ResourceType           string                  `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                 `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                   `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                 `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -39,6 +40,9 @@ type Requirements struct {
 }
 
 func (r *Requirements) Validate() error {
+	if r.ResourceType != "Requirements" {
+		return fmt.Errorf("invalid resourceType: expected 'Requirements', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

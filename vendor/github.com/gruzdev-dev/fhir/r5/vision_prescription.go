@@ -7,6 +7,7 @@ import (
 
 // An authorization for the provision of glasses and/or contact lenses to a patient.
 type VisionPrescription struct {
+	ResourceType      string                                `json:"resourceType" bson:"resource_type"`                           // Type of resource
 	Id                *string                               `json:"id,omitempty" bson:"id,omitempty"`                            // Logical id of this artifact
 	Meta              *Meta                                 `json:"meta,omitempty" bson:"meta,omitempty"`                        // Metadata about the resource
 	ImplicitRules     *string                               `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`     // A set of rules under which this content was created
@@ -27,6 +28,9 @@ type VisionPrescription struct {
 }
 
 func (r *VisionPrescription) Validate() error {
+	if r.ResourceType != "VisionPrescription" {
+		return fmt.Errorf("invalid resourceType: expected 'VisionPrescription', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -94,23 +98,6 @@ func (r *VisionPrescription) Validate() error {
 	return nil
 }
 
-type VisionPrescriptionLensSpecificationPrism struct {
-	Id     *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Amount float64 `json:"amount" bson:"amount"`             // Amount of adjustment
-	Base   string  `json:"base" bson:"base"`                 // up | down | in | out
-}
-
-func (r *VisionPrescriptionLensSpecificationPrism) Validate() error {
-	if r.Amount == 0 {
-		return fmt.Errorf("field 'Amount' is required")
-	}
-	var emptyString string
-	if r.Base == emptyString {
-		return fmt.Errorf("field 'Base' is required")
-	}
-	return nil
-}
-
 type VisionPrescriptionLensSpecification struct {
 	Id        *string                                    `json:"id,omitempty" bson:"id,omitempty"`                // Unique id for inter-element referencing
 	Product   *CodeableConcept                           `json:"product" bson:"product"`                          // Product to be supplied
@@ -156,6 +143,23 @@ func (r *VisionPrescriptionLensSpecification) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Note[%d]: %w", i, err)
 		}
+	}
+	return nil
+}
+
+type VisionPrescriptionLensSpecificationPrism struct {
+	Id     *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Amount float64 `json:"amount" bson:"amount"`             // Amount of adjustment
+	Base   string  `json:"base" bson:"base"`                 // up | down | in | out
+}
+
+func (r *VisionPrescriptionLensSpecificationPrism) Validate() error {
+	if r.Amount == 0 {
+		return fmt.Errorf("field 'Amount' is required")
+	}
+	var emptyString string
+	if r.Base == emptyString {
+		return fmt.Errorf("field 'Base' is required")
 	}
 	return nil
 }

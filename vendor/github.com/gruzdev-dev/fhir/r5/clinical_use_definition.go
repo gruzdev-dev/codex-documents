@@ -7,6 +7,7 @@ import (
 
 // A single issue - either an indication, contraindication, interaction, undesirable effect or warning for a medicinal product, medication, device or procedure.
 type ClinicalUseDefinition struct {
+	ResourceType      string                                  `json:"resourceType" bson:"resource_type"`                               // Type of resource
 	Id                *string                                 `json:"id,omitempty" bson:"id,omitempty"`                                // Logical id of this artifact
 	Meta              *Meta                                   `json:"meta,omitempty" bson:"meta,omitempty"`                            // Metadata about the resource
 	ImplicitRules     *string                                 `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`         // A set of rules under which this content was created
@@ -28,6 +29,9 @@ type ClinicalUseDefinition struct {
 }
 
 func (r *ClinicalUseDefinition) Validate() error {
+	if r.ResourceType != "ClinicalUseDefinition" {
+		return fmt.Errorf("invalid resourceType: expected 'ClinicalUseDefinition', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -130,27 +134,58 @@ func (r *ClinicalUseDefinitionUndesirableEffect) Validate() error {
 	return nil
 }
 
-type ClinicalUseDefinitionIndicationOtherTherapy struct {
-	Id               *string            `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
-	RelationshipType *CodeableConcept   `json:"relationshipType" bson:"relationship_type"` // The type of relationship between the product indication/contraindication and another therapy
-	Treatment        *CodeableReference `json:"treatment" bson:"treatment"`                // Reference to a specific medication, substance etc. as part of an indication or contraindication
+type ClinicalUseDefinitionIndication struct {
+	Id                      *string                                       `json:"id,omitempty" bson:"id,omitempty"`                                             // Unique id for inter-element referencing
+	DiseaseSymptomProcedure *CodeableReference                            `json:"diseaseSymptomProcedure,omitempty" bson:"disease_symptom_procedure,omitempty"` // The situation that is being documented as an indication for this item
+	DiseaseStatus           *CodeableReference                            `json:"diseaseStatus,omitempty" bson:"disease_status,omitempty"`                      // The status of the disease or symptom for the indication
+	Comorbidity             []CodeableReference                           `json:"comorbidity,omitempty" bson:"comorbidity,omitempty"`                           // A comorbidity or coinfection as part of the indication
+	IntendedEffect          []CodeableReference                           `json:"intendedEffect,omitempty" bson:"intended_effect,omitempty"`                    // The intended effect, aim or strategy to be achieved
+	DurationRange           *Range                                        `json:"durationRange,omitempty" bson:"duration_range,omitempty"`                      // Timing or duration information
+	DurationString          *string                                       `json:"durationString,omitempty" bson:"duration_string,omitempty"`                    // Timing or duration information
+	UndesirableEffect       []ClinicalUseDefinitionUndesirableEffect      `json:"undesirableEffect,omitempty" bson:"undesirable_effect,omitempty"`              // An unwanted side effect or negative outcome of the subject of this resource when being used for this indication
+	Applicability           *Expression                                   `json:"applicability,omitempty" bson:"applicability,omitempty"`                       // An expression that returns true or false, indicating whether the indication is applicable or not, after having applied its other elements
+	OtherTherapy            []ClinicalUseDefinitionIndicationOtherTherapy `json:"otherTherapy,omitempty" bson:"other_therapy,omitempty"`                        // Information about use of the product in relation to other therapies described as part of the contraindication
 }
 
-func (r *ClinicalUseDefinitionIndicationOtherTherapy) Validate() error {
-	if r.RelationshipType == nil {
-		return fmt.Errorf("field 'RelationshipType' is required")
-	}
-	if r.RelationshipType != nil {
-		if err := r.RelationshipType.Validate(); err != nil {
-			return fmt.Errorf("RelationshipType: %w", err)
+func (r *ClinicalUseDefinitionIndication) Validate() error {
+	if r.DiseaseSymptomProcedure != nil {
+		if err := r.DiseaseSymptomProcedure.Validate(); err != nil {
+			return fmt.Errorf("DiseaseSymptomProcedure: %w", err)
 		}
 	}
-	if r.Treatment == nil {
-		return fmt.Errorf("field 'Treatment' is required")
+	if r.DiseaseStatus != nil {
+		if err := r.DiseaseStatus.Validate(); err != nil {
+			return fmt.Errorf("DiseaseStatus: %w", err)
+		}
 	}
-	if r.Treatment != nil {
-		if err := r.Treatment.Validate(); err != nil {
-			return fmt.Errorf("Treatment: %w", err)
+	for i, item := range r.Comorbidity {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Comorbidity[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.IntendedEffect {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("IntendedEffect[%d]: %w", i, err)
+		}
+	}
+	if r.DurationRange != nil {
+		if err := r.DurationRange.Validate(); err != nil {
+			return fmt.Errorf("DurationRange: %w", err)
+		}
+	}
+	for i, item := range r.UndesirableEffect {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("UndesirableEffect[%d]: %w", i, err)
+		}
+	}
+	if r.Applicability != nil {
+		if err := r.Applicability.Validate(); err != nil {
+			return fmt.Errorf("Applicability: %w", err)
+		}
+	}
+	for i, item := range r.OtherTherapy {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("OtherTherapy[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -250,63 +285,6 @@ func (r *ClinicalUseDefinitionInteraction) Validate() error {
 	return nil
 }
 
-type ClinicalUseDefinitionIndication struct {
-	Id                      *string                                       `json:"id,omitempty" bson:"id,omitempty"`                                             // Unique id for inter-element referencing
-	DiseaseSymptomProcedure *CodeableReference                            `json:"diseaseSymptomProcedure,omitempty" bson:"disease_symptom_procedure,omitempty"` // The situation that is being documented as an indication for this item
-	DiseaseStatus           *CodeableReference                            `json:"diseaseStatus,omitempty" bson:"disease_status,omitempty"`                      // The status of the disease or symptom for the indication
-	Comorbidity             []CodeableReference                           `json:"comorbidity,omitempty" bson:"comorbidity,omitempty"`                           // A comorbidity or coinfection as part of the indication
-	IntendedEffect          []CodeableReference                           `json:"intendedEffect,omitempty" bson:"intended_effect,omitempty"`                    // The intended effect, aim or strategy to be achieved
-	DurationRange           *Range                                        `json:"durationRange,omitempty" bson:"duration_range,omitempty"`                      // Timing or duration information
-	DurationString          *string                                       `json:"durationString,omitempty" bson:"duration_string,omitempty"`                    // Timing or duration information
-	UndesirableEffect       []ClinicalUseDefinitionUndesirableEffect      `json:"undesirableEffect,omitempty" bson:"undesirable_effect,omitempty"`              // An unwanted side effect or negative outcome of the subject of this resource when being used for this indication
-	Applicability           *Expression                                   `json:"applicability,omitempty" bson:"applicability,omitempty"`                       // An expression that returns true or false, indicating whether the indication is applicable or not, after having applied its other elements
-	OtherTherapy            []ClinicalUseDefinitionIndicationOtherTherapy `json:"otherTherapy,omitempty" bson:"other_therapy,omitempty"`                        // Information about use of the product in relation to other therapies described as part of the contraindication
-}
-
-func (r *ClinicalUseDefinitionIndication) Validate() error {
-	if r.DiseaseSymptomProcedure != nil {
-		if err := r.DiseaseSymptomProcedure.Validate(); err != nil {
-			return fmt.Errorf("DiseaseSymptomProcedure: %w", err)
-		}
-	}
-	if r.DiseaseStatus != nil {
-		if err := r.DiseaseStatus.Validate(); err != nil {
-			return fmt.Errorf("DiseaseStatus: %w", err)
-		}
-	}
-	for i, item := range r.Comorbidity {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Comorbidity[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.IntendedEffect {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("IntendedEffect[%d]: %w", i, err)
-		}
-	}
-	if r.DurationRange != nil {
-		if err := r.DurationRange.Validate(); err != nil {
-			return fmt.Errorf("DurationRange: %w", err)
-		}
-	}
-	for i, item := range r.UndesirableEffect {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("UndesirableEffect[%d]: %w", i, err)
-		}
-	}
-	if r.Applicability != nil {
-		if err := r.Applicability.Validate(); err != nil {
-			return fmt.Errorf("Applicability: %w", err)
-		}
-	}
-	for i, item := range r.OtherTherapy {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("OtherTherapy[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
 type ClinicalUseDefinitionInteractionInteractant struct {
 	Id                  *string          `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
 	ItemReference       *Reference       `json:"itemReference" bson:"item_reference"`              // The specific medication, product, food etc. or laboratory test that interacts
@@ -334,6 +312,32 @@ func (r *ClinicalUseDefinitionInteractionInteractant) Validate() error {
 	if r.Route != nil {
 		if err := r.Route.Validate(); err != nil {
 			return fmt.Errorf("Route: %w", err)
+		}
+	}
+	return nil
+}
+
+type ClinicalUseDefinitionIndicationOtherTherapy struct {
+	Id               *string            `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
+	RelationshipType *CodeableConcept   `json:"relationshipType" bson:"relationship_type"` // The type of relationship between the product indication/contraindication and another therapy
+	Treatment        *CodeableReference `json:"treatment" bson:"treatment"`                // Reference to a specific medication, substance etc. as part of an indication or contraindication
+}
+
+func (r *ClinicalUseDefinitionIndicationOtherTherapy) Validate() error {
+	if r.RelationshipType == nil {
+		return fmt.Errorf("field 'RelationshipType' is required")
+	}
+	if r.RelationshipType != nil {
+		if err := r.RelationshipType.Validate(); err != nil {
+			return fmt.Errorf("RelationshipType: %w", err)
+		}
+	}
+	if r.Treatment == nil {
+		return fmt.Errorf("field 'Treatment' is required")
+	}
+	if r.Treatment != nil {
+		if err := r.Treatment.Validate(); err != nil {
+			return fmt.Errorf("Treatment: %w", err)
 		}
 	}
 	return nil

@@ -7,6 +7,7 @@ import (
 
 // A container for a collection of resources.
 type Bundle struct {
+	ResourceType  string          `json:"resourceType" bson:"resource_type"`                       // Type of resource
 	Id            *string         `json:"id,omitempty" bson:"id,omitempty"`                        // Logical id of this artifact
 	Meta          *Meta           `json:"meta,omitempty" bson:"meta,omitempty"`                    // Metadata about the resource
 	ImplicitRules *string         `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"` // A set of rules under which this content was created
@@ -22,6 +23,9 @@ type Bundle struct {
 }
 
 func (r *Bundle) Validate() error {
+	if r.ResourceType != "Bundle" {
+		return fmt.Errorf("invalid resourceType: expected 'Bundle', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -50,23 +54,6 @@ func (r *Bundle) Validate() error {
 		if err := r.Signature.Validate(); err != nil {
 			return fmt.Errorf("Signature: %w", err)
 		}
-	}
-	return nil
-}
-
-type BundleEntryResponse struct {
-	Id           *string         `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Status       string          `json:"status" bson:"status"`                                  // Status response code (text optional)
-	Location     *string         `json:"location,omitempty" bson:"location,omitempty"`          // The location (if the operation returns a location)
-	Etag         *string         `json:"etag,omitempty" bson:"etag,omitempty"`                  // The Etag for the resource (if relevant)
-	LastModified *string         `json:"lastModified,omitempty" bson:"last_modified,omitempty"` // Server's date time modified
-	Outcome      json.RawMessage `json:"outcome,omitempty" bson:"outcome,omitempty"`            // OperationOutcome with hints and warnings (for batch/transaction)
-}
-
-func (r *BundleEntryResponse) Validate() error {
-	var emptyString string
-	if r.Status == emptyString {
-		return fmt.Errorf("field 'Status' is required")
 	}
 	return nil
 }
@@ -149,6 +136,23 @@ func (r *BundleEntryRequest) Validate() error {
 	}
 	if r.Url == emptyString {
 		return fmt.Errorf("field 'Url' is required")
+	}
+	return nil
+}
+
+type BundleEntryResponse struct {
+	Id           *string         `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Status       string          `json:"status" bson:"status"`                                  // Status response code (text optional)
+	Location     *string         `json:"location,omitempty" bson:"location,omitempty"`          // The location (if the operation returns a location)
+	Etag         *string         `json:"etag,omitempty" bson:"etag,omitempty"`                  // The Etag for the resource (if relevant)
+	LastModified *string         `json:"lastModified,omitempty" bson:"last_modified,omitempty"` // Server's date time modified
+	Outcome      json.RawMessage `json:"outcome,omitempty" bson:"outcome,omitempty"`            // OperationOutcome with hints and warnings (for batch/transaction)
+}
+
+func (r *BundleEntryResponse) Validate() error {
+	var emptyString string
+	if r.Status == emptyString {
+		return fmt.Errorf("field 'Status' is required")
 	}
 	return nil
 }

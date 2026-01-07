@@ -7,6 +7,7 @@ import (
 
 // Demographics and administrative information about a person independent of a specific health-related context.
 type Person struct {
+	ResourceType         string                `json:"resourceType" bson:"resource_type"`                                     // Type of resource
 	Id                   *string               `json:"id,omitempty" bson:"id,omitempty"`                                      // Logical id of this artifact
 	Meta                 *Meta                 `json:"meta,omitempty" bson:"meta,omitempty"`                                  // Metadata about the resource
 	ImplicitRules        *string               `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`               // A set of rules under which this content was created
@@ -30,6 +31,9 @@ type Person struct {
 }
 
 func (r *Person) Validate() error {
+	if r.ResourceType != "Person" {
+		return fmt.Errorf("invalid resourceType: expected 'Person', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

@@ -7,6 +7,7 @@ import (
 
 // An event (i.e. any change to current patient status) that may be related to unintended effects on a patient or research participant. The unintended effects may require additional monitoring, treatment, hospitalization, or may result in death. The AdverseEvent resource also extends to potential or avoided events that could have had such effects. There are two major domains where the AdverseEvent resource is expected to be used. One is in clinical care reported adverse events and the other is in reporting adverse events in clinical  research trial management.  Adverse events can be reported by healthcare providers, patients, caregivers or by medical products manufacturers.  Given the differences between these two concepts, we recommend consulting the domain specific implementation guides when implementing the AdverseEvent Resource. The implementation guides include specific extensions, value sets and constraints.
 type AdverseEvent struct {
+	ResourceType            string                      `json:"resourceType" bson:"resource_type"`                                             // Type of resource
 	Id                      *string                     `json:"id,omitempty" bson:"id,omitempty"`                                              // Logical id of this artifact
 	Meta                    *Meta                       `json:"meta,omitempty" bson:"meta,omitempty"`                                          // Metadata about the resource
 	ImplicitRules           *string                     `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                       // A set of rules under which this content was created
@@ -41,6 +42,9 @@ type AdverseEvent struct {
 }
 
 func (r *AdverseEvent) Validate() error {
+	if r.ResourceType != "AdverseEvent" {
+		return fmt.Errorf("invalid resourceType: expected 'AdverseEvent', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

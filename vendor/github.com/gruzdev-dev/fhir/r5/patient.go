@@ -7,6 +7,7 @@ import (
 
 // Demographics and other administrative information about an individual or animal that is the subject of potential, past, current, or future health-related care, services, or processes.
 type Patient struct {
+	ResourceType         string                 `json:"resourceType" bson:"resource_type"`                                      // Type of resource
 	Id                   *string                `json:"id,omitempty" bson:"id,omitempty"`                                       // Logical id of this artifact
 	Meta                 *Meta                  `json:"meta,omitempty" bson:"meta,omitempty"`                                   // Metadata about the resource
 	ImplicitRules        *string                `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                // A set of rules under which this content was created
@@ -34,6 +35,9 @@ type Patient struct {
 }
 
 func (r *Patient) Validate() error {
+	if r.ResourceType != "Patient" {
+		return fmt.Errorf("invalid resourceType: expected 'Patient', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

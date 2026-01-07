@@ -7,6 +7,7 @@ import (
 
 // A record of an event relevant for purposes such as operations, privacy, security, maintenance, and performance analysis.
 type AuditEvent struct {
+	ResourceType     string             `json:"resourceType" bson:"resource_type"`                              // Type of resource
 	Id               *string            `json:"id,omitempty" bson:"id,omitempty"`                               // Logical id of this artifact
 	Meta             *Meta              `json:"meta,omitempty" bson:"meta,omitempty"`                           // Metadata about the resource
 	ImplicitRules    *string            `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`        // A set of rules under which this content was created
@@ -31,6 +32,9 @@ type AuditEvent struct {
 }
 
 func (r *AuditEvent) Validate() error {
+	if r.ResourceType != "AuditEvent" {
+		return fmt.Errorf("invalid resourceType: expected 'AuditEvent', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -107,6 +111,29 @@ func (r *AuditEvent) Validate() error {
 	for i, item := range r.Entity {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Entity[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type AuditEventOutcome struct {
+	Id     *string           `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Code   *Coding           `json:"code" bson:"code"`                         // Whether the event succeeded or failed
+	Detail []CodeableConcept `json:"detail,omitempty" bson:"detail,omitempty"` // Additional outcome detail
+}
+
+func (r *AuditEventOutcome) Validate() error {
+	if r.Code == nil {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	for i, item := range r.Detail {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Detail[%d]: %w", i, err)
 		}
 	}
 	return nil
@@ -314,29 +341,6 @@ func (r *AuditEventEntityDetail) Validate() error {
 	}
 	if r.ValueBase64Binary == nil {
 		return fmt.Errorf("field 'ValueBase64Binary' is required")
-	}
-	return nil
-}
-
-type AuditEventOutcome struct {
-	Id     *string           `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Code   *Coding           `json:"code" bson:"code"`                         // Whether the event succeeded or failed
-	Detail []CodeableConcept `json:"detail,omitempty" bson:"detail,omitempty"` // Additional outcome detail
-}
-
-func (r *AuditEventOutcome) Validate() error {
-	if r.Code == nil {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	for i, item := range r.Detail {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Detail[%d]: %w", i, err)
-		}
 	}
 	return nil
 }

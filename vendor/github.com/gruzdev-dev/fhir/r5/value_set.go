@@ -7,6 +7,7 @@ import (
 
 // A ValueSet resource instance specifies a set of codes drawn from one or more code systems, intended for use in a particular context. Value sets link between [[[CodeSystem]]] definitions and their use in [coded elements](terminologies.html).
 type ValueSet struct {
+	ResourceType           string             `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string            `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta              `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string            `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -46,6 +47,9 @@ type ValueSet struct {
 }
 
 func (r *ValueSet) Validate() error {
+	if r.ResourceType != "ValueSet" {
+		return fmt.Errorf("invalid resourceType: expected 'ValueSet', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -133,96 +137,6 @@ func (r *ValueSet) Validate() error {
 	return nil
 }
 
-type ValueSetComposeIncludeConcept struct {
-	Id          *string                                    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Code        string                                     `json:"code" bson:"code"`                                   // Code or expression from system
-	Display     *string                                    `json:"display,omitempty" bson:"display,omitempty"`         // Text to display for this code for this value set in this valueset
-	Designation []ValueSetComposeIncludeConceptDesignation `json:"designation,omitempty" bson:"designation,omitempty"` // Additional representations for this concept
-}
-
-func (r *ValueSetComposeIncludeConcept) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	for i, item := range r.Designation {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Designation[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ValueSetComposeIncludeFilter struct {
-	Id       *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
-	Property string  `json:"property" bson:"property"`         // A property/filter defined by the code system
-	Op       string  `json:"op" bson:"op"`                     // = | is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | child-of | descendent-leaf | exists
-	Value    string  `json:"value" bson:"value"`               // Code from the system, or regex criteria, or boolean value for exists
-}
-
-func (r *ValueSetComposeIncludeFilter) Validate() error {
-	var emptyString string
-	if r.Property == emptyString {
-		return fmt.Errorf("field 'Property' is required")
-	}
-	if r.Op == emptyString {
-		return fmt.Errorf("field 'Op' is required")
-	}
-	if r.Value == emptyString {
-		return fmt.Errorf("field 'Value' is required")
-	}
-	return nil
-}
-
-type ValueSetExpansion struct {
-	Id         *string                      `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
-	Identifier *string                      `json:"identifier,omitempty" bson:"identifier,omitempty"` // Identifies the value set expansion (business identifier)
-	Next       *string                      `json:"next,omitempty" bson:"next,omitempty"`             // Opaque urls for paging through expansion results
-	Timestamp  string                       `json:"timestamp" bson:"timestamp"`                       // Time ValueSet expansion happened
-	Total      *int                         `json:"total,omitempty" bson:"total,omitempty"`           // Total number of codes in the expansion
-	Offset     *int                         `json:"offset,omitempty" bson:"offset,omitempty"`         // Offset at which this resource starts
-	Parameter  []ValueSetExpansionParameter `json:"parameter,omitempty" bson:"parameter,omitempty"`   // Parameter that controlled the expansion process
-	Property   []ValueSetExpansionProperty  `json:"property,omitempty" bson:"property,omitempty"`     // Additional information supplied about each concept
-	Contains   []ValueSetExpansionContains  `json:"contains,omitempty" bson:"contains,omitempty"`     // Codes in the value set
-}
-
-func (r *ValueSetExpansion) Validate() error {
-	var emptyString string
-	if r.Timestamp == emptyString {
-		return fmt.Errorf("field 'Timestamp' is required")
-	}
-	for i, item := range r.Parameter {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Parameter[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Property {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Property[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Contains {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Contains[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ValueSetExpansionProperty struct {
-	Id   *string `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
-	Code string  `json:"code" bson:"code"`                   // Identifies the property on the concepts, and when referred to in operations
-	Uri  *string `json:"uri,omitempty" bson:"uri,omitempty"` // Formal identifier for the property
-}
-
-func (r *ValueSetExpansionProperty) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	return nil
-}
-
 type ValueSetExpansionContainsPropertySubProperty struct {
 	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
 	Code          string   `json:"code" bson:"code"`                     // Reference to ValueSet.expansion.property.code
@@ -269,52 +183,41 @@ func (r *ValueSetExpansionContainsPropertySubProperty) Validate() error {
 	return nil
 }
 
-type ValueSetCompose struct {
-	Id         *string                  `json:"id,omitempty" bson:"id,omitempty"`                  // Unique id for inter-element referencing
-	LockedDate *string                  `json:"lockedDate,omitempty" bson:"locked_date,omitempty"` // Fixed date for references with no specified version (transitive)
-	Inactive   bool                     `json:"inactive,omitempty" bson:"inactive,omitempty"`      // Whether inactive codes are in the value set
-	Include    []ValueSetComposeInclude `json:"include" bson:"include"`                            // Include one or more codes from a code system or other value set(s)
-	Exclude    []ValueSetComposeInclude `json:"exclude,omitempty" bson:"exclude,omitempty"`        // Explicitly exclude codes from a code system or other value sets
-	Property   []string                 `json:"property,omitempty" bson:"property,omitempty"`      // Property to return if client doesn't override
+type ValueSetComposeIncludeConcept struct {
+	Id          *string                                    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Code        string                                     `json:"code" bson:"code"`                                   // Code or expression from system
+	Display     *string                                    `json:"display,omitempty" bson:"display,omitempty"`         // Text to display for this code for this value set in this valueset
+	Designation []ValueSetComposeIncludeConceptDesignation `json:"designation,omitempty" bson:"designation,omitempty"` // Additional representations for this concept
 }
 
-func (r *ValueSetCompose) Validate() error {
-	if len(r.Include) < 1 {
-		return fmt.Errorf("field 'Include' must have at least 1 elements")
+func (r *ValueSetComposeIncludeConcept) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
 	}
-	for i, item := range r.Include {
+	for i, item := range r.Designation {
 		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Include[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Exclude {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Exclude[%d]: %w", i, err)
+			return fmt.Errorf("Designation[%d]: %w", i, err)
 		}
 	}
 	return nil
 }
 
-type ValueSetComposeIncludeConceptDesignation struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
-	Language      *string  `json:"language,omitempty" bson:"language,omitempty"`            // Human language of the designation
-	Use           *Coding  `json:"use,omitempty" bson:"use,omitempty"`                      // Types of uses of designations
-	AdditionalUse []Coding `json:"additionalUse,omitempty" bson:"additional_use,omitempty"` // Additional ways how this designation would be used
-	Value         string   `json:"value" bson:"value"`                                      // The text value for this designation
+type ValueSetComposeIncludeFilter struct {
+	Id       *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
+	Property string  `json:"property" bson:"property"`         // A property/filter defined by the code system
+	Op       string  `json:"op" bson:"op"`                     // = | is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | child-of | descendent-leaf | exists
+	Value    string  `json:"value" bson:"value"`               // Code from the system, or regex criteria, or boolean value for exists
 }
 
-func (r *ValueSetComposeIncludeConceptDesignation) Validate() error {
-	if r.Use != nil {
-		if err := r.Use.Validate(); err != nil {
-			return fmt.Errorf("Use: %w", err)
-		}
-	}
-	for i, item := range r.AdditionalUse {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("AdditionalUse[%d]: %w", i, err)
-		}
-	}
+func (r *ValueSetComposeIncludeFilter) Validate() error {
 	var emptyString string
+	if r.Property == emptyString {
+		return fmt.Errorf("field 'Property' is required")
+	}
+	if r.Op == emptyString {
+		return fmt.Errorf("field 'Op' is required")
+	}
 	if r.Value == emptyString {
 		return fmt.Errorf("field 'Value' is required")
 	}
@@ -341,34 +244,16 @@ func (r *ValueSetExpansionParameter) Validate() error {
 	return nil
 }
 
-type ValueSetExpansionContains struct {
-	Id          *string                                    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	System      *string                                    `json:"system,omitempty" bson:"system,omitempty"`           // System value for the code
-	Abstract    bool                                       `json:"abstract,omitempty" bson:"abstract,omitempty"`       // If user cannot select this entry
-	Inactive    bool                                       `json:"inactive,omitempty" bson:"inactive,omitempty"`       // If concept is inactive in the code system
-	Version     *string                                    `json:"version,omitempty" bson:"version,omitempty"`         // Version in which this code/display is defined
-	Code        *string                                    `json:"code,omitempty" bson:"code,omitempty"`               // Code - if blank, this is not a selectable code
-	Display     *string                                    `json:"display,omitempty" bson:"display,omitempty"`         // User display for the concept
-	Designation []ValueSetComposeIncludeConceptDesignation `json:"designation,omitempty" bson:"designation,omitempty"` // Additional representations for this item
-	Property    []ValueSetExpansionContainsProperty        `json:"property,omitempty" bson:"property,omitempty"`       // Property value for the concept
-	Contains    []ValueSetExpansionContains                `json:"contains,omitempty" bson:"contains,omitempty"`       // Codes contained under this entry
+type ValueSetExpansionProperty struct {
+	Id   *string `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
+	Code string  `json:"code" bson:"code"`                   // Identifies the property on the concepts, and when referred to in operations
+	Uri  *string `json:"uri,omitempty" bson:"uri,omitempty"` // Formal identifier for the property
 }
 
-func (r *ValueSetExpansionContains) Validate() error {
-	for i, item := range r.Designation {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Designation[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Property {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Property[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Contains {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Contains[%d]: %w", i, err)
-		}
+func (r *ValueSetExpansionProperty) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
 	}
 	return nil
 }
@@ -425,6 +310,32 @@ func (r *ValueSetExpansionContainsProperty) Validate() error {
 	return nil
 }
 
+type ValueSetCompose struct {
+	Id         *string                  `json:"id,omitempty" bson:"id,omitempty"`                  // Unique id for inter-element referencing
+	LockedDate *string                  `json:"lockedDate,omitempty" bson:"locked_date,omitempty"` // Fixed date for references with no specified version (transitive)
+	Inactive   bool                     `json:"inactive,omitempty" bson:"inactive,omitempty"`      // Whether inactive codes are in the value set
+	Include    []ValueSetComposeInclude `json:"include" bson:"include"`                            // Include one or more codes from a code system or other value set(s)
+	Exclude    []ValueSetComposeInclude `json:"exclude,omitempty" bson:"exclude,omitempty"`        // Explicitly exclude codes from a code system or other value sets
+	Property   []string                 `json:"property,omitempty" bson:"property,omitempty"`      // Property to return if client doesn't override
+}
+
+func (r *ValueSetCompose) Validate() error {
+	if len(r.Include) < 1 {
+		return fmt.Errorf("field 'Include' must have at least 1 elements")
+	}
+	for i, item := range r.Include {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Include[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Exclude {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Exclude[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
 type ValueSetComposeInclude struct {
 	Id        *string                         `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
 	System    *string                         `json:"system,omitempty" bson:"system,omitempty"`       // The system the codes come from
@@ -444,6 +355,99 @@ func (r *ValueSetComposeInclude) Validate() error {
 	for i, item := range r.Filter {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Filter[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ValueSetComposeIncludeConceptDesignation struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
+	Language      *string  `json:"language,omitempty" bson:"language,omitempty"`            // Human language of the designation
+	Use           *Coding  `json:"use,omitempty" bson:"use,omitempty"`                      // Types of uses of designations
+	AdditionalUse []Coding `json:"additionalUse,omitempty" bson:"additional_use,omitempty"` // Additional ways how this designation would be used
+	Value         string   `json:"value" bson:"value"`                                      // The text value for this designation
+}
+
+func (r *ValueSetComposeIncludeConceptDesignation) Validate() error {
+	if r.Use != nil {
+		if err := r.Use.Validate(); err != nil {
+			return fmt.Errorf("Use: %w", err)
+		}
+	}
+	for i, item := range r.AdditionalUse {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AdditionalUse[%d]: %w", i, err)
+		}
+	}
+	var emptyString string
+	if r.Value == emptyString {
+		return fmt.Errorf("field 'Value' is required")
+	}
+	return nil
+}
+
+type ValueSetExpansion struct {
+	Id         *string                      `json:"id,omitempty" bson:"id,omitempty"`                 // Unique id for inter-element referencing
+	Identifier *string                      `json:"identifier,omitempty" bson:"identifier,omitempty"` // Identifies the value set expansion (business identifier)
+	Next       *string                      `json:"next,omitempty" bson:"next,omitempty"`             // Opaque urls for paging through expansion results
+	Timestamp  string                       `json:"timestamp" bson:"timestamp"`                       // Time ValueSet expansion happened
+	Total      *int                         `json:"total,omitempty" bson:"total,omitempty"`           // Total number of codes in the expansion
+	Offset     *int                         `json:"offset,omitempty" bson:"offset,omitempty"`         // Offset at which this resource starts
+	Parameter  []ValueSetExpansionParameter `json:"parameter,omitempty" bson:"parameter,omitempty"`   // Parameter that controlled the expansion process
+	Property   []ValueSetExpansionProperty  `json:"property,omitempty" bson:"property,omitempty"`     // Additional information supplied about each concept
+	Contains   []ValueSetExpansionContains  `json:"contains,omitempty" bson:"contains,omitempty"`     // Codes in the value set
+}
+
+func (r *ValueSetExpansion) Validate() error {
+	var emptyString string
+	if r.Timestamp == emptyString {
+		return fmt.Errorf("field 'Timestamp' is required")
+	}
+	for i, item := range r.Parameter {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Parameter[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Property {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Property[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Contains {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Contains[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ValueSetExpansionContains struct {
+	Id          *string                                    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	System      *string                                    `json:"system,omitempty" bson:"system,omitempty"`           // System value for the code
+	Abstract    bool                                       `json:"abstract,omitempty" bson:"abstract,omitempty"`       // If user cannot select this entry
+	Inactive    bool                                       `json:"inactive,omitempty" bson:"inactive,omitempty"`       // If concept is inactive in the code system
+	Version     *string                                    `json:"version,omitempty" bson:"version,omitempty"`         // Version in which this code/display is defined
+	Code        *string                                    `json:"code,omitempty" bson:"code,omitempty"`               // Code - if blank, this is not a selectable code
+	Display     *string                                    `json:"display,omitempty" bson:"display,omitempty"`         // User display for the concept
+	Designation []ValueSetComposeIncludeConceptDesignation `json:"designation,omitempty" bson:"designation,omitempty"` // Additional representations for this item
+	Property    []ValueSetExpansionContainsProperty        `json:"property,omitempty" bson:"property,omitempty"`       // Property value for the concept
+	Contains    []ValueSetExpansionContains                `json:"contains,omitempty" bson:"contains,omitempty"`       // Codes contained under this entry
+}
+
+func (r *ValueSetExpansionContains) Validate() error {
+	for i, item := range r.Designation {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Designation[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Property {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Property[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Contains {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Contains[%d]: %w", i, err)
 		}
 	}
 	return nil

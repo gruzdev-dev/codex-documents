@@ -7,6 +7,7 @@ import (
 
 // The header for a message exchange that is either requesting or responding to an action.  The reference(s) that are the subject of the action as well as other information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.
 type MessageHeader struct {
+	ResourceType   string                     `json:"resourceType" bson:"resource_type"`                       // Type of resource
 	Id             *string                    `json:"id,omitempty" bson:"id,omitempty"`                        // Logical id of this artifact
 	Meta           *Meta                      `json:"meta,omitempty" bson:"meta,omitempty"`                    // Metadata about the resource
 	ImplicitRules  *string                    `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"` // A set of rules under which this content was created
@@ -25,6 +26,9 @@ type MessageHeader struct {
 }
 
 func (r *MessageHeader) Validate() error {
+	if r.ResourceType != "MessageHeader" {
+		return fmt.Errorf("invalid resourceType: expected 'MessageHeader', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

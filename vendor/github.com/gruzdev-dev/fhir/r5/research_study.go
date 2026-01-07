@@ -7,6 +7,7 @@ import (
 
 // A scientific study intended to increase health-related knowledge. For example, clinical trials are research studies that involve people. These studies may be related to new ways to screen, prevent, diagnose, and treat disease. They may also study certain outcomes and certain groups of people by looking at data collected in the past or future.
 type ResearchStudy struct {
+	ResourceType       string                         `json:"resourceType" bson:"resource_type"`                                  // Type of resource
 	Id                 *string                        `json:"id,omitempty" bson:"id,omitempty"`                                   // Logical id of this artifact
 	Meta               *Meta                          `json:"meta,omitempty" bson:"meta,omitempty"`                               // Metadata about the resource
 	ImplicitRules      *string                        `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`            // A set of rules under which this content was created
@@ -48,6 +49,9 @@ type ResearchStudy struct {
 }
 
 func (r *ResearchStudy) Validate() error {
+	if r.ResourceType != "ResearchStudy" {
+		return fmt.Errorf("invalid resourceType: expected 'ResearchStudy', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -216,6 +220,29 @@ func (r *ResearchStudyAssociatedParty) Validate() error {
 	return nil
 }
 
+type ResearchStudyRecruitment struct {
+	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	TargetNumber *int       `json:"targetNumber,omitempty" bson:"target_number,omitempty"` // Estimated total number of participants to be enrolled
+	ActualNumber *int       `json:"actualNumber,omitempty" bson:"actual_number,omitempty"` // Actual total number of participants enrolled in study
+	Eligibility  *Reference `json:"eligibility,omitempty" bson:"eligibility,omitempty"`    // Inclusion and exclusion criteria
+	ActualGroup  *Reference `json:"actualGroup,omitempty" bson:"actual_group,omitempty"`   // Group of participants who were enrolled in study
+	Description  *string    `json:"description,omitempty" bson:"description,omitempty"`    // Description of the recruitment
+}
+
+func (r *ResearchStudyRecruitment) Validate() error {
+	if r.Eligibility != nil {
+		if err := r.Eligibility.Validate(); err != nil {
+			return fmt.Errorf("Eligibility: %w", err)
+		}
+	}
+	if r.ActualGroup != nil {
+		if err := r.ActualGroup.Validate(); err != nil {
+			return fmt.Errorf("ActualGroup: %w", err)
+		}
+	}
+	return nil
+}
+
 type ResearchStudyComparisonGroup struct {
 	Id            *string    `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
 	TargetNumber  *int       `json:"targetNumber,omitempty" bson:"target_number,omitempty"`   // Estimated total number of participants to be enrolled in the comparison group
@@ -234,6 +261,93 @@ func (r *ResearchStudyComparisonGroup) Validate() error {
 	if r.ObservedGroup != nil {
 		if err := r.ObservedGroup.Validate(); err != nil {
 			return fmt.Errorf("ObservedGroup: %w", err)
+		}
+	}
+	return nil
+}
+
+type ResearchStudyLabel struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
+	Type     *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // primary | official | scientific | plain-language | subtitle | short-title | acronym | earlier-title | language | auto-translated | human-use | machine-use | duplicate-uid
+	Value    *string          `json:"value,omitempty" bson:"value,omitempty"`       // The name
+	Language *string          `json:"language,omitempty" bson:"language,omitempty"` // Used to express the specific language
+}
+
+func (r *ResearchStudyLabel) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	return nil
+}
+
+type ResearchStudyRelatesTo struct {
+	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
+	Type             *CodeableConcept `json:"type" bson:"type"`                          // documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with | documents | specification-of | created-with | cite-as | reprint | reprint-of | summarizes
+	TargetUri        *string          `json:"targetUri" bson:"target_uri"`               // The artifact that is related to this ResearchStudy
+	TargetAttachment *Attachment      `json:"targetAttachment" bson:"target_attachment"` // The artifact that is related to this ResearchStudy
+	TargetCanonical  *string          `json:"targetCanonical" bson:"target_canonical"`   // The artifact that is related to this ResearchStudy
+	TargetReference  *Reference       `json:"targetReference" bson:"target_reference"`   // The artifact that is related to this ResearchStudy
+	TargetMarkdown   *string          `json:"targetMarkdown" bson:"target_markdown"`     // The artifact that is related to this ResearchStudy
+}
+
+func (r *ResearchStudyRelatesTo) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.TargetUri == nil {
+		return fmt.Errorf("field 'TargetUri' is required")
+	}
+	if r.TargetAttachment == nil {
+		return fmt.Errorf("field 'TargetAttachment' is required")
+	}
+	if r.TargetAttachment != nil {
+		if err := r.TargetAttachment.Validate(); err != nil {
+			return fmt.Errorf("TargetAttachment: %w", err)
+		}
+	}
+	if r.TargetCanonical == nil {
+		return fmt.Errorf("field 'TargetCanonical' is required")
+	}
+	if r.TargetReference == nil {
+		return fmt.Errorf("field 'TargetReference' is required")
+	}
+	if r.TargetReference != nil {
+		if err := r.TargetReference.Validate(); err != nil {
+			return fmt.Errorf("TargetReference: %w", err)
+		}
+	}
+	if r.TargetMarkdown == nil {
+		return fmt.Errorf("field 'TargetMarkdown' is required")
+	}
+	return nil
+}
+
+type ResearchStudyProgressStatus struct {
+	Id     *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	State  *CodeableConcept `json:"state" bson:"state"`                       // Label for status or state (e.g. recruitment status)
+	Actual bool             `json:"actual,omitempty" bson:"actual,omitempty"` // Actual if true else anticipated
+	Period *Period          `json:"period,omitempty" bson:"period,omitempty"` // Date range
+}
+
+func (r *ResearchStudyProgressStatus) Validate() error {
+	if r.State == nil {
+		return fmt.Errorf("field 'State' is required")
+	}
+	if r.State != nil {
+		if err := r.State.Validate(); err != nil {
+			return fmt.Errorf("State: %w", err)
+		}
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
 		}
 	}
 	return nil
@@ -322,53 +436,6 @@ func (r *ResearchStudyObjectiveOutcomeMeasure) Validate() error {
 	return nil
 }
 
-type ResearchStudyProgressStatus struct {
-	Id     *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	State  *CodeableConcept `json:"state" bson:"state"`                       // Label for status or state (e.g. recruitment status)
-	Actual bool             `json:"actual,omitempty" bson:"actual,omitempty"` // Actual if true else anticipated
-	Period *Period          `json:"period,omitempty" bson:"period,omitempty"` // Date range
-}
-
-func (r *ResearchStudyProgressStatus) Validate() error {
-	if r.State == nil {
-		return fmt.Errorf("field 'State' is required")
-	}
-	if r.State != nil {
-		if err := r.State.Validate(); err != nil {
-			return fmt.Errorf("State: %w", err)
-		}
-	}
-	if r.Period != nil {
-		if err := r.Period.Validate(); err != nil {
-			return fmt.Errorf("Period: %w", err)
-		}
-	}
-	return nil
-}
-
-type ResearchStudyRecruitment struct {
-	Id           *string    `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	TargetNumber *int       `json:"targetNumber,omitempty" bson:"target_number,omitempty"` // Estimated total number of participants to be enrolled
-	ActualNumber *int       `json:"actualNumber,omitempty" bson:"actual_number,omitempty"` // Actual total number of participants enrolled in study
-	Eligibility  *Reference `json:"eligibility,omitempty" bson:"eligibility,omitempty"`    // Inclusion and exclusion criteria
-	ActualGroup  *Reference `json:"actualGroup,omitempty" bson:"actual_group,omitempty"`   // Group of participants who were enrolled in study
-	Description  *string    `json:"description,omitempty" bson:"description,omitempty"`    // Description of the recruitment
-}
-
-func (r *ResearchStudyRecruitment) Validate() error {
-	if r.Eligibility != nil {
-		if err := r.Eligibility.Validate(); err != nil {
-			return fmt.Errorf("Eligibility: %w", err)
-		}
-	}
-	if r.ActualGroup != nil {
-		if err := r.ActualGroup.Validate(); err != nil {
-			return fmt.Errorf("ActualGroup: %w", err)
-		}
-	}
-	return nil
-}
-
 type ResearchStudyObjectiveOutcomeMeasureEventHandling struct {
 	Id          *string          `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Event       *CodeableConcept `json:"event,omitempty" bson:"event,omitempty"`             // The event
@@ -392,69 +459,6 @@ func (r *ResearchStudyObjectiveOutcomeMeasureEventHandling) Validate() error {
 		if err := r.Handling.Validate(); err != nil {
 			return fmt.Errorf("Handling: %w", err)
 		}
-	}
-	return nil
-}
-
-type ResearchStudyLabel struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`             // Unique id for inter-element referencing
-	Type     *CodeableConcept `json:"type,omitempty" bson:"type,omitempty"`         // primary | official | scientific | plain-language | subtitle | short-title | acronym | earlier-title | language | auto-translated | human-use | machine-use | duplicate-uid
-	Value    *string          `json:"value,omitempty" bson:"value,omitempty"`       // The name
-	Language *string          `json:"language,omitempty" bson:"language,omitempty"` // Used to express the specific language
-}
-
-func (r *ResearchStudyLabel) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	return nil
-}
-
-type ResearchStudyRelatesTo struct {
-	Id               *string          `json:"id,omitempty" bson:"id,omitempty"`          // Unique id for inter-element referencing
-	Type             *CodeableConcept `json:"type" bson:"type"`                          // documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with | documents | specification-of | created-with | cite-as | reprint | reprint-of | summarizes
-	TargetUri        *string          `json:"targetUri" bson:"target_uri"`               // The artifact that is related to this ResearchStudy
-	TargetAttachment *Attachment      `json:"targetAttachment" bson:"target_attachment"` // The artifact that is related to this ResearchStudy
-	TargetCanonical  *string          `json:"targetCanonical" bson:"target_canonical"`   // The artifact that is related to this ResearchStudy
-	TargetReference  *Reference       `json:"targetReference" bson:"target_reference"`   // The artifact that is related to this ResearchStudy
-	TargetMarkdown   *string          `json:"targetMarkdown" bson:"target_markdown"`     // The artifact that is related to this ResearchStudy
-}
-
-func (r *ResearchStudyRelatesTo) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.TargetUri == nil {
-		return fmt.Errorf("field 'TargetUri' is required")
-	}
-	if r.TargetAttachment == nil {
-		return fmt.Errorf("field 'TargetAttachment' is required")
-	}
-	if r.TargetAttachment != nil {
-		if err := r.TargetAttachment.Validate(); err != nil {
-			return fmt.Errorf("TargetAttachment: %w", err)
-		}
-	}
-	if r.TargetCanonical == nil {
-		return fmt.Errorf("field 'TargetCanonical' is required")
-	}
-	if r.TargetReference == nil {
-		return fmt.Errorf("field 'TargetReference' is required")
-	}
-	if r.TargetReference != nil {
-		if err := r.TargetReference.Validate(); err != nil {
-			return fmt.Errorf("TargetReference: %w", err)
-		}
-	}
-	if r.TargetMarkdown == nil {
-		return fmt.Errorf("field 'TargetMarkdown' is required")
 	}
 	return nil
 }

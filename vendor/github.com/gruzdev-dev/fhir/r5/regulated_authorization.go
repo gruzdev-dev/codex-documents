@@ -7,6 +7,7 @@ import (
 
 // Regulatory approval, clearance or licensing related to a regulated product, treatment, facility or activity that is cited in a guidance, regulation, rule or legislative act. An example is Market Authorization relating to a Medicinal Product.
 type RegulatedAuthorization struct {
+	ResourceType     string                      `json:"resourceType" bson:"resource_type"`                             // Type of resource
 	Id               *string                     `json:"id,omitempty" bson:"id,omitempty"`                              // Logical id of this artifact
 	Meta             *Meta                       `json:"meta,omitempty" bson:"meta,omitempty"`                          // Metadata about the resource
 	ImplicitRules    *string                     `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`       // A set of rules under which this content was created
@@ -31,6 +32,9 @@ type RegulatedAuthorization struct {
 }
 
 func (r *RegulatedAuthorization) Validate() error {
+	if r.ResourceType != "RegulatedAuthorization" {
+		return fmt.Errorf("invalid resourceType: expected 'RegulatedAuthorization', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

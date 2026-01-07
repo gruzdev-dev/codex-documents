@@ -7,6 +7,7 @@ import (
 
 // A record of a request for service such as diagnostic investigations, treatments, or operations to be performed.
 type ServiceRequest struct {
+	ResourceType       string                             `json:"resourceType" bson:"resource_type"`                                  // Type of resource
 	Id                 *string                            `json:"id,omitempty" bson:"id,omitempty"`                                   // Logical id of this artifact
 	Meta               *Meta                              `json:"meta,omitempty" bson:"meta,omitempty"`                               // Metadata about the resource
 	ImplicitRules      *string                            `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`            // A set of rules under which this content was created
@@ -52,6 +53,9 @@ type ServiceRequest struct {
 }
 
 func (r *ServiceRequest) Validate() error {
+	if r.ResourceType != "ServiceRequest" {
+		return fmt.Errorf("invalid resourceType: expected 'ServiceRequest', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

@@ -7,6 +7,7 @@ import (
 
 // A record of intake by a patient.  A NutritionIntake may indicate that the patient may be consuming the food (i.e., solid and/or liquid), breastmilk, infant formula, supplements, enteral formula now or has consumed it in the past.  The source of this information can be the patient, significant other (such as a family member or spouse), or a clinician.  A common scenario where this information is captured is during the history taking process during a patient visit or stay or through an app that tracks food (i.e., solid and/or liquid), breastmilk, infant formula, supplements, enteral formula consumed.   The consumption information may come from sources such as the patient's memory, from a nutrition label, or from a clinician documenting observed intake.
 type NutritionIntake struct {
+	ResourceType       string                         `json:"resourceType" bson:"resource_type"`                                  // Type of resource
 	Id                 *string                        `json:"id,omitempty" bson:"id,omitempty"`                                   // Logical id of this artifact
 	Meta               *Meta                          `json:"meta,omitempty" bson:"meta,omitempty"`                               // Metadata about the resource
 	ImplicitRules      *string                        `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`            // A set of rules under which this content was created
@@ -35,6 +36,9 @@ type NutritionIntake struct {
 }
 
 func (r *NutritionIntake) Validate() error {
+	if r.ResourceType != "NutritionIntake" {
+		return fmt.Errorf("invalid resourceType: expected 'NutritionIntake', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

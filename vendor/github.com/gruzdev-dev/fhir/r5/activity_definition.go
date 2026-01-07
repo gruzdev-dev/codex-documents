@@ -7,6 +7,7 @@ import (
 
 // This resource allows for the definition of some activity to be performed, independent of a particular patient, practitioner, or other performance context.
 type ActivityDefinition struct {
+	ResourceType                 string                           `json:"resourceType" bson:"resource_type"`                                                      // Type of resource
 	Id                           *string                          `json:"id,omitempty" bson:"id,omitempty"`                                                       // Logical id of this artifact
 	Meta                         *Meta                            `json:"meta,omitempty" bson:"meta,omitempty"`                                                   // Metadata about the resource
 	ImplicitRules                *string                          `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                                // A set of rules under which this content was created
@@ -74,6 +75,9 @@ type ActivityDefinition struct {
 }
 
 func (r *ActivityDefinition) Validate() error {
+	if r.ResourceType != "ActivityDefinition" {
+		return fmt.Errorf("invalid resourceType: expected 'ActivityDefinition', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

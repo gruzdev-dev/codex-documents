@@ -7,6 +7,7 @@ import (
 
 // Describes the event of a patient consuming or otherwise being administered a medication.  This may be as simple as swallowing a tablet or it may be a long running infusion. Related resources tie this event to the authorizing prescription, and the specific encounter between patient and health care practitioner. This event can also be used to record waste using a status of not-done and the appropriate statusReason.
 type MedicationAdministration struct {
+	ResourceType          string                              `json:"resourceType" bson:"resource_type"`                                       // Type of resource
 	Id                    *string                             `json:"id,omitempty" bson:"id,omitempty"`                                        // Logical id of this artifact
 	Meta                  *Meta                               `json:"meta,omitempty" bson:"meta,omitempty"`                                    // Metadata about the resource
 	ImplicitRules         *string                             `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                 // A set of rules under which this content was created
@@ -39,6 +40,9 @@ type MedicationAdministration struct {
 }
 
 func (r *MedicationAdministration) Validate() error {
+	if r.ResourceType != "MedicationAdministration" {
+		return fmt.Errorf("invalid resourceType: expected 'MedicationAdministration', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

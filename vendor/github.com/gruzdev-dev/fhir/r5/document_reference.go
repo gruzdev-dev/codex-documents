@@ -7,6 +7,7 @@ import (
 
 // A reference to a document of any kind for any purpose. While the term “document” implies a more narrow focus, for this resource this “document” encompasses *any* serialized object with a mime-type, it includes formal patient-centric documents (CDA), clinical notes, scanned paper, non-patient specific documents like policy text, as well as a photo, video, or audio recording acquired or used in healthcare.  The DocumentReference resource provides metadata about the document so that the document can be discovered and managed.  The actual content may be inline base64 encoded data or provided by direct reference.
 type DocumentReference struct {
+	ResourceType    string                       `json:"resourceType" bson:"resource_type"`                           // Type of resource
 	Id              *string                      `json:"id,omitempty" bson:"id,omitempty"`                            // Logical id of this artifact
 	Meta            *Meta                        `json:"meta,omitempty" bson:"meta,omitempty"`                        // Metadata about the resource
 	ImplicitRules   *string                      `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`     // A set of rules under which this content was created
@@ -40,6 +41,9 @@ type DocumentReference struct {
 }
 
 func (r *DocumentReference) Validate() error {
+	if r.ResourceType != "DocumentReference" {
+		return fmt.Errorf("invalid resourceType: expected 'DocumentReference', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -155,54 +159,6 @@ func (r *DocumentReference) Validate() error {
 	return nil
 }
 
-type DocumentReferenceContent struct {
-	Id         *string                           `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
-	Attachment *Attachment                       `json:"attachment" bson:"attachment"`               // Where to access the document
-	Profile    []DocumentReferenceContentProfile `json:"profile,omitempty" bson:"profile,omitempty"` // Content profile rules for the document
-}
-
-func (r *DocumentReferenceContent) Validate() error {
-	if r.Attachment == nil {
-		return fmt.Errorf("field 'Attachment' is required")
-	}
-	if r.Attachment != nil {
-		if err := r.Attachment.Validate(); err != nil {
-			return fmt.Errorf("Attachment: %w", err)
-		}
-	}
-	for i, item := range r.Profile {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Profile[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type DocumentReferenceContentProfile struct {
-	Id             *string `json:"id,omitempty" bson:"id,omitempty"`      // Unique id for inter-element referencing
-	ValueCoding    *Coding `json:"valueCoding" bson:"value_coding"`       // Code|uri|canonical
-	ValueUri       *string `json:"valueUri" bson:"value_uri"`             // Code|uri|canonical
-	ValueCanonical *string `json:"valueCanonical" bson:"value_canonical"` // Code|uri|canonical
-}
-
-func (r *DocumentReferenceContentProfile) Validate() error {
-	if r.ValueCoding == nil {
-		return fmt.Errorf("field 'ValueCoding' is required")
-	}
-	if r.ValueCoding != nil {
-		if err := r.ValueCoding.Validate(); err != nil {
-			return fmt.Errorf("ValueCoding: %w", err)
-		}
-	}
-	if r.ValueUri == nil {
-		return fmt.Errorf("field 'ValueUri' is required")
-	}
-	if r.ValueCanonical == nil {
-		return fmt.Errorf("field 'ValueCanonical' is required")
-	}
-	return nil
-}
-
 type DocumentReferenceAttester struct {
 	Id    *string          `json:"id,omitempty" bson:"id,omitempty"`       // Unique id for inter-element referencing
 	Mode  *CodeableConcept `json:"mode" bson:"mode"`                       // personal | professional | legal | official
@@ -249,6 +205,54 @@ func (r *DocumentReferenceRelatesTo) Validate() error {
 		if err := r.Target.Validate(); err != nil {
 			return fmt.Errorf("Target: %w", err)
 		}
+	}
+	return nil
+}
+
+type DocumentReferenceContent struct {
+	Id         *string                           `json:"id,omitempty" bson:"id,omitempty"`           // Unique id for inter-element referencing
+	Attachment *Attachment                       `json:"attachment" bson:"attachment"`               // Where to access the document
+	Profile    []DocumentReferenceContentProfile `json:"profile,omitempty" bson:"profile,omitempty"` // Content profile rules for the document
+}
+
+func (r *DocumentReferenceContent) Validate() error {
+	if r.Attachment == nil {
+		return fmt.Errorf("field 'Attachment' is required")
+	}
+	if r.Attachment != nil {
+		if err := r.Attachment.Validate(); err != nil {
+			return fmt.Errorf("Attachment: %w", err)
+		}
+	}
+	for i, item := range r.Profile {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Profile[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type DocumentReferenceContentProfile struct {
+	Id             *string `json:"id,omitempty" bson:"id,omitempty"`      // Unique id for inter-element referencing
+	ValueCoding    *Coding `json:"valueCoding" bson:"value_coding"`       // Code|uri|canonical
+	ValueUri       *string `json:"valueUri" bson:"value_uri"`             // Code|uri|canonical
+	ValueCanonical *string `json:"valueCanonical" bson:"value_canonical"` // Code|uri|canonical
+}
+
+func (r *DocumentReferenceContentProfile) Validate() error {
+	if r.ValueCoding == nil {
+		return fmt.Errorf("field 'ValueCoding' is required")
+	}
+	if r.ValueCoding != nil {
+		if err := r.ValueCoding.Validate(); err != nil {
+			return fmt.Errorf("ValueCoding: %w", err)
+		}
+	}
+	if r.ValueUri == nil {
+		return fmt.Errorf("field 'ValueUri' is required")
+	}
+	if r.ValueCanonical == nil {
+		return fmt.Errorf("field 'ValueCanonical' is required")
 	}
 	return nil
 }

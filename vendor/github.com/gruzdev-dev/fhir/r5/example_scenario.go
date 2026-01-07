@@ -7,6 +7,7 @@ import (
 
 // A walkthrough of a workflow showing the interaction between systems and the instances shared, possibly including the evolution of instances over time.
 type ExampleScenario struct {
+	ResourceType           string                    `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                   `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                     `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                   `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -37,6 +38,9 @@ type ExampleScenario struct {
 }
 
 func (r *ExampleScenario) Validate() error {
+	if r.ResourceType != "ExampleScenario" {
+		return fmt.Errorf("invalid resourceType: expected 'ExampleScenario', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -94,6 +98,66 @@ func (r *ExampleScenario) Validate() error {
 	return nil
 }
 
+type ExampleScenarioInstanceVersion struct {
+	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Key         string     `json:"key" bson:"key"`                                     // ID or acronym of the version
+	Title       string     `json:"title" bson:"title"`                                 // Label for instance version
+	Description *string    `json:"description,omitempty" bson:"description,omitempty"` // Details about version
+	Content     *Reference `json:"content,omitempty" bson:"content,omitempty"`         // Example instance version data
+}
+
+func (r *ExampleScenarioInstanceVersion) Validate() error {
+	var emptyString string
+	if r.Key == emptyString {
+		return fmt.Errorf("field 'Key' is required")
+	}
+	if r.Title == emptyString {
+		return fmt.Errorf("field 'Title' is required")
+	}
+	if r.Content != nil {
+		if err := r.Content.Validate(); err != nil {
+			return fmt.Errorf("Content: %w", err)
+		}
+	}
+	return nil
+}
+
+type ExampleScenarioProcessStepOperation struct {
+	Id              *string                                   `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
+	Type            *Coding                                   `json:"type,omitempty" bson:"type,omitempty"`                        // Kind of action
+	Title           string                                    `json:"title" bson:"title"`                                          // Label for step
+	Initiator       *string                                   `json:"initiator,omitempty" bson:"initiator,omitempty"`              // Who starts the operation
+	Receiver        *string                                   `json:"receiver,omitempty" bson:"receiver,omitempty"`                // Who receives the operation
+	Description     *string                                   `json:"description,omitempty" bson:"description,omitempty"`          // Human-friendly description of the operation
+	InitiatorActive bool                                      `json:"initiatorActive,omitempty" bson:"initiator_active,omitempty"` // Initiator stays active?
+	ReceiverActive  bool                                      `json:"receiverActive,omitempty" bson:"receiver_active,omitempty"`   // Receiver stays active?
+	Request         *ExampleScenarioInstanceContainedInstance `json:"request,omitempty" bson:"request,omitempty"`                  // Instance transmitted on invocation
+	Response        *ExampleScenarioInstanceContainedInstance `json:"response,omitempty" bson:"response,omitempty"`                // Instance transmitted on invocation response
+}
+
+func (r *ExampleScenarioProcessStepOperation) Validate() error {
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	var emptyString string
+	if r.Title == emptyString {
+		return fmt.Errorf("field 'Title' is required")
+	}
+	if r.Request != nil {
+		if err := r.Request.Validate(); err != nil {
+			return fmt.Errorf("Request: %w", err)
+		}
+	}
+	if r.Response != nil {
+		if err := r.Response.Validate(); err != nil {
+			return fmt.Errorf("Response: %w", err)
+		}
+	}
+	return nil
+}
+
 type ExampleScenarioInstance struct {
 	Id                        *string                                    `json:"id,omitempty" bson:"id,omitempty"`                                                 // Unique id for inter-element referencing
 	Key                       string                                     `json:"key" bson:"key"`                                                                   // ID or acronym of the instance
@@ -142,30 +206,6 @@ func (r *ExampleScenarioInstance) Validate() error {
 	return nil
 }
 
-type ExampleScenarioInstanceVersion struct {
-	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Key         string     `json:"key" bson:"key"`                                     // ID or acronym of the version
-	Title       string     `json:"title" bson:"title"`                                 // Label for instance version
-	Description *string    `json:"description,omitempty" bson:"description,omitempty"` // Details about version
-	Content     *Reference `json:"content,omitempty" bson:"content,omitempty"`         // Example instance version data
-}
-
-func (r *ExampleScenarioInstanceVersion) Validate() error {
-	var emptyString string
-	if r.Key == emptyString {
-		return fmt.Errorf("field 'Key' is required")
-	}
-	if r.Title == emptyString {
-		return fmt.Errorf("field 'Title' is required")
-	}
-	if r.Content != nil {
-		if err := r.Content.Validate(); err != nil {
-			return fmt.Errorf("Content: %w", err)
-		}
-	}
-	return nil
-}
-
 type ExampleScenarioInstanceContainedInstance struct {
 	Id                *string `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
 	InstanceReference string  `json:"instanceReference" bson:"instance_reference"`                   // Key of contained instance
@@ -176,82 +216,6 @@ func (r *ExampleScenarioInstanceContainedInstance) Validate() error {
 	var emptyString string
 	if r.InstanceReference == emptyString {
 		return fmt.Errorf("field 'InstanceReference' is required")
-	}
-	return nil
-}
-
-type ExampleScenarioProcessStepOperation struct {
-	Id              *string                                   `json:"id,omitempty" bson:"id,omitempty"`                            // Unique id for inter-element referencing
-	Type            *Coding                                   `json:"type,omitempty" bson:"type,omitempty"`                        // Kind of action
-	Title           string                                    `json:"title" bson:"title"`                                          // Label for step
-	Initiator       *string                                   `json:"initiator,omitempty" bson:"initiator,omitempty"`              // Who starts the operation
-	Receiver        *string                                   `json:"receiver,omitempty" bson:"receiver,omitempty"`                // Who receives the operation
-	Description     *string                                   `json:"description,omitempty" bson:"description,omitempty"`          // Human-friendly description of the operation
-	InitiatorActive bool                                      `json:"initiatorActive,omitempty" bson:"initiator_active,omitempty"` // Initiator stays active?
-	ReceiverActive  bool                                      `json:"receiverActive,omitempty" bson:"receiver_active,omitempty"`   // Receiver stays active?
-	Request         *ExampleScenarioInstanceContainedInstance `json:"request,omitempty" bson:"request,omitempty"`                  // Instance transmitted on invocation
-	Response        *ExampleScenarioInstanceContainedInstance `json:"response,omitempty" bson:"response,omitempty"`                // Instance transmitted on invocation response
-}
-
-func (r *ExampleScenarioProcessStepOperation) Validate() error {
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	var emptyString string
-	if r.Title == emptyString {
-		return fmt.Errorf("field 'Title' is required")
-	}
-	if r.Request != nil {
-		if err := r.Request.Validate(); err != nil {
-			return fmt.Errorf("Request: %w", err)
-		}
-	}
-	if r.Response != nil {
-		if err := r.Response.Validate(); err != nil {
-			return fmt.Errorf("Response: %w", err)
-		}
-	}
-	return nil
-}
-
-type ExampleScenarioProcessStepAlternative struct {
-	Id          *string                      `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Title       string                       `json:"title" bson:"title"`                                 // Label for alternative
-	Description *string                      `json:"description,omitempty" bson:"description,omitempty"` // Human-readable description of option
-	Step        []ExampleScenarioProcessStep `json:"step,omitempty" bson:"step,omitempty"`               // Alternative action(s)
-}
-
-func (r *ExampleScenarioProcessStepAlternative) Validate() error {
-	var emptyString string
-	if r.Title == emptyString {
-		return fmt.Errorf("field 'Title' is required")
-	}
-	for i, item := range r.Step {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Step[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type ExampleScenarioActor struct {
-	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Key         string  `json:"key" bson:"key"`                                     // ID or acronym of the actor
-	Type        *string `json:"type,omitempty" bson:"type,omitempty"`               // person | system | collective | other
-	Title       string  `json:"title" bson:"title"`                                 // Label for actor when rendering
-	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Details about actor
-	Definition  *string `json:"definition,omitempty" bson:"definition,omitempty"`   // Formal definition of actor
-}
-
-func (r *ExampleScenarioActor) Validate() error {
-	var emptyString string
-	if r.Key == emptyString {
-		return fmt.Errorf("field 'Key' is required")
-	}
-	if r.Title == emptyString {
-		return fmt.Errorf("field 'Title' is required")
 	}
 	return nil
 }
@@ -303,6 +267,46 @@ func (r *ExampleScenarioProcessStep) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Alternative[%d]: %w", i, err)
 		}
+	}
+	return nil
+}
+
+type ExampleScenarioProcessStepAlternative struct {
+	Id          *string                      `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Title       string                       `json:"title" bson:"title"`                                 // Label for alternative
+	Description *string                      `json:"description,omitempty" bson:"description,omitempty"` // Human-readable description of option
+	Step        []ExampleScenarioProcessStep `json:"step,omitempty" bson:"step,omitempty"`               // Alternative action(s)
+}
+
+func (r *ExampleScenarioProcessStepAlternative) Validate() error {
+	var emptyString string
+	if r.Title == emptyString {
+		return fmt.Errorf("field 'Title' is required")
+	}
+	for i, item := range r.Step {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Step[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type ExampleScenarioActor struct {
+	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Key         string  `json:"key" bson:"key"`                                     // ID or acronym of the actor
+	Type        *string `json:"type,omitempty" bson:"type,omitempty"`               // person | system | collective | other
+	Title       string  `json:"title" bson:"title"`                                 // Label for actor when rendering
+	Description *string `json:"description,omitempty" bson:"description,omitempty"` // Details about actor
+	Definition  *string `json:"definition,omitempty" bson:"definition,omitempty"`   // Formal definition of actor
+}
+
+func (r *ExampleScenarioActor) Validate() error {
+	var emptyString string
+	if r.Key == emptyString {
+		return fmt.Errorf("field 'Key' is required")
+	}
+	if r.Title == emptyString {
+		return fmt.Errorf("field 'Title' is required")
 	}
 	return nil
 }

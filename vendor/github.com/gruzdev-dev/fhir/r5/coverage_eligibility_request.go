@@ -7,6 +7,7 @@ import (
 
 // The CoverageEligibilityRequest provides patient and insurance coverage information to an insurer for them to respond, in the form of an CoverageEligibilityResponse, with information regarding whether the stated coverage is valid and in-force and optionally to provide the insurance details of the policy.
 type CoverageEligibilityRequest struct {
+	ResourceType   string                                     `json:"resourceType" bson:"resource_type"`                         // Type of resource
 	Id             *string                                    `json:"id,omitempty" bson:"id,omitempty"`                          // Logical id of this artifact
 	Meta           *Meta                                      `json:"meta,omitempty" bson:"meta,omitempty"`                      // Metadata about the resource
 	ImplicitRules  *string                                    `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`   // A set of rules under which this content was created
@@ -33,6 +34,9 @@ type CoverageEligibilityRequest struct {
 }
 
 func (r *CoverageEligibilityRequest) Validate() error {
+	if r.ResourceType != "CoverageEligibilityRequest" {
+		return fmt.Errorf("invalid resourceType: expected 'CoverageEligibilityRequest', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -117,6 +121,36 @@ func (r *CoverageEligibilityRequest) Validate() error {
 	for i, item := range r.Item {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Item[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type CoverageEligibilityRequestEvent struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
+	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
+	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
+	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
+}
+
+func (r *CoverageEligibilityRequestEvent) Validate() error {
+	if r.Type == nil {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	if r.Type != nil {
+		if err := r.Type.Validate(); err != nil {
+			return fmt.Errorf("Type: %w", err)
+		}
+	}
+	if r.WhenDateTime == nil {
+		return fmt.Errorf("field 'WhenDateTime' is required")
+	}
+	if r.WhenPeriod == nil {
+		return fmt.Errorf("field 'WhenPeriod' is required")
+	}
+	if r.WhenPeriod != nil {
+		if err := r.WhenPeriod.Validate(); err != nil {
+			return fmt.Errorf("WhenPeriod: %w", err)
 		}
 	}
 	return nil
@@ -241,36 +275,6 @@ func (r *CoverageEligibilityRequestItemDiagnosis) Validate() error {
 	if r.DiagnosisReference != nil {
 		if err := r.DiagnosisReference.Validate(); err != nil {
 			return fmt.Errorf("DiagnosisReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type CoverageEligibilityRequestEvent struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`   // Unique id for inter-element referencing
-	Type         *CodeableConcept `json:"type" bson:"type"`                   // Specific event
-	WhenDateTime *string          `json:"whenDateTime" bson:"when_date_time"` // Occurance date or period
-	WhenPeriod   *Period          `json:"whenPeriod" bson:"when_period"`      // Occurance date or period
-}
-
-func (r *CoverageEligibilityRequestEvent) Validate() error {
-	if r.Type == nil {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	if r.Type != nil {
-		if err := r.Type.Validate(); err != nil {
-			return fmt.Errorf("Type: %w", err)
-		}
-	}
-	if r.WhenDateTime == nil {
-		return fmt.Errorf("field 'WhenDateTime' is required")
-	}
-	if r.WhenPeriod == nil {
-		return fmt.Errorf("field 'WhenPeriod' is required")
-	}
-	if r.WhenPeriod != nil {
-		if err := r.WhenPeriod.Validate(); err != nil {
-			return fmt.Errorf("WhenPeriod: %w", err)
 		}
 	}
 	return nil

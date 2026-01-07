@@ -7,6 +7,7 @@ import (
 
 // Describes a physiological or technical alert condition report originated by a device.  The DeviceAlert resource is derived from the ISO/IEEE 11073-10201 Domain Information Model standard, but is more widely applicable.
 type DeviceAlert struct {
+	ResourceType       string                   `json:"resourceType" bson:"resource_type"`                                  // Type of resource
 	Id                 *string                  `json:"id,omitempty" bson:"id,omitempty"`                                   // Logical id of this artifact
 	Meta               *Meta                    `json:"meta,omitempty" bson:"meta,omitempty"`                               // Metadata about the resource
 	ImplicitRules      *string                  `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`            // A set of rules under which this content was created
@@ -35,6 +36,9 @@ type DeviceAlert struct {
 }
 
 func (r *DeviceAlert) Validate() error {
+	if r.ResourceType != "DeviceAlert" {
+		return fmt.Errorf("invalid resourceType: expected 'DeviceAlert', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

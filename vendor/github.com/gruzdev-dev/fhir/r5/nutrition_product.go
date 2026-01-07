@@ -7,6 +7,7 @@ import (
 
 // A food or supplement that is consumed by patients.
 type NutritionProduct struct {
+	ResourceType      string                           `json:"resourceType" bson:"resource_type"`                               // Type of resource
 	Id                *string                          `json:"id,omitempty" bson:"id,omitempty"`                                // Logical id of this artifact
 	Meta              *Meta                            `json:"meta,omitempty" bson:"meta,omitempty"`                            // Metadata about the resource
 	ImplicitRules     *string                          `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`         // A set of rules under which this content was created
@@ -27,6 +28,9 @@ type NutritionProduct struct {
 }
 
 func (r *NutritionProduct) Validate() error {
+	if r.ResourceType != "NutritionProduct" {
+		return fmt.Errorf("invalid resourceType: expected 'NutritionProduct', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

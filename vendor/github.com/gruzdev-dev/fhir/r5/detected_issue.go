@@ -7,6 +7,7 @@ import (
 
 // Indicates an actual or potential clinical issue with or between one or more active or proposed clinical actions for a patient; e.g. Drug-drug interaction, Ineffective treatment frequency, Procedure-condition conflict, gaps in care, etc.
 type DetectedIssue struct {
+	ResourceType       string                    `json:"resourceType" bson:"resource_type"`                                  // Type of resource
 	Id                 *string                   `json:"id,omitempty" bson:"id,omitempty"`                                   // Logical id of this artifact
 	Meta               *Meta                     `json:"meta,omitempty" bson:"meta,omitempty"`                               // Metadata about the resource
 	ImplicitRules      *string                   `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`            // A set of rules under which this content was created
@@ -36,6 +37,9 @@ type DetectedIssue struct {
 }
 
 func (r *DetectedIssue) Validate() error {
+	if r.ResourceType != "DetectedIssue" {
+		return fmt.Errorf("invalid resourceType: expected 'DetectedIssue', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

@@ -7,6 +7,7 @@ import (
 
 // The technical details of an endpoint that can be used for electronic services, such as for web services providing XDS.b, a REST endpoint for another FHIR server, or a s/Mime email address. This may include any security context information.
 type Endpoint struct {
+	ResourceType         string            `json:"resourceType" bson:"resource_type"`                                     // Type of resource
 	Id                   *string           `json:"id,omitempty" bson:"id,omitempty"`                                      // Logical id of this artifact
 	Meta                 *Meta             `json:"meta,omitempty" bson:"meta,omitempty"`                                  // Metadata about the resource
 	ImplicitRules        *string           `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`               // A set of rules under which this content was created
@@ -29,6 +30,9 @@ type Endpoint struct {
 }
 
 func (r *Endpoint) Validate() error {
+	if r.ResourceType != "Endpoint" {
+		return fmt.Errorf("invalid resourceType: expected 'Endpoint', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

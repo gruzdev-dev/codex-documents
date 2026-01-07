@@ -7,6 +7,7 @@ import (
 
 // A medically related item or items, in a container or package.
 type PackagedProductDefinition struct {
+	ResourceType          string                                         `json:"resourceType" bson:"resource_type"`                                        // Type of resource
 	Id                    *string                                        `json:"id,omitempty" bson:"id,omitempty"`                                         // Logical id of this artifact
 	Meta                  *Meta                                          `json:"meta,omitempty" bson:"meta,omitempty"`                                     // Metadata about the resource
 	ImplicitRules         *string                                        `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                  // A set of rules under which this content was created
@@ -31,6 +32,9 @@ type PackagedProductDefinition struct {
 }
 
 func (r *PackagedProductDefinition) Validate() error {
+	if r.ResourceType != "PackagedProductDefinition" {
+		return fmt.Errorf("invalid resourceType: expected 'PackagedProductDefinition', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -94,26 +98,6 @@ func (r *PackagedProductDefinition) Validate() error {
 	for i, item := range r.Characteristic {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Characteristic[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type PackagedProductDefinitionLegalStatusOfSupply struct {
-	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
-	Code         *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`                 // The actual status of supply. In what situation this package type may be supplied for use
-	Jurisdiction *CodeableConcept `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"` // The place where the legal status of supply applies
-}
-
-func (r *PackagedProductDefinitionLegalStatusOfSupply) Validate() error {
-	if r.Code != nil {
-		if err := r.Code.Validate(); err != nil {
-			return fmt.Errorf("Code: %w", err)
-		}
-	}
-	if r.Jurisdiction != nil {
-		if err := r.Jurisdiction.Validate(); err != nil {
-			return fmt.Errorf("Jurisdiction: %w", err)
 		}
 	}
 	return nil
@@ -238,6 +222,26 @@ func (r *PackagedProductDefinitionPackagingContainedItem) Validate() error {
 	if r.Amount != nil {
 		if err := r.Amount.Validate(); err != nil {
 			return fmt.Errorf("Amount: %w", err)
+		}
+	}
+	return nil
+}
+
+type PackagedProductDefinitionLegalStatusOfSupply struct {
+	Id           *string          `json:"id,omitempty" bson:"id,omitempty"`                     // Unique id for inter-element referencing
+	Code         *CodeableConcept `json:"code,omitempty" bson:"code,omitempty"`                 // The actual status of supply. In what situation this package type may be supplied for use
+	Jurisdiction *CodeableConcept `json:"jurisdiction,omitempty" bson:"jurisdiction,omitempty"` // The place where the legal status of supply applies
+}
+
+func (r *PackagedProductDefinitionLegalStatusOfSupply) Validate() error {
+	if r.Code != nil {
+		if err := r.Code.Validate(); err != nil {
+			return fmt.Errorf("Code: %w", err)
+		}
+	}
+	if r.Jurisdiction != nil {
+		if err := r.Jurisdiction.Validate(); err != nil {
+			return fmt.Errorf("Jurisdiction: %w", err)
 		}
 	}
 	return nil

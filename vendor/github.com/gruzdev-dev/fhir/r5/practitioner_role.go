@@ -7,6 +7,7 @@ import (
 
 // A specific set of Roles/Locations/specialties/services that a practitioner may perform, or has performed at an organization during a period of time.
 type PractitionerRole struct {
+	ResourceType      string                  `json:"resourceType" bson:"resource_type"`                               // Type of resource
 	Id                *string                 `json:"id,omitempty" bson:"id,omitempty"`                                // Logical id of this artifact
 	Meta              *Meta                   `json:"meta,omitempty" bson:"meta,omitempty"`                            // Metadata about the resource
 	ImplicitRules     *string                 `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`         // A set of rules under which this content was created
@@ -32,6 +33,9 @@ type PractitionerRole struct {
 }
 
 func (r *PractitionerRole) Validate() error {
+	if r.ResourceType != "PractitionerRole" {
+		return fmt.Errorf("invalid resourceType: expected 'PractitionerRole', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

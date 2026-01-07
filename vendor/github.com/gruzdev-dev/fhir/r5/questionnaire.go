@@ -7,6 +7,7 @@ import (
 
 // A structured set of questions intended to guide the collection of answers from end-users. Questionnaires provide detailed control over order, presentation, phraseology and grouping to allow coherent, consistent data collection.
 type Questionnaire struct {
+	ResourceType           string              `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string             `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta               `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string             `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -41,6 +42,9 @@ type Questionnaire struct {
 }
 
 func (r *Questionnaire) Validate() error {
+	if r.ResourceType != "Questionnaire" {
+		return fmt.Errorf("invalid resourceType: expected 'Questionnaire', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -88,6 +92,64 @@ func (r *Questionnaire) Validate() error {
 	for i, item := range r.Code {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Code[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Item {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Item[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type QuestionnaireItem struct {
+	Id               *string                         `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
+	LinkId           string                          `json:"linkId" bson:"link_id"`                                         // Unique id for item in questionnaire
+	Definition       []string                        `json:"definition,omitempty" bson:"definition,omitempty"`              // ElementDefinition - details for the item
+	Code             []Coding                        `json:"code,omitempty" bson:"code,omitempty"`                          // Corresponding concept for this item in a terminology
+	Prefix           *string                         `json:"prefix,omitempty" bson:"prefix,omitempty"`                      // E.g. "1(a)", "2.5.3"
+	Text             *string                         `json:"text,omitempty" bson:"text,omitempty"`                          // Primary text for the item
+	Type             string                          `json:"type" bson:"type"`                                              // group | display | boolean | decimal | integer | date | dateTime +
+	EnableWhen       []QuestionnaireItemEnableWhen   `json:"enableWhen,omitempty" bson:"enable_when,omitempty"`             // Only allow data when
+	EnableBehavior   *string                         `json:"enableBehavior,omitempty" bson:"enable_behavior,omitempty"`     // all | any
+	DisabledDisplay  *string                         `json:"disabledDisplay,omitempty" bson:"disabled_display,omitempty"`   // hidden | protected
+	Required         bool                            `json:"required,omitempty" bson:"required,omitempty"`                  // Whether the item must be included in data results
+	Repeats          bool                            `json:"repeats,omitempty" bson:"repeats,omitempty"`                    // Whether the item may repeat
+	ReadOnly         bool                            `json:"readOnly,omitempty" bson:"read_only,omitempty"`                 // Don't allow human editing
+	MaxLength        *int                            `json:"maxLength,omitempty" bson:"max_length,omitempty"`               // No more than these many characters
+	AnswerConstraint *string                         `json:"answerConstraint,omitempty" bson:"answer_constraint,omitempty"` // optionsOnly | optionsOrType | optionsOrString
+	AnswerValueSet   *string                         `json:"answerValueSet,omitempty" bson:"answer_value_set,omitempty"`    // ValueSet containing permitted answers
+	AnswerOption     []QuestionnaireItemAnswerOption `json:"answerOption,omitempty" bson:"answer_option,omitempty"`         // Permitted answer
+	Initial          []QuestionnaireItemInitial      `json:"initial,omitempty" bson:"initial,omitempty"`                    // Initial value(s) when item is first rendered
+	Item             []QuestionnaireItem             `json:"item,omitempty" bson:"item,omitempty"`                          // Nested questionnaire items
+}
+
+func (r *QuestionnaireItem) Validate() error {
+	var emptyString string
+	if r.LinkId == emptyString {
+		return fmt.Errorf("field 'LinkId' is required")
+	}
+	for i, item := range r.Code {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Code[%d]: %w", i, err)
+		}
+	}
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	for i, item := range r.EnableWhen {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("EnableWhen[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.AnswerOption {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("AnswerOption[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Initial {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Initial[%d]: %w", i, err)
 		}
 	}
 	for i, item := range r.Item {
@@ -318,64 +380,6 @@ func (r *QuestionnaireItemInitial) Validate() error {
 	if r.ValueReference != nil {
 		if err := r.ValueReference.Validate(); err != nil {
 			return fmt.Errorf("ValueReference: %w", err)
-		}
-	}
-	return nil
-}
-
-type QuestionnaireItem struct {
-	Id               *string                         `json:"id,omitempty" bson:"id,omitempty"`                              // Unique id for inter-element referencing
-	LinkId           string                          `json:"linkId" bson:"link_id"`                                         // Unique id for item in questionnaire
-	Definition       []string                        `json:"definition,omitempty" bson:"definition,omitempty"`              // ElementDefinition - details for the item
-	Code             []Coding                        `json:"code,omitempty" bson:"code,omitempty"`                          // Corresponding concept for this item in a terminology
-	Prefix           *string                         `json:"prefix,omitempty" bson:"prefix,omitempty"`                      // E.g. "1(a)", "2.5.3"
-	Text             *string                         `json:"text,omitempty" bson:"text,omitempty"`                          // Primary text for the item
-	Type             string                          `json:"type" bson:"type"`                                              // group | display | boolean | decimal | integer | date | dateTime +
-	EnableWhen       []QuestionnaireItemEnableWhen   `json:"enableWhen,omitempty" bson:"enable_when,omitempty"`             // Only allow data when
-	EnableBehavior   *string                         `json:"enableBehavior,omitempty" bson:"enable_behavior,omitempty"`     // all | any
-	DisabledDisplay  *string                         `json:"disabledDisplay,omitempty" bson:"disabled_display,omitempty"`   // hidden | protected
-	Required         bool                            `json:"required,omitempty" bson:"required,omitempty"`                  // Whether the item must be included in data results
-	Repeats          bool                            `json:"repeats,omitempty" bson:"repeats,omitempty"`                    // Whether the item may repeat
-	ReadOnly         bool                            `json:"readOnly,omitempty" bson:"read_only,omitempty"`                 // Don't allow human editing
-	MaxLength        *int                            `json:"maxLength,omitempty" bson:"max_length,omitempty"`               // No more than these many characters
-	AnswerConstraint *string                         `json:"answerConstraint,omitempty" bson:"answer_constraint,omitempty"` // optionsOnly | optionsOrType | optionsOrString
-	AnswerValueSet   *string                         `json:"answerValueSet,omitempty" bson:"answer_value_set,omitempty"`    // ValueSet containing permitted answers
-	AnswerOption     []QuestionnaireItemAnswerOption `json:"answerOption,omitempty" bson:"answer_option,omitempty"`         // Permitted answer
-	Initial          []QuestionnaireItemInitial      `json:"initial,omitempty" bson:"initial,omitempty"`                    // Initial value(s) when item is first rendered
-	Item             []QuestionnaireItem             `json:"item,omitempty" bson:"item,omitempty"`                          // Nested questionnaire items
-}
-
-func (r *QuestionnaireItem) Validate() error {
-	var emptyString string
-	if r.LinkId == emptyString {
-		return fmt.Errorf("field 'LinkId' is required")
-	}
-	for i, item := range r.Code {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Code[%d]: %w", i, err)
-		}
-	}
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	for i, item := range r.EnableWhen {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("EnableWhen[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.AnswerOption {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("AnswerOption[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Initial {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Initial[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Item {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Item[%d]: %w", i, err)
 		}
 	}
 	return nil

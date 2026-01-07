@@ -7,6 +7,7 @@ import (
 
 // A Capability Statement documents a set of capabilities (behaviors) of a FHIR Server or Client for a particular version of FHIR that may be used as a statement of actual server functionality or a statement of required or desired server implementation.
 type CapabilityStatement struct {
+	ResourceType           string                             `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                            `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                              `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                            `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -48,6 +49,9 @@ type CapabilityStatement struct {
 }
 
 func (r *CapabilityStatement) Validate() error {
+	if r.ResourceType != "CapabilityStatement" {
+		return fmt.Errorf("invalid resourceType: expected 'CapabilityStatement', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -127,136 +131,6 @@ func (r *CapabilityStatement) Validate() error {
 	return nil
 }
 
-type CapabilityStatementSoftware struct {
-	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
-	Name        string  `json:"name" bson:"name"`                                    // A name the software is known by
-	Version     *string `json:"version,omitempty" bson:"version,omitempty"`          // Version covered by this statement
-	ReleaseDate *string `json:"releaseDate,omitempty" bson:"release_date,omitempty"` // Date this version was released
-}
-
-func (r *CapabilityStatementSoftware) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	return nil
-}
-
-type CapabilityStatementImplementation struct {
-	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
-	Description string     `json:"description" bson:"description"`                 // Describes this specific instance
-	Url         *string    `json:"url,omitempty" bson:"url,omitempty"`             // Base URL for the installation
-	Custodian   *Reference `json:"custodian,omitempty" bson:"custodian,omitempty"` // Organization that manages the data
-}
-
-func (r *CapabilityStatementImplementation) Validate() error {
-	var emptyString string
-	if r.Description == emptyString {
-		return fmt.Errorf("field 'Description' is required")
-	}
-	if r.Custodian != nil {
-		if err := r.Custodian.Validate(); err != nil {
-			return fmt.Errorf("Custodian: %w", err)
-		}
-	}
-	return nil
-}
-
-type CapabilityStatementRestSecurity struct {
-	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Cors        bool              `json:"cors,omitempty" bson:"cors,omitempty"`               // Adds CORS Headers (http://enable-cors.org/)
-	Service     []CodeableConcept `json:"service,omitempty" bson:"service,omitempty"`         // OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates
-	Description *string           `json:"description,omitempty" bson:"description,omitempty"` // General description of how security works
-}
-
-func (r *CapabilityStatementRestSecurity) Validate() error {
-	for i, item := range r.Service {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Service[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type CapabilityStatementRestResource struct {
-	Id                *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
-	Type              string                                       `json:"type" bson:"type"`                                                // A resource type that is supported
-	Definition        *string                                      `json:"definition,omitempty" bson:"definition,omitempty"`                // The definition for an additional resource
-	Profile           *string                                      `json:"profile,omitempty" bson:"profile,omitempty"`                      // System-wide profile
-	SupportedProfile  []string                                     `json:"supportedProfile,omitempty" bson:"supported_profile,omitempty"`   // Use-case specific profiles
-	Documentation     *string                                      `json:"documentation,omitempty" bson:"documentation,omitempty"`          // Additional information about the use of the resource type
-	Interaction       []CapabilityStatementRestResourceInteraction `json:"interaction,omitempty" bson:"interaction,omitempty"`              // What interactions are supported?
-	Versioning        *string                                      `json:"versioning,omitempty" bson:"versioning,omitempty"`                // no-version | versioned | versioned-update
-	ReadHistory       bool                                         `json:"readHistory,omitempty" bson:"read_history,omitempty"`             // Whether vRead can return past versions
-	UpdateCreate      bool                                         `json:"updateCreate,omitempty" bson:"update_create,omitempty"`           // If update can commit to a new identity
-	ConditionalCreate bool                                         `json:"conditionalCreate,omitempty" bson:"conditional_create,omitempty"` // If allows/uses conditional create
-	ConditionalRead   *string                                      `json:"conditionalRead,omitempty" bson:"conditional_read,omitempty"`     // not-supported | modified-since | not-match | full-support
-	ConditionalUpdate bool                                         `json:"conditionalUpdate,omitempty" bson:"conditional_update,omitempty"` // If allows/uses conditional update
-	ConditionalPatch  bool                                         `json:"conditionalPatch,omitempty" bson:"conditional_patch,omitempty"`   // If allows/uses conditional patch
-	ConditionalDelete *string                                      `json:"conditionalDelete,omitempty" bson:"conditional_delete,omitempty"` // not-supported | single | multiple - how conditional delete is supported
-	ReferencePolicy   []string                                     `json:"referencePolicy,omitempty" bson:"reference_policy,omitempty"`     // literal | logical | resolves | enforced | local
-	SearchInclude     []string                                     `json:"searchInclude,omitempty" bson:"search_include,omitempty"`         // _include values supported by the server
-	SearchRevInclude  []string                                     `json:"searchRevInclude,omitempty" bson:"search_rev_include,omitempty"`  // _revinclude values supported by the server
-	SearchParam       []CapabilityStatementRestResourceSearchParam `json:"searchParam,omitempty" bson:"search_param,omitempty"`             // Search parameters supported by implementation
-	Operation         []CapabilityStatementRestResourceOperation   `json:"operation,omitempty" bson:"operation,omitempty"`                  // Definition of a resource operation
-}
-
-func (r *CapabilityStatementRestResource) Validate() error {
-	var emptyString string
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	for i, item := range r.Interaction {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Interaction[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SearchParam {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SearchParam[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Operation {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Operation[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type CapabilityStatementRestResourceInteraction struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Code          string  `json:"code" bson:"code"`                                       // read | vread | update | update-conditional | patch | patch-conditional | delete | delete-conditional-single | delete-conditional-multiple | delete-history | delete-history-version | history-instance | history-type | create | create-conditional | search-type
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Anything special about interaction behavior
-}
-
-func (r *CapabilityStatementRestResourceInteraction) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	return nil
-}
-
-type CapabilityStatementRestResourceSearchParam struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Name          string  `json:"name" bson:"name"`                                       // Name for parameter in search url
-	Definition    *string `json:"definition,omitempty" bson:"definition,omitempty"`       // Source of definition for parameter
-	Type          string  `json:"type" bson:"type"`                                       // number | date | string | token | reference | composite | quantity | uri | special | resource
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Server-specific usage
-}
-
-func (r *CapabilityStatementRestResourceSearchParam) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	if r.Type == emptyString {
-		return fmt.Errorf("field 'Type' is required")
-	}
-	return nil
-}
-
 type CapabilityStatementRestResourceOperation struct {
 	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
 	Name          string  `json:"name" bson:"name"`                                       // Name by which the operation/query is invoked
@@ -271,51 +145,6 @@ func (r *CapabilityStatementRestResourceOperation) Validate() error {
 	}
 	if r.Definition == emptyString {
 		return fmt.Errorf("field 'Definition' is required")
-	}
-	return nil
-}
-
-type CapabilityStatementRest struct {
-	Id            *string                                      `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Mode          string                                       `json:"mode" bson:"mode"`                                       // client | server
-	Documentation *string                                      `json:"documentation,omitempty" bson:"documentation,omitempty"` // General description of implementation
-	Security      *CapabilityStatementRestSecurity             `json:"security,omitempty" bson:"security,omitempty"`           // Information about security of implementation
-	Resource      []CapabilityStatementRestResource            `json:"resource,omitempty" bson:"resource,omitempty"`           // Resource served on the REST interface
-	Interaction   []CapabilityStatementRestInteraction         `json:"interaction,omitempty" bson:"interaction,omitempty"`     // What interactions are supported?
-	SearchParam   []CapabilityStatementRestResourceSearchParam `json:"searchParam,omitempty" bson:"search_param,omitempty"`    // Search parameters for searching all resources
-	Operation     []CapabilityStatementRestResourceOperation   `json:"operation,omitempty" bson:"operation,omitempty"`         // Definition of a system level operation
-	Compartment   []string                                     `json:"compartment,omitempty" bson:"compartment,omitempty"`     // Compartments served/used by system
-}
-
-func (r *CapabilityStatementRest) Validate() error {
-	var emptyString string
-	if r.Mode == emptyString {
-		return fmt.Errorf("field 'Mode' is required")
-	}
-	if r.Security != nil {
-		if err := r.Security.Validate(); err != nil {
-			return fmt.Errorf("Security: %w", err)
-		}
-	}
-	for i, item := range r.Resource {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Resource[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Interaction {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Interaction[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.SearchParam {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("SearchParam[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Operation {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Operation[%d]: %w", i, err)
-		}
 	}
 	return nil
 }
@@ -378,6 +207,106 @@ func (r *CapabilityStatementMessagingEndpoint) Validate() error {
 	return nil
 }
 
+type CapabilityStatementImplementation struct {
+	Id          *string    `json:"id,omitempty" bson:"id,omitempty"`               // Unique id for inter-element referencing
+	Description string     `json:"description" bson:"description"`                 // Describes this specific instance
+	Url         *string    `json:"url,omitempty" bson:"url,omitempty"`             // Base URL for the installation
+	Custodian   *Reference `json:"custodian,omitempty" bson:"custodian,omitempty"` // Organization that manages the data
+}
+
+func (r *CapabilityStatementImplementation) Validate() error {
+	var emptyString string
+	if r.Description == emptyString {
+		return fmt.Errorf("field 'Description' is required")
+	}
+	if r.Custodian != nil {
+		if err := r.Custodian.Validate(); err != nil {
+			return fmt.Errorf("Custodian: %w", err)
+		}
+	}
+	return nil
+}
+
+type CapabilityStatementRest struct {
+	Id            *string                                      `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Mode          string                                       `json:"mode" bson:"mode"`                                       // client | server
+	Documentation *string                                      `json:"documentation,omitempty" bson:"documentation,omitempty"` // General description of implementation
+	Security      *CapabilityStatementRestSecurity             `json:"security,omitempty" bson:"security,omitempty"`           // Information about security of implementation
+	Resource      []CapabilityStatementRestResource            `json:"resource,omitempty" bson:"resource,omitempty"`           // Resource served on the REST interface
+	Interaction   []CapabilityStatementRestInteraction         `json:"interaction,omitempty" bson:"interaction,omitempty"`     // What interactions are supported?
+	SearchParam   []CapabilityStatementRestResourceSearchParam `json:"searchParam,omitempty" bson:"search_param,omitempty"`    // Search parameters for searching all resources
+	Operation     []CapabilityStatementRestResourceOperation   `json:"operation,omitempty" bson:"operation,omitempty"`         // Definition of a system level operation
+	Compartment   []string                                     `json:"compartment,omitempty" bson:"compartment,omitempty"`     // Compartments served/used by system
+}
+
+func (r *CapabilityStatementRest) Validate() error {
+	var emptyString string
+	if r.Mode == emptyString {
+		return fmt.Errorf("field 'Mode' is required")
+	}
+	if r.Security != nil {
+		if err := r.Security.Validate(); err != nil {
+			return fmt.Errorf("Security: %w", err)
+		}
+	}
+	for i, item := range r.Resource {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Resource[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Interaction {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Interaction[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SearchParam {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SearchParam[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Operation {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Operation[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type CapabilityStatementRestSecurity struct {
+	Id          *string           `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Cors        bool              `json:"cors,omitempty" bson:"cors,omitempty"`               // Adds CORS Headers (http://enable-cors.org/)
+	Service     []CodeableConcept `json:"service,omitempty" bson:"service,omitempty"`         // OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates
+	Description *string           `json:"description,omitempty" bson:"description,omitempty"` // General description of how security works
+}
+
+func (r *CapabilityStatementRestSecurity) Validate() error {
+	for i, item := range r.Service {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Service[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type CapabilityStatementRestResourceSearchParam struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Name          string  `json:"name" bson:"name"`                                       // Name for parameter in search url
+	Definition    *string `json:"definition,omitempty" bson:"definition,omitempty"`       // Source of definition for parameter
+	Type          string  `json:"type" bson:"type"`                                       // number | date | string | token | reference | composite | quantity | uri | special | resource
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Server-specific usage
+}
+
+func (r *CapabilityStatementRestResourceSearchParam) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	return nil
+}
+
 type CapabilityStatementMessagingSupportedMessage struct {
 	Id         *string `json:"id,omitempty" bson:"id,omitempty"` // Unique id for inter-element referencing
 	Mode       string  `json:"mode" bson:"mode"`                 // sender | receiver
@@ -409,6 +338,81 @@ func (r *CapabilityStatementDocument) Validate() error {
 	}
 	if r.Profile == emptyString {
 		return fmt.Errorf("field 'Profile' is required")
+	}
+	return nil
+}
+
+type CapabilityStatementSoftware struct {
+	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                    // Unique id for inter-element referencing
+	Name        string  `json:"name" bson:"name"`                                    // A name the software is known by
+	Version     *string `json:"version,omitempty" bson:"version,omitempty"`          // Version covered by this statement
+	ReleaseDate *string `json:"releaseDate,omitempty" bson:"release_date,omitempty"` // Date this version was released
+}
+
+func (r *CapabilityStatementSoftware) Validate() error {
+	var emptyString string
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	return nil
+}
+
+type CapabilityStatementRestResource struct {
+	Id                *string                                      `json:"id,omitempty" bson:"id,omitempty"`                                // Unique id for inter-element referencing
+	Type              string                                       `json:"type" bson:"type"`                                                // A resource type that is supported
+	Definition        *string                                      `json:"definition,omitempty" bson:"definition,omitempty"`                // The definition for an additional resource
+	Profile           *string                                      `json:"profile,omitempty" bson:"profile,omitempty"`                      // System-wide profile
+	SupportedProfile  []string                                     `json:"supportedProfile,omitempty" bson:"supported_profile,omitempty"`   // Use-case specific profiles
+	Documentation     *string                                      `json:"documentation,omitempty" bson:"documentation,omitempty"`          // Additional information about the use of the resource type
+	Interaction       []CapabilityStatementRestResourceInteraction `json:"interaction,omitempty" bson:"interaction,omitempty"`              // What interactions are supported?
+	Versioning        *string                                      `json:"versioning,omitempty" bson:"versioning,omitempty"`                // no-version | versioned | versioned-update
+	ReadHistory       bool                                         `json:"readHistory,omitempty" bson:"read_history,omitempty"`             // Whether vRead can return past versions
+	UpdateCreate      bool                                         `json:"updateCreate,omitempty" bson:"update_create,omitempty"`           // If update can commit to a new identity
+	ConditionalCreate bool                                         `json:"conditionalCreate,omitempty" bson:"conditional_create,omitempty"` // If allows/uses conditional create
+	ConditionalRead   *string                                      `json:"conditionalRead,omitempty" bson:"conditional_read,omitempty"`     // not-supported | modified-since | not-match | full-support
+	ConditionalUpdate bool                                         `json:"conditionalUpdate,omitempty" bson:"conditional_update,omitempty"` // If allows/uses conditional update
+	ConditionalPatch  bool                                         `json:"conditionalPatch,omitempty" bson:"conditional_patch,omitempty"`   // If allows/uses conditional patch
+	ConditionalDelete *string                                      `json:"conditionalDelete,omitempty" bson:"conditional_delete,omitempty"` // not-supported | single | multiple - how conditional delete is supported
+	ReferencePolicy   []string                                     `json:"referencePolicy,omitempty" bson:"reference_policy,omitempty"`     // literal | logical | resolves | enforced | local
+	SearchInclude     []string                                     `json:"searchInclude,omitempty" bson:"search_include,omitempty"`         // _include values supported by the server
+	SearchRevInclude  []string                                     `json:"searchRevInclude,omitempty" bson:"search_rev_include,omitempty"`  // _revinclude values supported by the server
+	SearchParam       []CapabilityStatementRestResourceSearchParam `json:"searchParam,omitempty" bson:"search_param,omitempty"`             // Search parameters supported by implementation
+	Operation         []CapabilityStatementRestResourceOperation   `json:"operation,omitempty" bson:"operation,omitempty"`                  // Definition of a resource operation
+}
+
+func (r *CapabilityStatementRestResource) Validate() error {
+	var emptyString string
+	if r.Type == emptyString {
+		return fmt.Errorf("field 'Type' is required")
+	}
+	for i, item := range r.Interaction {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Interaction[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.SearchParam {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("SearchParam[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Operation {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Operation[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+type CapabilityStatementRestResourceInteraction struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Code          string  `json:"code" bson:"code"`                                       // read | vread | update | update-conditional | patch | patch-conditional | delete | delete-conditional-single | delete-conditional-multiple | delete-history | delete-history-version | history-instance | history-type | create | create-conditional | search-type
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Anything special about interaction behavior
+}
+
+func (r *CapabilityStatementRestResourceInteraction) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
 	}
 	return nil
 }

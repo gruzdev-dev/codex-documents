@@ -7,6 +7,7 @@ import (
 
 // The findings and interpretation of diagnostic tests performed on patients, groups of patients, products, substances, devices, and locations, and/or specimens derived from these. The report includes clinical context such as requesting provider information, and some mix of atomic results, images, textual and coded interpretations, and formatted representation of diagnostic reports. The report also includes non-clinical context such as batch analysis and stability reporting of products and substances.
 type DiagnosticReport struct {
+	ResourceType       string                           `json:"resourceType" bson:"resource_type"`                                 // Type of resource
 	Id                 *string                          `json:"id,omitempty" bson:"id,omitempty"`                                  // Logical id of this artifact
 	Meta               *Meta                            `json:"meta,omitempty" bson:"meta,omitempty"`                              // Metadata about the resource
 	ImplicitRules      *string                          `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`           // A set of rules under which this content was created
@@ -43,6 +44,9 @@ type DiagnosticReport struct {
 }
 
 func (r *DiagnosticReport) Validate() error {
+	if r.ResourceType != "DiagnosticReport" {
+		return fmt.Errorf("invalid resourceType: expected 'DiagnosticReport', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

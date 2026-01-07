@@ -7,6 +7,7 @@ import (
 
 // An action that is or was performed on or for a patient, practitioner, device, organization, or location. For example, this can be a physical intervention on a patient like an operation, or less invasive like long term services, counseling, or hypnotherapy.  This can be a quality or safety inspection for a location, organization, or device.  This can be an accreditation procedure on a practitioner for licensing.
 type Procedure struct {
+	ResourceType       string                 `json:"resourceType" bson:"resource_type"`                                  // Type of resource
 	Id                 *string                `json:"id,omitempty" bson:"id,omitempty"`                                   // Logical id of this artifact
 	Meta               *Meta                  `json:"meta,omitempty" bson:"meta,omitempty"`                               // Metadata about the resource
 	ImplicitRules      *string                `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`            // A set of rules under which this content was created
@@ -49,6 +50,9 @@ type Procedure struct {
 }
 
 func (r *Procedure) Validate() error {
+	if r.ResourceType != "Procedure" {
+		return fmt.Errorf("invalid resourceType: expected 'Procedure', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

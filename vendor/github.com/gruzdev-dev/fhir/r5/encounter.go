@@ -7,6 +7,7 @@ import (
 
 // An interaction between healthcare provider(s), and/or patient(s) for the purpose of providing healthcare service(s) or assessing the health status of patient(s).
 type Encounter struct {
+	ResourceType       string                    `json:"resourceType" bson:"resource_type"`                                 // Type of resource
 	Id                 *string                   `json:"id,omitempty" bson:"id,omitempty"`                                  // Logical id of this artifact
 	Meta               *Meta                     `json:"meta,omitempty" bson:"meta,omitempty"`                              // Metadata about the resource
 	ImplicitRules      *string                   `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`           // A set of rules under which this content was created
@@ -45,6 +46,9 @@ type Encounter struct {
 }
 
 func (r *Encounter) Validate() error {
+	if r.ResourceType != "Encounter" {
+		return fmt.Errorf("invalid resourceType: expected 'Encounter', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -192,6 +196,80 @@ func (r *Encounter) Validate() error {
 	return nil
 }
 
+type EncounterAdmission struct {
+	Id                     *string          `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
+	PreAdmissionIdentifier *Identifier      `json:"preAdmissionIdentifier,omitempty" bson:"pre_admission_identifier,omitempty"` // Pre-admission identifier
+	Origin                 *Reference       `json:"origin,omitempty" bson:"origin,omitempty"`                                   // The location/organization from which the patient came before admission
+	AdmitSource            *CodeableConcept `json:"admitSource,omitempty" bson:"admit_source,omitempty"`                        // From where patient was admitted (physician referral, transfer)
+	ReAdmission            *CodeableConcept `json:"reAdmission,omitempty" bson:"re_admission,omitempty"`                        // Indicates that the patient is being re-admitted
+	Destination            *Reference       `json:"destination,omitempty" bson:"destination,omitempty"`                         // Location/organization to which the patient is discharged
+	DischargeDisposition   *CodeableConcept `json:"dischargeDisposition,omitempty" bson:"discharge_disposition,omitempty"`      // Category or kind of location after discharge
+}
+
+func (r *EncounterAdmission) Validate() error {
+	if r.PreAdmissionIdentifier != nil {
+		if err := r.PreAdmissionIdentifier.Validate(); err != nil {
+			return fmt.Errorf("PreAdmissionIdentifier: %w", err)
+		}
+	}
+	if r.Origin != nil {
+		if err := r.Origin.Validate(); err != nil {
+			return fmt.Errorf("Origin: %w", err)
+		}
+	}
+	if r.AdmitSource != nil {
+		if err := r.AdmitSource.Validate(); err != nil {
+			return fmt.Errorf("AdmitSource: %w", err)
+		}
+	}
+	if r.ReAdmission != nil {
+		if err := r.ReAdmission.Validate(); err != nil {
+			return fmt.Errorf("ReAdmission: %w", err)
+		}
+	}
+	if r.Destination != nil {
+		if err := r.Destination.Validate(); err != nil {
+			return fmt.Errorf("Destination: %w", err)
+		}
+	}
+	if r.DischargeDisposition != nil {
+		if err := r.DischargeDisposition.Validate(); err != nil {
+			return fmt.Errorf("DischargeDisposition: %w", err)
+		}
+	}
+	return nil
+}
+
+type EncounterLocation struct {
+	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
+	Location *Reference       `json:"location" bson:"location"`                 // Location the encounter takes place
+	Status   *string          `json:"status,omitempty" bson:"status,omitempty"` // planned | active | reserved | completed
+	Form     *CodeableConcept `json:"form,omitempty" bson:"form,omitempty"`     // The physical type of the location (usually the level in the location hierarchy - bed, room, ward, virtual etc.)
+	Period   *Period          `json:"period,omitempty" bson:"period,omitempty"` // Time period during which the patient was present at the location
+}
+
+func (r *EncounterLocation) Validate() error {
+	if r.Location == nil {
+		return fmt.Errorf("field 'Location' is required")
+	}
+	if r.Location != nil {
+		if err := r.Location.Validate(); err != nil {
+			return fmt.Errorf("Location: %w", err)
+		}
+	}
+	if r.Form != nil {
+		if err := r.Form.Validate(); err != nil {
+			return fmt.Errorf("Form: %w", err)
+		}
+	}
+	if r.Period != nil {
+		if err := r.Period.Validate(); err != nil {
+			return fmt.Errorf("Period: %w", err)
+		}
+	}
+	return nil
+}
+
 type EncounterBusinessStatus struct {
 	Id            *string          `json:"id,omitempty" bson:"id,omitempty"`                        // Unique id for inter-element referencing
 	Code          *CodeableConcept `json:"code" bson:"code"`                                        // The current business status
@@ -277,80 +355,6 @@ func (r *EncounterDiagnosis) Validate() error {
 	for i, item := range r.Use {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Use[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type EncounterAdmission struct {
-	Id                     *string          `json:"id,omitempty" bson:"id,omitempty"`                                           // Unique id for inter-element referencing
-	PreAdmissionIdentifier *Identifier      `json:"preAdmissionIdentifier,omitempty" bson:"pre_admission_identifier,omitempty"` // Pre-admission identifier
-	Origin                 *Reference       `json:"origin,omitempty" bson:"origin,omitempty"`                                   // The location/organization from which the patient came before admission
-	AdmitSource            *CodeableConcept `json:"admitSource,omitempty" bson:"admit_source,omitempty"`                        // From where patient was admitted (physician referral, transfer)
-	ReAdmission            *CodeableConcept `json:"reAdmission,omitempty" bson:"re_admission,omitempty"`                        // Indicates that the patient is being re-admitted
-	Destination            *Reference       `json:"destination,omitempty" bson:"destination,omitempty"`                         // Location/organization to which the patient is discharged
-	DischargeDisposition   *CodeableConcept `json:"dischargeDisposition,omitempty" bson:"discharge_disposition,omitempty"`      // Category or kind of location after discharge
-}
-
-func (r *EncounterAdmission) Validate() error {
-	if r.PreAdmissionIdentifier != nil {
-		if err := r.PreAdmissionIdentifier.Validate(); err != nil {
-			return fmt.Errorf("PreAdmissionIdentifier: %w", err)
-		}
-	}
-	if r.Origin != nil {
-		if err := r.Origin.Validate(); err != nil {
-			return fmt.Errorf("Origin: %w", err)
-		}
-	}
-	if r.AdmitSource != nil {
-		if err := r.AdmitSource.Validate(); err != nil {
-			return fmt.Errorf("AdmitSource: %w", err)
-		}
-	}
-	if r.ReAdmission != nil {
-		if err := r.ReAdmission.Validate(); err != nil {
-			return fmt.Errorf("ReAdmission: %w", err)
-		}
-	}
-	if r.Destination != nil {
-		if err := r.Destination.Validate(); err != nil {
-			return fmt.Errorf("Destination: %w", err)
-		}
-	}
-	if r.DischargeDisposition != nil {
-		if err := r.DischargeDisposition.Validate(); err != nil {
-			return fmt.Errorf("DischargeDisposition: %w", err)
-		}
-	}
-	return nil
-}
-
-type EncounterLocation struct {
-	Id       *string          `json:"id,omitempty" bson:"id,omitempty"`         // Unique id for inter-element referencing
-	Location *Reference       `json:"location" bson:"location"`                 // Location the encounter takes place
-	Status   *string          `json:"status,omitempty" bson:"status,omitempty"` // planned | active | reserved | completed
-	Form     *CodeableConcept `json:"form,omitempty" bson:"form,omitempty"`     // The physical type of the location (usually the level in the location hierarchy - bed, room, ward, virtual etc.)
-	Period   *Period          `json:"period,omitempty" bson:"period,omitempty"` // Time period during which the patient was present at the location
-}
-
-func (r *EncounterLocation) Validate() error {
-	if r.Location == nil {
-		return fmt.Errorf("field 'Location' is required")
-	}
-	if r.Location != nil {
-		if err := r.Location.Validate(); err != nil {
-			return fmt.Errorf("Location: %w", err)
-		}
-	}
-	if r.Form != nil {
-		if err := r.Form.Validate(); err != nil {
-			return fmt.Errorf("Form: %w", err)
-		}
-	}
-	if r.Period != nil {
-		if err := r.Period.Validate(); err != nil {
-			return fmt.Errorf("Period: %w", err)
 		}
 	}
 	return nil

@@ -7,6 +7,7 @@ import (
 
 // The details of a healthcare service available at a location or in a catalog.  In the case where there is a hierarchy of services (for example, Lab -> Pathology -> Wound Cultures), this can be represented using a set of linked HealthcareServices.
 type HealthcareService struct {
+	ResourceType         string                         `json:"resourceType" bson:"resource_type"`                                      // Type of resource
 	Id                   *string                        `json:"id,omitempty" bson:"id,omitempty"`                                       // Logical id of this artifact
 	Meta                 *Meta                          `json:"meta,omitempty" bson:"meta,omitempty"`                                   // Metadata about the resource
 	ImplicitRules        *string                        `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                // A set of rules under which this content was created
@@ -40,6 +41,9 @@ type HealthcareService struct {
 }
 
 func (r *HealthcareService) Validate() error {
+	if r.ResourceType != "HealthcareService" {
+		return fmt.Errorf("invalid resourceType: expected 'HealthcareService', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

@@ -7,6 +7,7 @@ import (
 
 // A selection of DICOM SOP instances within a single Study and Series. This might include additional specifics such as a set of frames or an image region, allowing linkage to an Observation Resource.
 type ImagingSelection struct {
+	ResourceType        string                          `json:"resourceType" bson:"resource_type"`                                     // Type of resource
 	Id                  *string                         `json:"id,omitempty" bson:"id,omitempty"`                                      // Logical id of this artifact
 	Meta                *Meta                           `json:"meta,omitempty" bson:"meta,omitempty"`                                  // Metadata about the resource
 	ImplicitRules       *string                         `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`               // A set of rules under which this content was created
@@ -35,6 +36,9 @@ type ImagingSelection struct {
 }
 
 func (r *ImagingSelection) Validate() error {
+	if r.ResourceType != "ImagingSelection" {
+		return fmt.Errorf("invalid resourceType: expected 'ImagingSelection', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

@@ -7,6 +7,7 @@ import (
 
 // A clinical condition, problem, diagnosis, or other event, situation, issue, or clinical concept that has risen to a level of concern.
 type Condition struct {
+	ResourceType       string              `json:"resourceType" bson:"resource_type"`                                 // Type of resource
 	Id                 *string             `json:"id,omitempty" bson:"id,omitempty"`                                  // Logical id of this artifact
 	Meta               *Meta               `json:"meta,omitempty" bson:"meta,omitempty"`                              // Metadata about the resource
 	ImplicitRules      *string             `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`           // A set of rules under which this content was created
@@ -42,6 +43,9 @@ type Condition struct {
 }
 
 func (r *Condition) Validate() error {
+	if r.ResourceType != "Condition" {
+		return fmt.Errorf("invalid resourceType: expected 'Condition', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

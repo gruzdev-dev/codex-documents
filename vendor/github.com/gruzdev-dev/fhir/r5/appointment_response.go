@@ -7,6 +7,7 @@ import (
 
 // A reply to an appointment request for a patient and/or practitioner(s), such as a confirmation or rejection.
 type AppointmentResponse struct {
+	ResourceType      string            `json:"resourceType" bson:"resource_type"`                            // Type of resource
 	Id                *string           `json:"id,omitempty" bson:"id,omitempty"`                             // Logical id of this artifact
 	Meta              *Meta             `json:"meta,omitempty" bson:"meta,omitempty"`                         // Metadata about the resource
 	ImplicitRules     *string           `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`      // A set of rules under which this content was created
@@ -28,6 +29,9 @@ type AppointmentResponse struct {
 }
 
 func (r *AppointmentResponse) Validate() error {
+	if r.ResourceType != "AppointmentResponse" {
+		return fmt.Errorf("invalid resourceType: expected 'AppointmentResponse', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)

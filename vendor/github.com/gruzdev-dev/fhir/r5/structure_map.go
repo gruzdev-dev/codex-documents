@@ -7,6 +7,7 @@ import (
 
 // A Map of relationships between 2 structures that can be used to transform data.
 type StructureMap struct {
+	ResourceType           string                  `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string                 `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                   `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string                 `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -38,6 +39,9 @@ type StructureMap struct {
 }
 
 func (r *StructureMap) Validate() error {
+	if r.ResourceType != "StructureMap" {
+		return fmt.Errorf("invalid resourceType: expected 'StructureMap', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -104,6 +108,29 @@ func (r *StructureMap) Validate() error {
 	return nil
 }
 
+type StructureMapGroupRuleSource struct {
+	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
+	Context      string  `json:"context" bson:"context"`                                // Type or variable this rule applies to
+	Min          *int    `json:"min,omitempty" bson:"min,omitempty"`                    // Specified minimum cardinality
+	Max          *string `json:"max,omitempty" bson:"max,omitempty"`                    // Specified maximum cardinality (number or *)
+	Type         *string `json:"type,omitempty" bson:"type,omitempty"`                  // Rule only applies if source has this type
+	DefaultValue *string `json:"defaultValue,omitempty" bson:"default_value,omitempty"` // Default value if no value exists
+	Element      *string `json:"element,omitempty" bson:"element,omitempty"`            // Optional field for this source
+	ListMode     *string `json:"listMode,omitempty" bson:"list_mode,omitempty"`         // first | not_first | last | not_last | only_one
+	Variable     *string `json:"variable,omitempty" bson:"variable,omitempty"`          // Named context for field, if a field is specified
+	Condition    *string `json:"condition,omitempty" bson:"condition,omitempty"`        // FHIRPath expression  - must be true or the rule does not apply
+	Check        *string `json:"check,omitempty" bson:"check,omitempty"`                // FHIRPath expression  - must be true or the mapping engine throws an error instead of completing
+	LogMessage   *string `json:"logMessage,omitempty" bson:"log_message,omitempty"`     // Message to put in log if source exists (FHIRPath)
+}
+
+func (r *StructureMapGroupRuleSource) Validate() error {
+	var emptyString string
+	if r.Context == emptyString {
+		return fmt.Errorf("field 'Context' is required")
+	}
+	return nil
+}
+
 type StructureMapGroupRuleTarget struct {
 	Id         *string                                `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Context    *string                                `json:"context,omitempty" bson:"context,omitempty"`         // Variable this rule applies to
@@ -120,102 +147,6 @@ func (r *StructureMapGroupRuleTarget) Validate() error {
 		if err := item.Validate(); err != nil {
 			return fmt.Errorf("Parameter[%d]: %w", i, err)
 		}
-	}
-	return nil
-}
-
-type StructureMapGroupInput struct {
-	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Name          string  `json:"name" bson:"name"`                                       // Name for this instance of data
-	Type          *string `json:"type,omitempty" bson:"type,omitempty"`                   // Type for this instance of data
-	Mode          string  `json:"mode" bson:"mode"`                                       // source | target
-	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation for this instance of data
-}
-
-func (r *StructureMapGroupInput) Validate() error {
-	var emptyString string
-	if r.Name == emptyString {
-		return fmt.Errorf("field 'Name' is required")
-	}
-	if r.Mode == emptyString {
-		return fmt.Errorf("field 'Mode' is required")
-	}
-	return nil
-}
-
-type StructureMapGroupRule struct {
-	Id            *string                          `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
-	Name          *string                          `json:"name,omitempty" bson:"name,omitempty"`                   // Name of the rule for internal references
-	Source        []StructureMapGroupRuleSource    `json:"source" bson:"source"`                                   // Source inputs to the mapping
-	Target        []StructureMapGroupRuleTarget    `json:"target,omitempty" bson:"target,omitempty"`               // Content to create because of this mapping rule
-	Rule          []StructureMapGroupRule          `json:"rule,omitempty" bson:"rule,omitempty"`                   // Rules contained in this rule
-	Dependent     []StructureMapGroupRuleDependent `json:"dependent,omitempty" bson:"dependent,omitempty"`         // Which other rules to apply in the context of this rule
-	Documentation *string                          `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation for this instance of data
-}
-
-func (r *StructureMapGroupRule) Validate() error {
-	if len(r.Source) < 1 {
-		return fmt.Errorf("field 'Source' must have at least 1 elements")
-	}
-	for i, item := range r.Source {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Source[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Target {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Target[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Rule {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Rule[%d]: %w", i, err)
-		}
-	}
-	for i, item := range r.Dependent {
-		if err := item.Validate(); err != nil {
-			return fmt.Errorf("Dependent[%d]: %w", i, err)
-		}
-	}
-	return nil
-}
-
-type StructureMapGroupRuleTargetParameter struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	ValueId       *string  `json:"valueId" bson:"value_id"`              // Parameter value - variable or literal
-	ValueString   *string  `json:"valueString" bson:"value_string"`      // Parameter value - variable or literal
-	ValueBoolean  *bool    `json:"valueBoolean" bson:"value_boolean"`    // Parameter value - variable or literal
-	ValueInteger  *int     `json:"valueInteger" bson:"value_integer"`    // Parameter value - variable or literal
-	ValueDecimal  *float64 `json:"valueDecimal" bson:"value_decimal"`    // Parameter value - variable or literal
-	ValueDate     *string  `json:"valueDate" bson:"value_date"`          // Parameter value - variable or literal
-	ValueTime     *string  `json:"valueTime" bson:"value_time"`          // Parameter value - variable or literal
-	ValueDateTime *string  `json:"valueDateTime" bson:"value_date_time"` // Parameter value - variable or literal
-}
-
-func (r *StructureMapGroupRuleTargetParameter) Validate() error {
-	if r.ValueId == nil {
-		return fmt.Errorf("field 'ValueId' is required")
-	}
-	if r.ValueString == nil {
-		return fmt.Errorf("field 'ValueString' is required")
-	}
-	if r.ValueBoolean == nil {
-		return fmt.Errorf("field 'ValueBoolean' is required")
-	}
-	if r.ValueInteger == nil {
-		return fmt.Errorf("field 'ValueInteger' is required")
-	}
-	if r.ValueDecimal == nil {
-		return fmt.Errorf("field 'ValueDecimal' is required")
-	}
-	if r.ValueDate == nil {
-		return fmt.Errorf("field 'ValueDate' is required")
-	}
-	if r.ValueTime == nil {
-		return fmt.Errorf("field 'ValueTime' is required")
-	}
-	if r.ValueDateTime == nil {
-		return fmt.Errorf("field 'ValueDateTime' is required")
 	}
 	return nil
 }
@@ -302,25 +233,98 @@ func (r *StructureMapGroup) Validate() error {
 	return nil
 }
 
-type StructureMapGroupRuleSource struct {
-	Id           *string `json:"id,omitempty" bson:"id,omitempty"`                      // Unique id for inter-element referencing
-	Context      string  `json:"context" bson:"context"`                                // Type or variable this rule applies to
-	Min          *int    `json:"min,omitempty" bson:"min,omitempty"`                    // Specified minimum cardinality
-	Max          *string `json:"max,omitempty" bson:"max,omitempty"`                    // Specified maximum cardinality (number or *)
-	Type         *string `json:"type,omitempty" bson:"type,omitempty"`                  // Rule only applies if source has this type
-	DefaultValue *string `json:"defaultValue,omitempty" bson:"default_value,omitempty"` // Default value if no value exists
-	Element      *string `json:"element,omitempty" bson:"element,omitempty"`            // Optional field for this source
-	ListMode     *string `json:"listMode,omitempty" bson:"list_mode,omitempty"`         // first | not_first | last | not_last | only_one
-	Variable     *string `json:"variable,omitempty" bson:"variable,omitempty"`          // Named context for field, if a field is specified
-	Condition    *string `json:"condition,omitempty" bson:"condition,omitempty"`        // FHIRPath expression  - must be true or the rule does not apply
-	Check        *string `json:"check,omitempty" bson:"check,omitempty"`                // FHIRPath expression  - must be true or the mapping engine throws an error instead of completing
-	LogMessage   *string `json:"logMessage,omitempty" bson:"log_message,omitempty"`     // Message to put in log if source exists (FHIRPath)
+type StructureMapGroupInput struct {
+	Id            *string `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Name          string  `json:"name" bson:"name"`                                       // Name for this instance of data
+	Type          *string `json:"type,omitempty" bson:"type,omitempty"`                   // Type for this instance of data
+	Mode          string  `json:"mode" bson:"mode"`                                       // source | target
+	Documentation *string `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation for this instance of data
 }
 
-func (r *StructureMapGroupRuleSource) Validate() error {
+func (r *StructureMapGroupInput) Validate() error {
 	var emptyString string
-	if r.Context == emptyString {
-		return fmt.Errorf("field 'Context' is required")
+	if r.Name == emptyString {
+		return fmt.Errorf("field 'Name' is required")
+	}
+	if r.Mode == emptyString {
+		return fmt.Errorf("field 'Mode' is required")
+	}
+	return nil
+}
+
+type StructureMapGroupRuleTargetParameter struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	ValueId       *string  `json:"valueId" bson:"value_id"`              // Parameter value - variable or literal
+	ValueString   *string  `json:"valueString" bson:"value_string"`      // Parameter value - variable or literal
+	ValueBoolean  *bool    `json:"valueBoolean" bson:"value_boolean"`    // Parameter value - variable or literal
+	ValueInteger  *int     `json:"valueInteger" bson:"value_integer"`    // Parameter value - variable or literal
+	ValueDecimal  *float64 `json:"valueDecimal" bson:"value_decimal"`    // Parameter value - variable or literal
+	ValueDate     *string  `json:"valueDate" bson:"value_date"`          // Parameter value - variable or literal
+	ValueTime     *string  `json:"valueTime" bson:"value_time"`          // Parameter value - variable or literal
+	ValueDateTime *string  `json:"valueDateTime" bson:"value_date_time"` // Parameter value - variable or literal
+}
+
+func (r *StructureMapGroupRuleTargetParameter) Validate() error {
+	if r.ValueId == nil {
+		return fmt.Errorf("field 'ValueId' is required")
+	}
+	if r.ValueString == nil {
+		return fmt.Errorf("field 'ValueString' is required")
+	}
+	if r.ValueBoolean == nil {
+		return fmt.Errorf("field 'ValueBoolean' is required")
+	}
+	if r.ValueInteger == nil {
+		return fmt.Errorf("field 'ValueInteger' is required")
+	}
+	if r.ValueDecimal == nil {
+		return fmt.Errorf("field 'ValueDecimal' is required")
+	}
+	if r.ValueDate == nil {
+		return fmt.Errorf("field 'ValueDate' is required")
+	}
+	if r.ValueTime == nil {
+		return fmt.Errorf("field 'ValueTime' is required")
+	}
+	if r.ValueDateTime == nil {
+		return fmt.Errorf("field 'ValueDateTime' is required")
+	}
+	return nil
+}
+
+type StructureMapGroupRule struct {
+	Id            *string                          `json:"id,omitempty" bson:"id,omitempty"`                       // Unique id for inter-element referencing
+	Name          *string                          `json:"name,omitempty" bson:"name,omitempty"`                   // Name of the rule for internal references
+	Source        []StructureMapGroupRuleSource    `json:"source" bson:"source"`                                   // Source inputs to the mapping
+	Target        []StructureMapGroupRuleTarget    `json:"target,omitempty" bson:"target,omitempty"`               // Content to create because of this mapping rule
+	Rule          []StructureMapGroupRule          `json:"rule,omitempty" bson:"rule,omitempty"`                   // Rules contained in this rule
+	Dependent     []StructureMapGroupRuleDependent `json:"dependent,omitempty" bson:"dependent,omitempty"`         // Which other rules to apply in the context of this rule
+	Documentation *string                          `json:"documentation,omitempty" bson:"documentation,omitempty"` // Documentation for this instance of data
+}
+
+func (r *StructureMapGroupRule) Validate() error {
+	if len(r.Source) < 1 {
+		return fmt.Errorf("field 'Source' must have at least 1 elements")
+	}
+	for i, item := range r.Source {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Source[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Target {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Target[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Rule {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Rule[%d]: %w", i, err)
+		}
+	}
+	for i, item := range r.Dependent {
+		if err := item.Validate(); err != nil {
+			return fmt.Errorf("Dependent[%d]: %w", i, err)
+		}
 	}
 	return nil
 }

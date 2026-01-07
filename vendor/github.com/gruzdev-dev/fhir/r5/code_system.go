@@ -7,6 +7,7 @@ import (
 
 // The CodeSystem resource is used to declare the existence of and describe a code system or code system supplement and its key properties, and optionally define a part or all of its content.
 type CodeSystem struct {
+	ResourceType           string               `json:"resourceType" bson:"resource_type"`                                          // Type of resource
 	Id                     *string              `json:"id,omitempty" bson:"id,omitempty"`                                           // Logical id of this artifact
 	Meta                   *Meta                `json:"meta,omitempty" bson:"meta,omitempty"`                                       // Metadata about the resource
 	ImplicitRules          *string              `json:"implicitRules,omitempty" bson:"implicit_rules,omitempty"`                    // A set of rules under which this content was created
@@ -54,6 +55,9 @@ type CodeSystem struct {
 }
 
 func (r *CodeSystem) Validate() error {
+	if r.ResourceType != "CodeSystem" {
+		return fmt.Errorf("invalid resourceType: expected 'CodeSystem', got '%s'", r.ResourceType)
+	}
 	if r.Meta != nil {
 		if err := r.Meta.Validate(); err != nil {
 			return fmt.Errorf("Meta: %w", err)
@@ -149,6 +153,74 @@ func (r *CodeSystem) Validate() error {
 	return nil
 }
 
+type CodeSystemConceptProperty struct {
+	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
+	Code          string   `json:"code" bson:"code"`                     // Reference to CodeSystem.property.code or a FHIR defined concept-property
+	ValueCode     *string  `json:"valueCode" bson:"value_code"`          // Value of the property for this concept
+	ValueCoding   *Coding  `json:"valueCoding" bson:"value_coding"`      // Value of the property for this concept
+	ValueString   *string  `json:"valueString" bson:"value_string"`      // Value of the property for this concept
+	ValueInteger  *int     `json:"valueInteger" bson:"value_integer"`    // Value of the property for this concept
+	ValueBoolean  *bool    `json:"valueBoolean" bson:"value_boolean"`    // Value of the property for this concept
+	ValueDateTime *string  `json:"valueDateTime" bson:"value_date_time"` // Value of the property for this concept
+	ValueDecimal  *float64 `json:"valueDecimal" bson:"value_decimal"`    // Value of the property for this concept
+}
+
+func (r *CodeSystemConceptProperty) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if r.ValueCode == nil {
+		return fmt.Errorf("field 'ValueCode' is required")
+	}
+	if r.ValueCoding == nil {
+		return fmt.Errorf("field 'ValueCoding' is required")
+	}
+	if r.ValueCoding != nil {
+		if err := r.ValueCoding.Validate(); err != nil {
+			return fmt.Errorf("ValueCoding: %w", err)
+		}
+	}
+	if r.ValueString == nil {
+		return fmt.Errorf("field 'ValueString' is required")
+	}
+	if r.ValueInteger == nil {
+		return fmt.Errorf("field 'ValueInteger' is required")
+	}
+	if r.ValueBoolean == nil {
+		return fmt.Errorf("field 'ValueBoolean' is required")
+	}
+	if r.ValueDateTime == nil {
+		return fmt.Errorf("field 'ValueDateTime' is required")
+	}
+	if r.ValueDecimal == nil {
+		return fmt.Errorf("field 'ValueDecimal' is required")
+	}
+	return nil
+}
+
+type CodeSystemFilter struct {
+	Id          *string  `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
+	Code        string   `json:"code" bson:"code"`                                   // Code that identifies the filter
+	Description *string  `json:"description,omitempty" bson:"description,omitempty"` // How or why the filter is used
+	Operator    []string `json:"operator" bson:"operator"`                           // = | is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | child-of | descendent-leaf | exists
+	Value       string   `json:"value" bson:"value"`                                 // What to use for the value
+}
+
+func (r *CodeSystemFilter) Validate() error {
+	var emptyString string
+	if r.Code == emptyString {
+		return fmt.Errorf("field 'Code' is required")
+	}
+	if len(r.Operator) < 1 {
+		return fmt.Errorf("field 'Operator' must have at least 1 elements")
+	}
+	if r.Value == emptyString {
+		return fmt.Errorf("field 'Value' is required")
+	}
+	return nil
+}
+
 type CodeSystemProperty struct {
 	Id          *string `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
 	Code        string  `json:"code" bson:"code"`                                   // Identifies the property on the concepts, and when referred to in operations
@@ -221,74 +293,6 @@ func (r *CodeSystemConceptDesignation) Validate() error {
 		}
 	}
 	var emptyString string
-	if r.Value == emptyString {
-		return fmt.Errorf("field 'Value' is required")
-	}
-	return nil
-}
-
-type CodeSystemConceptProperty struct {
-	Id            *string  `json:"id,omitempty" bson:"id,omitempty"`     // Unique id for inter-element referencing
-	Code          string   `json:"code" bson:"code"`                     // Reference to CodeSystem.property.code or a FHIR defined concept-property
-	ValueCode     *string  `json:"valueCode" bson:"value_code"`          // Value of the property for this concept
-	ValueCoding   *Coding  `json:"valueCoding" bson:"value_coding"`      // Value of the property for this concept
-	ValueString   *string  `json:"valueString" bson:"value_string"`      // Value of the property for this concept
-	ValueInteger  *int     `json:"valueInteger" bson:"value_integer"`    // Value of the property for this concept
-	ValueBoolean  *bool    `json:"valueBoolean" bson:"value_boolean"`    // Value of the property for this concept
-	ValueDateTime *string  `json:"valueDateTime" bson:"value_date_time"` // Value of the property for this concept
-	ValueDecimal  *float64 `json:"valueDecimal" bson:"value_decimal"`    // Value of the property for this concept
-}
-
-func (r *CodeSystemConceptProperty) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if r.ValueCode == nil {
-		return fmt.Errorf("field 'ValueCode' is required")
-	}
-	if r.ValueCoding == nil {
-		return fmt.Errorf("field 'ValueCoding' is required")
-	}
-	if r.ValueCoding != nil {
-		if err := r.ValueCoding.Validate(); err != nil {
-			return fmt.Errorf("ValueCoding: %w", err)
-		}
-	}
-	if r.ValueString == nil {
-		return fmt.Errorf("field 'ValueString' is required")
-	}
-	if r.ValueInteger == nil {
-		return fmt.Errorf("field 'ValueInteger' is required")
-	}
-	if r.ValueBoolean == nil {
-		return fmt.Errorf("field 'ValueBoolean' is required")
-	}
-	if r.ValueDateTime == nil {
-		return fmt.Errorf("field 'ValueDateTime' is required")
-	}
-	if r.ValueDecimal == nil {
-		return fmt.Errorf("field 'ValueDecimal' is required")
-	}
-	return nil
-}
-
-type CodeSystemFilter struct {
-	Id          *string  `json:"id,omitempty" bson:"id,omitempty"`                   // Unique id for inter-element referencing
-	Code        string   `json:"code" bson:"code"`                                   // Code that identifies the filter
-	Description *string  `json:"description,omitempty" bson:"description,omitempty"` // How or why the filter is used
-	Operator    []string `json:"operator" bson:"operator"`                           // = | is-a | descendent-of | is-not-a | regex | in | not-in | generalizes | child-of | descendent-leaf | exists
-	Value       string   `json:"value" bson:"value"`                                 // What to use for the value
-}
-
-func (r *CodeSystemFilter) Validate() error {
-	var emptyString string
-	if r.Code == emptyString {
-		return fmt.Errorf("field 'Code' is required")
-	}
-	if len(r.Operator) < 1 {
-		return fmt.Errorf("field 'Operator' must have at least 1 elements")
-	}
 	if r.Value == emptyString {
 		return fmt.Errorf("field 'Value' is required")
 	}
