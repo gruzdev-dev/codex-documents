@@ -61,5 +61,5 @@ func (h *Handler) UpdatePatient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	h.respondWithResource(w, http.StatusOK, &patient)
 }

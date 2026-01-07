@@ -4,6 +4,7 @@ import (
 	"codex-documents/adapters/http"
 	"codex-documents/adapters/storage/mongodb"
 	"codex-documents/configs"
+	"codex-documents/core/ports"
 	"codex-documents/core/services"
 	"codex-documents/core/validator"
 	"codex-documents/pkg/database"
@@ -22,7 +23,7 @@ func BuildAppContainer() (*dig.Container, error) {
 		return nil, err
 	}
 
-	if err := c.Provide(mongodb.NewPatientRepo); err != nil {
+	if err := c.Provide(mongodb.NewPatientRepo, dig.As(new(ports.PatientRepository))); err != nil {
 		return nil, err
 	}
 
@@ -30,7 +31,7 @@ func BuildAppContainer() (*dig.Container, error) {
 		return nil, err
 	}
 
-	if err := c.Provide(services.NewPatientService); err != nil {
+	if err := c.Provide(services.NewPatientService, dig.As(new(ports.PatientService))); err != nil {
 		return nil, err
 	}
 

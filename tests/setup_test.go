@@ -36,6 +36,7 @@ func SetupTestEnv(t *testing.T) *TestEnv {
 
 	os.Setenv("MONGO_URI", uri)
 	os.Setenv("MONGO_DATABASE", "test_db")
+	os.Setenv("JWT_SECRET", "secret-key")
 
 	c, err := container.BuildAppContainer()
 	require.NoError(t, err)

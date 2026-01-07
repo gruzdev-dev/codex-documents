@@ -20,14 +20,13 @@ type Config struct {
 }
 
 func NewConfig() (*Config, error) {
-	configFile, err := os.ReadFile("config.yaml")
-	if err != nil {
-		return nil, err
-	}
-
 	var cfg Config
-	if err := yaml.Unmarshal(configFile, &cfg); err != nil {
-		return nil, err
+
+	configFile, err := os.ReadFile("config.yaml")
+	if err == nil {
+		if err := yaml.Unmarshal(configFile, &cfg); err != nil {
+			return nil, err
+		}
 	}
 
 	if envPort := os.Getenv("SERVER_PORT"); envPort != "" {
