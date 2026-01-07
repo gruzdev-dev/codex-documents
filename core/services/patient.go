@@ -9,6 +9,7 @@ import (
 	"codex-documents/core/validator"
 	"codex-documents/pkg/identity"
 
+	"github.com/google/uuid"
 	models "github.com/gruzdev-dev/fhir/r5"
 )
 
@@ -27,6 +28,11 @@ func NewPatientService(repo ports.PatientRepository, v *validator.PatientValidat
 func (s *PatientService) Create(ctx context.Context, patient *models.Patient) error {
 	if err := s.validator.Validate(patient); err != nil {
 		return fmt.Errorf("%w: %v", domain.ErrInvalidInput, err)
+	}
+
+	if patient.Id == nil {
+		id := uuid.New().String()
+		patient.Id = &id
 	}
 
 	if err := s.repo.Create(ctx, patient); err != nil {
