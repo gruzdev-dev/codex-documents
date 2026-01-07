@@ -14,8 +14,8 @@ type Config struct {
 		JWTSecret string `yaml:"jwt_secret"`
 	} `yaml:"auth"`
 	MongoDB struct {
-		URI        string `yaml:"uri"`
-		Database   string `yaml:"database"`
+		URI      string `yaml:"uri"`
+		Database string `yaml:"database"`
 	} `yaml:"mongodb"`
 }
 
