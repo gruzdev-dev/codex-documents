@@ -33,7 +33,6 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	api.Use(authMid.Handler)
 
 	p := api.PathPrefix("/Patient").Subrouter()
-	p.HandleFunc("", h.CreatePatient).Methods("POST")
 	p.HandleFunc("/{id}", h.GetPatient).Methods("GET")
 	p.HandleFunc("/{id}", h.UpdatePatient).Methods("PUT")
 

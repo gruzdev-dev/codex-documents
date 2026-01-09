@@ -2,6 +2,7 @@ package container
 
 import (
 	"codex-documents/adapters/clients/files"
+	"codex-documents/adapters/grpc"
 	"codex-documents/adapters/http"
 	"codex-documents/adapters/storage/mongodb"
 	"codex-documents/configs"
@@ -52,6 +53,10 @@ func BuildAppContainer() (*dig.Container, error) {
 	}
 
 	if err := c.Provide(http.NewHandler); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(grpc.NewAuthHandler); err != nil {
 		return nil, err
 	}
 

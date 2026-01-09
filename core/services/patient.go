@@ -25,13 +25,13 @@ func NewPatientService(repo ports.PatientRepository, v *validator.PatientValidat
 	}
 }
 
-func (s *PatientService) Create(ctx context.Context, patient *models.Patient) error {
+func (s *PatientService) Create(ctx context.Context, patient *models.Patient) (*models.Patient, error) {
 	if err := s.validator.Validate(patient); err != nil {
-		return fmt.Errorf("%w: %v", domain.ErrInvalidInput, err)
+		return nil, fmt.Errorf("%w: %v", domain.ErrInvalidInput, err)
 	}
 
 	if patient.Id != nil && *patient.Id != "" {
-		return fmt.Errorf("%w: patient ID must not be provided during creation", domain.ErrInvalidInput)
+		return nil, fmt.Errorf("%w: patient ID must not be provided during creation", domain.ErrInvalidInput)
 	}
 
 	if patient.Id == nil {
@@ -39,11 +39,12 @@ func (s *PatientService) Create(ctx context.Context, patient *models.Patient) er
 		patient.Id = &id
 	}
 
-	if err := s.repo.Create(ctx, patient); err != nil {
-		return fmt.Errorf("%w: %v", domain.ErrInternal, err)
+	created, err := s.repo.Create(ctx, patient)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}
 
-	return nil
+	return created, nil
 }
 
 func (s *PatientService) Get(ctx context.Context, id string) (*models.Patient, error) {
@@ -95,11 +96,7 @@ func (s *PatientService) Update(ctx context.Context, patient *models.Patient) (*
 		return nil, domain.ErrPatientNotFound
 	}
 
-	if err := s.repo.Update(ctx, patient); err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
-	}
-
-	updated, err := s.repo.GetByID(ctx, *patient.Id)
+	updated, err := s.repo.Update(ctx, patient)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}

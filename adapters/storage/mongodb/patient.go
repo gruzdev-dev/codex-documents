@@ -22,12 +22,12 @@ func NewPatientRepo(db *mongo.Database) *PatientRepo {
 	}
 }
 
-func (s *PatientRepo) Create(ctx context.Context, patient *models.Patient) error {
+func (s *PatientRepo) Create(ctx context.Context, patient *models.Patient) (*models.Patient, error) {
 	_, err := s.collection.InsertOne(ctx, patient)
 	if err != nil {
-		return fmt.Errorf("failed to insert patient: %w", err)
+		return nil, fmt.Errorf("failed to insert patient: %w", err)
 	}
-	return nil
+	return patient, nil
 }
 
 func (s *PatientRepo) GetByID(ctx context.Context, id string) (*models.Patient, error) {
@@ -46,9 +46,9 @@ func (s *PatientRepo) GetByID(ctx context.Context, id string) (*models.Patient, 
 	return &patient, nil
 }
 
-func (s *PatientRepo) Update(ctx context.Context, patient *models.Patient) error {
+func (s *PatientRepo) Update(ctx context.Context, patient *models.Patient) (*models.Patient, error) {
 	if patient.Id == nil {
-		return domain.ErrPatientIDRequired
+		return nil, domain.ErrPatientIDRequired
 	}
 
 	filter := bson.M{"id": *patient.Id}
@@ -56,8 +56,8 @@ func (s *PatientRepo) Update(ctx context.Context, patient *models.Patient) error
 
 	_, err := s.collection.UpdateOne(ctx, filter, update)
 	if err != nil {
-		return fmt.Errorf("failed to update patient: %w", err)
+		return nil, fmt.Errorf("failed to update patient: %w", err)
 	}
 
-	return nil
+	return patient, nil
 }
