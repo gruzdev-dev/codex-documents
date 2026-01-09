@@ -1,6 +1,7 @@
 package container
 
 import (
+	"codex-documents/adapters/clients/files"
 	"codex-documents/adapters/http"
 	"codex-documents/adapters/storage/mongodb"
 	"codex-documents/configs"
@@ -8,7 +9,6 @@ import (
 	"codex-documents/core/services"
 	"codex-documents/core/validator"
 	"codex-documents/pkg/database"
-
 	"go.uber.org/dig"
 )
 
@@ -32,6 +32,22 @@ func BuildAppContainer() (*dig.Container, error) {
 	}
 
 	if err := c.Provide(services.NewPatientService, dig.As(new(ports.PatientService))); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(mongodb.NewDocumentRepo, dig.As(new(ports.DocumentRepository))); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(validator.NewDocumentValidator); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(files.NewFilesClient, dig.As(new(ports.FileProvider))); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(services.NewDocumentService, dig.As(new(ports.DocumentService))); err != nil {
 		return nil, err
 	}
 

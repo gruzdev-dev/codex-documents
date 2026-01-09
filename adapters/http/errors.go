@@ -43,6 +43,12 @@ func (h *Handler) mapErrorToFhir(err error) (int, models.IssueSeverity, models.I
 	case errors.Is(err, domain.ErrPatientNotFound):
 		return http.StatusNotFound, models.IssueSeverityError, models.IssueTypeNotFound
 
+	case errors.Is(err, domain.ErrDocumentNotFound):
+		return http.StatusNotFound, models.IssueSeverityError, models.IssueTypeNotFound
+
+	case errors.Is(err, domain.ErrDocumentIDRequired):
+		return http.StatusUnprocessableEntity, models.IssueSeverityError, models.IssueTypeRequired
+
 	case errors.Is(err, domain.ErrAccessDenied):
 		return http.StatusForbidden, models.IssueSeverityError, models.IssueTypeForbidden
 

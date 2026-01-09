@@ -4,7 +4,6 @@ import (
 	"context"
 )
 
-type FilesServicePort interface {
-	GetUploadURL(ctx context.Context, fileID string) (string, error)
-	GetDownloadURL(ctx context.Context, fileID string) (string, error)
+type FileProvider interface {
+	GetUploadURL(ctx context.Context, fileName string, contentType string) (string, error)
 }

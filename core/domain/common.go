@@ -1,12 +1,6 @@
 package domain
 
-type Identifier struct {
-	System string
-	Value  string
-}
-
-type Codeable struct {
-	Code    string
-	System  string
-	Display string
+type ListResponse[T any] struct {
+	Items []T
+	Total int64
 }

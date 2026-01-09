@@ -7,15 +7,17 @@ import (
 )
 
 type DocumentRepository interface {
-	Create(ctx context.Context, doc *models.DocumentReference) error
+	Create(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
 	GetByID(ctx context.Context, id string) (*models.DocumentReference, error)
-	SearchByPatient(ctx context.Context, patientID string) ([]*models.DocumentReference, error)
-
-	CreateObservation(ctx context.Context, obs *models.Observation) error
-	SearchObservations(ctx context.Context, patientID string, code string) ([]*models.Observation, error)
+	Update(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
+	Delete(ctx context.Context, id string) error
+	Search(ctx context.Context, patientID string, limit, offset int) ([]models.DocumentReference, int64, error)
 }
 
-type AccessRepository interface {
-	SaveShare(ctx context.Context, share *domain.SharedAccess) error
-	GetShareByToken(ctx context.Context, token string) (*domain.SharedAccess, error)
+type DocumentService interface {
+	CreateDocument(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
+	GetDocument(ctx context.Context, id string) (*models.DocumentReference, error)
+	UpdateDocument(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
+	DeleteDocument(ctx context.Context, id string) error
+	ListDocuments(ctx context.Context, patientID string, limit, offset int) (*domain.ListResponse[models.DocumentReference], error)
 }
