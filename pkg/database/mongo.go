@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"codex-documents/configs"
+
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -16,9 +17,11 @@ const (
 )
 
 func NewMongoDB(cfg *configs.Config) (*mongo.Database, error) {
+	uri := buildMongoURI(cfg)
+
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().
-		ApplyURI(cfg.MongoDB.URI).
+		ApplyURI(uri).
 		SetServerAPIOptions(serverAPI)
 
 	client, err := mongo.Connect(opts)
@@ -34,4 +37,26 @@ func NewMongoDB(cfg *configs.Config) (*mongo.Database, error) {
 	}
 
 	return client.Database(cfg.MongoDB.Database), nil
+}
+
+func buildMongoURI(cfg *configs.Config) string {
+	if cfg.MongoDB.Username != "" && cfg.MongoDB.Password != "" {
+		authSource := cfg.MongoDB.AuthSource
+		if authSource == "" {
+			authSource = cfg.MongoDB.Database
+		}
+		return fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=%s",
+			cfg.MongoDB.Username,
+			cfg.MongoDB.Password,
+			cfg.MongoDB.Host,
+			cfg.MongoDB.Port,
+			cfg.MongoDB.Database,
+			authSource,
+		)
+	}
+	return fmt.Sprintf("mongodb://%s:%s/%s",
+		cfg.MongoDB.Host,
+		cfg.MongoDB.Port,
+		cfg.MongoDB.Database,
+	)
 }

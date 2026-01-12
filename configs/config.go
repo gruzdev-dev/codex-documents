@@ -2,39 +2,34 @@ package configs
 
 import (
 	"os"
-
-	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	Server struct {
-		Port string `yaml:"port"`
-	} `yaml:"server"`
+	HTTP struct {
+		Port string
+	}
 	GRPC struct {
-		Port string `yaml:"port"`
-	} `yaml:"grpc"`
+		Port string
+	}
 	Auth struct {
-		JWTSecret      string `yaml:"jwt_secret"`
-		InternalSecret string `yaml:"internal_secret"`
-	} `yaml:"auth"`
+		JWTSecret      string
+		InternalSecret string
+	}
 	MongoDB struct {
-		URI      string `yaml:"uri"`
-		Database string `yaml:"database"`
-	} `yaml:"mongodb"`
+		Host       string
+		Port       string
+		Username   string
+		Password   string
+		Database   string
+		AuthSource string
+	}
 }
 
 func NewConfig() (*Config, error) {
 	var cfg Config
 
-	configFile, err := os.ReadFile("config.yaml")
-	if err == nil {
-		if err := yaml.Unmarshal(configFile, &cfg); err != nil {
-			return nil, err
-		}
-	}
-
-	if envPort := os.Getenv("SERVER_PORT"); envPort != "" {
-		cfg.Server.Port = envPort
+	if envPort := os.Getenv("HTTP_PORT"); envPort != "" {
+		cfg.HTTP.Port = envPort
 	}
 	if envGRPCPort := os.Getenv("GRPC_PORT"); envGRPCPort != "" {
 		cfg.GRPC.Port = envGRPCPort
@@ -45,11 +40,23 @@ func NewConfig() (*Config, error) {
 	if envInternalSecret := os.Getenv("INTERNAL_SERVICE_SECRET"); envInternalSecret != "" {
 		cfg.Auth.InternalSecret = envInternalSecret
 	}
-	if envMongoURI := os.Getenv("MONGO_URI"); envMongoURI != "" {
-		cfg.MongoDB.URI = envMongoURI
+	if envMongoHost := os.Getenv("MONGO_HOST"); envMongoHost != "" {
+		cfg.MongoDB.Host = envMongoHost
+	}
+	if envMongoPort := os.Getenv("MONGO_PORT"); envMongoPort != "" {
+		cfg.MongoDB.Port = envMongoPort
+	}
+	if envMongoUsername := os.Getenv("MONGO_USERNAME"); envMongoUsername != "" {
+		cfg.MongoDB.Username = envMongoUsername
+	}
+	if envMongoPassword := os.Getenv("MONGO_PASSWORD"); envMongoPassword != "" {
+		cfg.MongoDB.Password = envMongoPassword
 	}
 	if envMongoDB := os.Getenv("MONGO_DATABASE"); envMongoDB != "" {
 		cfg.MongoDB.Database = envMongoDB
+	}
+	if envMongoAuthSource := os.Getenv("MONGO_AUTH_SOURCE"); envMongoAuthSource != "" {
+		cfg.MongoDB.AuthSource = envMongoAuthSource
 	}
 
 	return &cfg, nil
