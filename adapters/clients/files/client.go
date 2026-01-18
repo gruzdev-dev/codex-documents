@@ -2,17 +2,45 @@ package files
 
 import (
 	"context"
-	"fmt"
+	"github.com/gruzdev-dev/codex-documents/core/domain"
+	"github.com/gruzdev-dev/codex-documents/core/ports"
+	"github.com/gruzdev-dev/codex-files/proto"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
-type FilesClient struct {
+type client struct {
+	grpc   proto.FilesServiceClient
+	secret string
 }
 
-func NewFilesClient() *FilesClient {
-	return &FilesClient{}
+func NewClient(conn grpc.ClientConnInterface, secret string) ports.FileProvider {
+	return &client{
+		grpc:   proto.NewFilesServiceClient(conn),
+		secret: secret,
+	}
 }
 
-func (c *FilesClient) GetUploadURL(ctx context.Context, fileName string, contentType string) (string, error) {
-	uploadURL := fmt.Sprintf("http://localhost:8080/api/v1/files/upload/%s", fileName)
-	return uploadURL, nil
+func (c *client) GetPresignedUrls(ctx context.Context, data domain.GetPresignedUrlsRequest) (*domain.PresignedUrlsResponse, error) {
+	md := metadata.New(map[string]string{
+		"x-internal-token": c.secret,
+	})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	req := &proto.GeneratePresignedUrlsRequest{
+		UserId:      data.UserId,
+		ContentType: data.ContentType,
+		Size:        data.Size,
+	}
+
+	resp, err := c.grpc.GeneratePresignedUrls(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &domain.PresignedUrlsResponse{
+		FileId:      resp.FileId,
+		UploadUrl:   resp.UploadUrl,
+		DownloadUrl: resp.DownloadUrl,
+	}, nil
 }

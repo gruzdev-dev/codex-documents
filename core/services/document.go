@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"codex-documents/core/domain"
-	"codex-documents/core/ports"
-	"codex-documents/core/validator"
-	"codex-documents/pkg/identity"
+	"github.com/gruzdev-dev/codex-documents/core/domain"
+	"github.com/gruzdev-dev/codex-documents/core/ports"
+	"github.com/gruzdev-dev/codex-documents/core/validator"
+	"github.com/gruzdev-dev/codex-documents/pkg/identity"
 
 	"github.com/google/uuid"
 	models "github.com/gruzdev-dev/fhir/r5"
@@ -58,18 +58,23 @@ func (s *DocumentService) CreateDocument(ctx context.Context, doc *models.Docume
 		contentType = *attachment.ContentType
 	}
 
-	fileName := fmt.Sprintf("%s.bin", *doc.Id)
-	uploadURL, err := s.fileProvider.GetUploadURL(ctx, fileName, contentType)
+	presignedUrls, err := s.fileProvider.GetPresignedUrls(ctx, domain.GetPresignedUrlsRequest{
+		UserId:      user.PatientID,
+		ContentType: contentType,
+		Size:        *attachment.Size,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}
 
-	attachment.Url = &uploadURL
+	attachment.Url = &presignedUrls.DownloadUrl
 	created, err := s.repo.Create(ctx, doc)
 
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}
+
+	// todo return presigned urls - uplad url and add into headers
 
 	return created, nil
 }

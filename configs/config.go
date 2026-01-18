@@ -23,6 +23,9 @@ type Config struct {
 		Database   string
 		AuthSource string
 	}
+	FileService struct {
+		Addr string
+	}
 }
 
 func NewConfig() (*Config, error) {
@@ -57,6 +60,9 @@ func NewConfig() (*Config, error) {
 	}
 	if envMongoAuthSource := os.Getenv("MONGO_AUTH_SOURCE"); envMongoAuthSource != "" {
 		cfg.MongoDB.AuthSource = envMongoAuthSource
+	}
+	if envFileServiceAddr := os.Getenv("FILE_SERVICE_ADDR"); envFileServiceAddr != "" {
+		cfg.FileService.Addr = envFileServiceAddr
 	}
 
 	return &cfg, nil

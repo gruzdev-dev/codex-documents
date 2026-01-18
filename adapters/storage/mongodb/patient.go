@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"codex-documents/core/domain"
+	"github.com/gruzdev-dev/codex-documents/core/domain"
 
 	models "github.com/gruzdev-dev/fhir/r5"
 	"go.mongodb.org/mongo-driver/v2/bson"

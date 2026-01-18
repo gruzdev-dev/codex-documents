@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"codex-documents/configs"
+	"github.com/gruzdev-dev/codex-documents/configs"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -41,17 +41,13 @@ func NewMongoDB(cfg *configs.Config) (*mongo.Database, error) {
 
 func buildMongoURI(cfg *configs.Config) string {
 	if cfg.MongoDB.Username != "" && cfg.MongoDB.Password != "" {
-		authSource := cfg.MongoDB.AuthSource
-		if authSource == "" {
-			authSource = cfg.MongoDB.Database
-		}
 		return fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=%s",
 			cfg.MongoDB.Username,
 			cfg.MongoDB.Password,
 			cfg.MongoDB.Host,
 			cfg.MongoDB.Port,
 			cfg.MongoDB.Database,
-			authSource,
+			cfg.MongoDB.AuthSource,
 		)
 	}
 	return fmt.Sprintf("mongodb://%s:%s/%s",

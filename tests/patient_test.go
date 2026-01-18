@@ -1,3 +1,5 @@
+//go:build integration
+
 package tests
 
 import (
@@ -8,10 +10,12 @@ import (
 	nethttp "net/http"
 	"testing"
 
-	"codex-documents/api/proto"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gruzdev-dev/codex-documents/core/domain"
+	"github.com/gruzdev-dev/codex-documents/proto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -87,16 +91,21 @@ func TestPatientIntegration(t *testing.T) {
 	env := SetupTestEnv(t)
 	defer env.Cleanup()
 
+	env.MockFileProvider.EXPECT().GetPresignedUrls(gomock.Any(), gomock.Any()).Return(&domain.PresignedUrlsResponse{
+		FileId:      "test-file-id",
+		UploadUrl:   "http://test/upload",
+		DownloadUrl: "http://test/download",
+	}, nil).AnyTimes()
+
 	client := &nethttp.Client{}
 
 	var patientID string
 	var token string
 
-	t.Run("Create Patient via gRPC", func(t *testing.T) {
+	t.Run("Step 1: Create Patient via gRPC", func(t *testing.T) {
 		md := metadata.Pairs("x-internal-token", "test-secret")
 		ctx := metadata.NewOutgoingContext(context.Background(), md)
 
-		// Нам нужен только email, как договорились
 		resp, err := env.GRPCClient.CreatePatient(ctx, &proto.CreatePatientRequest{
 			Email: "ivan@example.com",
 		})
@@ -105,12 +114,11 @@ func TestPatientIntegration(t *testing.T) {
 		patientID = resp.PatientId
 		require.NotEmpty(t, patientID)
 
-		// Генерируем токен с полученным ID
 		token, err = createTestJWTToken("secret-key", patientID)
 		require.NoError(t, err)
 	})
 
-	t.Run("Update Patient", func(t *testing.T) {
+	t.Run("Step 2: Update Patient", func(t *testing.T) {
 		require.NotEmpty(t, patientID, "Patient ID should be set from Create step")
 
 		updateJSON := fmt.Sprintf(UPDATE_JSON_TEMPLATE, patientID)
@@ -127,7 +135,7 @@ func TestPatientIntegration(t *testing.T) {
 		assert.Equal(t, nethttp.StatusOK, resp.StatusCode, "Expected status 200 OK")
 	})
 
-	t.Run("Verify FHIR JSON", func(t *testing.T) {
+	t.Run("Step 3: Verify FHIR JSON", func(t *testing.T) {
 		require.NotEmpty(t, patientID, "Patient ID should be set from Create step")
 
 		req, err := nethttp.NewRequest("GET", env.ServerURL+"/api/v1/Patient/"+patientID, nil)

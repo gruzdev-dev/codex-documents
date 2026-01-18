@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"codex-documents/core/domain"
-	"codex-documents/pkg/ptr"
 	"github.com/gorilla/mux"
+	"github.com/gruzdev-dev/codex-documents/core/domain"
+	"github.com/gruzdev-dev/codex-documents/pkg/ptr"
 	models "github.com/gruzdev-dev/fhir/r5"
 )
 

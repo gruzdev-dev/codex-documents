@@ -1,8 +1,9 @@
 package ports
 
 import (
-	"codex-documents/core/domain"
 	"context"
+
+	"github.com/gruzdev-dev/codex-documents/core/domain"
 	models "github.com/gruzdev-dev/fhir/r5"
 )
 

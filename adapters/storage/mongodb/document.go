@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"codex-documents/core/domain"
+	"github.com/gruzdev-dev/codex-documents/core/domain"
 
 	models "github.com/gruzdev-dev/fhir/r5"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -94,7 +94,7 @@ func (r *DocumentRepo) Search(ctx context.Context, patientID string, limit, offs
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to find documents: %w", err)
 	}
-	defer cursor.Close(ctx)
+	defer func() { _ = cursor.Close(ctx) }()
 
 	var documents []models.DocumentReference
 	if err = cursor.All(ctx, &documents); err != nil {

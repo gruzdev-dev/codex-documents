@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"codex-documents/api/proto"
-	"codex-documents/core/ports"
-	"github.com/gruzdev-dev/fhir/r5"
+	"github.com/gruzdev-dev/codex-documents/core/ports"
+	"github.com/gruzdev-dev/codex-documents/proto"
+	models "github.com/gruzdev-dev/fhir/r5"
 )
 
 type AuthHandler struct {

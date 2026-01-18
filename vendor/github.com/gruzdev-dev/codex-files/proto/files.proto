@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/gruzdev-dev/codex-files/proto";
+
+service FilesService {
+  rpc GeneratePresignedUrls(GeneratePresignedUrlsRequest) returns (GeneratePresignedUrlsResponse);
+  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse);
+}
+
+message GeneratePresignedUrlsRequest {
+  string user_id = 1;
+  string content_type = 2;
+  int64 size = 3;
+}
+
+message GeneratePresignedUrlsResponse {
+  string file_id = 1;
+  string upload_url = 2;
+  string download_url = 3;
+}
+
+message DeleteFileRequest {
+  string file_id = 1;
+}
+
+message DeleteFileResponse {}

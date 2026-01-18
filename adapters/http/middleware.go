@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	"codex-documents/core/domain"
-	"codex-documents/pkg/identity"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gruzdev-dev/codex-documents/core/domain"
+	"github.com/gruzdev-dev/codex-documents/pkg/identity"
 )
 
 type AuthMiddleware struct {

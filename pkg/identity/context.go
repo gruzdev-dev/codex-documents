@@ -1,8 +1,9 @@
 package identity
 
 import (
-	"codex-documents/core/domain"
 	"context"
+
+	"github.com/gruzdev-dev/codex-documents/core/domain"
 )
 
 type ctxKey int

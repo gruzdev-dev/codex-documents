@@ -2,8 +2,12 @@ package ports
 
 import (
 	"context"
+
+	"github.com/gruzdev-dev/codex-documents/core/domain"
 )
 
+//go:generate mockgen -source=files.go -destination=files_mocks.go -package=ports FileProvider 
+
 type FileProvider interface {
-	GetUploadURL(ctx context.Context, fileName string, contentType string) (string, error)
+	GetPresignedUrls(ctx context.Context, data domain.GetPresignedUrlsRequest) (*domain.PresignedUrlsResponse, error)
 }

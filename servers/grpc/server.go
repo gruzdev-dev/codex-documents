@@ -1,12 +1,13 @@
 package grpc
 
 import (
-	grpcAdapter "codex-documents/adapters/grpc"
-	"codex-documents/configs"
 	"context"
 	"fmt"
-	"google.golang.org/grpc"
 	"net"
+
+	grpcAdapter "github.com/gruzdev-dev/codex-documents/adapters/grpc"
+	"github.com/gruzdev-dev/codex-documents/configs"
+	"google.golang.org/grpc"
 )
 
 type Server struct {

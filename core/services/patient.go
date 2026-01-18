@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"codex-documents/core/domain"
-	"codex-documents/core/ports"
-	"codex-documents/core/validator"
-	"codex-documents/pkg/identity"
+	"github.com/gruzdev-dev/codex-documents/core/domain"
+	"github.com/gruzdev-dev/codex-documents/core/ports"
+	"github.com/gruzdev-dev/codex-documents/core/validator"
+	"github.com/gruzdev-dev/codex-documents/pkg/identity"
 
 	"github.com/google/uuid"
 	models "github.com/gruzdev-dev/fhir/r5"

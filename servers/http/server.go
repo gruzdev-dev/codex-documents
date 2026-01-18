@@ -1,9 +1,6 @@
 package http
 
 import (
-	"codex-documents/adapters/http"
-	"codex-documents/configs"
-	middleware "codex-documents/middleware/http"
 	"context"
 	"fmt"
 	"log"
@@ -12,6 +9,10 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gruzdev-dev/codex-documents/adapters/http"
+	"github.com/gruzdev-dev/codex-documents/configs"
+	middleware "github.com/gruzdev-dev/codex-documents/middleware/http"
 
 	"github.com/gorilla/mux"
 )
@@ -34,12 +35,12 @@ func (s *Server) Start() error {
 
 	router.HandleFunc("/healthz", func(w nethttp.ResponseWriter, r *nethttp.Request) {
 		w.WriteHeader(nethttp.StatusOK)
-		w.Write([]byte("OK"))
+		_, _ = w.Write([]byte("OK"))
 	}).Methods("GET")
 
 	router.HandleFunc("/readyz", func(w nethttp.ResponseWriter, r *nethttp.Request) {
 		w.WriteHeader(nethttp.StatusOK)
-		w.Write([]byte("OK"))
+		_, _ = w.Write([]byte("OK"))
 	}).Methods("GET")
 
 	s.handler.RegisterRoutes(router)

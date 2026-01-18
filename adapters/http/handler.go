@@ -1,11 +1,12 @@
 package http
 
 import (
-	"codex-documents/configs"
-	"codex-documents/core/ports"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/gruzdev-dev/codex-documents/configs"
+	"github.com/gruzdev-dev/codex-documents/core/ports"
 
 	"github.com/gorilla/mux"
 )
@@ -46,14 +47,17 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "OK")
+	_, _ = fmt.Fprintln(w, "OK")
 }
 
 func (h *Handler) respondWithResource(w http.ResponseWriter, status int, resource interface{}) {
 	w.Header().Set("Content-Type", "application/fhir+json")
 	w.WriteHeader(status)
 	if resource != nil {
-		json.NewEncoder(w).Encode(resource)
+		err := json.NewEncoder(w).Encode(resource)
+		if err != nil {
+			w.WriteHeader(http.StatusNoContent)
+		}
 	} else {
 		w.WriteHeader(http.StatusNoContent)
 	}
