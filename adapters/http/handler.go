@@ -12,16 +12,18 @@ import (
 )
 
 type Handler struct {
-	cfg             *configs.Config
-	patientService  ports.PatientService
-	documentService ports.DocumentService
+	cfg                *configs.Config
+	patientService     ports.PatientService
+	documentService    ports.DocumentService
+	observationService ports.ObservationService
 }
 
-func NewHandler(cfg *configs.Config, ps ports.PatientService, ds ports.DocumentService) *Handler {
+func NewHandler(cfg *configs.Config, ps ports.PatientService, ds ports.DocumentService, os ports.ObservationService) *Handler {
 	return &Handler{
-		cfg:             cfg,
-		patientService:  ps,
-		documentService: ds,
+		cfg:                cfg,
+		patientService:     ps,
+		documentService:    ds,
+		observationService: os,
 	}
 }
 
@@ -42,6 +44,13 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	d.HandleFunc("", h.ListDocuments).Methods("GET")
 	d.HandleFunc("/{id}", h.GetDocument).Methods("GET")
 	d.HandleFunc("/{id}", h.DeleteDocument).Methods("DELETE")
+
+	o := api.PathPrefix("/Observation").Subrouter()
+	o.HandleFunc("", h.CreateObservation).Methods("POST")
+	o.HandleFunc("", h.ListObservations).Methods("GET")
+	o.HandleFunc("/{id}", h.GetObservation).Methods("GET")
+	o.HandleFunc("/{id}", h.UpdateObservation).Methods("PUT")
+	o.HandleFunc("/{id}", h.DeleteObservation).Methods("DELETE")
 }
 
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {

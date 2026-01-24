@@ -55,6 +55,18 @@ func BuildContainer() (*dig.Container, error) {
 		return nil, err
 	}
 
+	if err := c.Provide(mongodb.NewObservationRepo, dig.As(new(ports.ObservationRepository))); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(validator.NewObservationValidator); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(services.NewObservationService, dig.As(new(ports.ObservationService))); err != nil {
+		return nil, err
+	}
+
 	if err := c.Provide(http.NewHandler); err != nil {
 		return nil, err
 	}

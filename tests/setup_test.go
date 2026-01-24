@@ -152,6 +152,18 @@ func buildTestContainer(cfg *configs.Config, mockFileProvider *ports.MockFilePro
 		return nil, err
 	}
 
+	if err := c.Provide(mongostorage.NewObservationRepo, dig.As(new(ports.ObservationRepository))); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(validator.NewObservationValidator); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(services.NewObservationService, dig.As(new(ports.ObservationService))); err != nil {
+		return nil, err
+	}
+
 	if err := c.Provide(httpadapter.NewHandler); err != nil {
 		return nil, err
 	}

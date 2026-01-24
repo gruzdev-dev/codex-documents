@@ -7,6 +7,8 @@ import (
 	models "github.com/gruzdev-dev/fhir/r5"
 )
 
+//go:generate mockgen -source=document.go -destination=document_mocks.go -package=ports DocumentRepository,DocumentService
+
 type DocumentRepository interface {
 	Create(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
 	GetByID(ctx context.Context, id string) (*models.DocumentReference, error)

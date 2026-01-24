@@ -5,6 +5,8 @@ import (
 	models "github.com/gruzdev-dev/fhir/r5"
 )
 
+//go:generate mockgen -source=patient.go -destination=patient_mocks.go -package=ports PatientService,PatientRepository
+
 type PatientService interface {
 	Create(ctx context.Context, patient *models.Patient) (*models.Patient, error)
 	Get(ctx context.Context, id string) (*models.Patient, error)

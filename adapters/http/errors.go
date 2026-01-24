@@ -49,6 +49,18 @@ func (h *Handler) mapErrorToFhir(err error) (int, models.IssueSeverity, models.I
 	case errors.Is(err, domain.ErrDocumentIDRequired):
 		return http.StatusUnprocessableEntity, models.IssueSeverityError, models.IssueTypeRequired
 
+	case errors.Is(err, domain.ErrObservationNotFound):
+		return http.StatusNotFound, models.IssueSeverityError, models.IssueTypeNotFound
+
+	case errors.Is(err, domain.ErrObservationIDRequired):
+		return http.StatusBadRequest, models.IssueSeverityError, models.IssueTypeRequired
+
+	case errors.Is(err, domain.ErrInvalidDerivedFromRef):
+		return http.StatusUnprocessableEntity, models.IssueSeverityError, models.IssueTypeInvalid
+
+	case errors.Is(err, domain.ErrDerivedFromDocNotFound):
+		return http.StatusUnprocessableEntity, models.IssueSeverityError, models.IssueTypeNotFound
+
 	case errors.Is(err, domain.ErrAccessDenied):
 		return http.StatusForbidden, models.IssueSeverityError, models.IssueTypeForbidden
 
