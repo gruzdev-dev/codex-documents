@@ -24,13 +24,20 @@ func (h *Handler) CreateDocument(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdDoc, err := h.documentService.CreateDocument(r.Context(), &doc)
+	result, err := h.documentService.CreateDocument(r.Context(), &doc)
 	if err != nil {
 		h.respondWithError(w, err)
 		return
 	}
 
-	h.respondWithResource(w, http.StatusCreated, createdDoc)
+	if len(result.UploadUrls) > 0 {
+		uploadUrlsJSON, err := json.Marshal(result.UploadUrls)
+		if err == nil {
+			w.Header().Set("X-Upload-Urls", string(uploadUrlsJSON))
+		}
+	}
+
+	h.respondWithResource(w, http.StatusCreated, result.Document)
 }
 
 func (h *Handler) GetDocument(w http.ResponseWriter, r *http.Request) {
@@ -43,30 +50,6 @@ func (h *Handler) GetDocument(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.respondWithResource(w, http.StatusOK, doc)
-}
-
-func (h *Handler) UpdateDocument(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-	var doc models.DocumentReference
-	if err := json.NewDecoder(r.Body).Decode(&doc); err != nil {
-		h.respondWithError(w, err)
-		return
-	}
-
-	doc.Id = ptr.To(id)
-
-	if err := doc.Validate(); err != nil {
-		h.respondWithError(w, fmt.Errorf("%w: %v", domain.ErrInvalidInput, err))
-		return
-	}
-
-	updatedDoc, err := h.documentService.UpdateDocument(r.Context(), &doc)
-	if err != nil {
-		h.respondWithError(w, err)
-		return
-	}
-
-	h.respondWithResource(w, http.StatusOK, updatedDoc)
 }
 
 func (h *Handler) DeleteDocument(w http.ResponseWriter, r *http.Request) {

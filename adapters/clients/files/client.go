@@ -44,3 +44,19 @@ func (c *client) GetPresignedUrls(ctx context.Context, data domain.GetPresignedU
 		DownloadUrl: resp.DownloadUrl,
 	}, nil
 }
+
+func (c *client) DeleteFile(ctx context.Context, fileId string) error {
+	md := metadata.New(map[string]string{
+		"x-internal-token": c.secret,
+	})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	req := &proto.DeleteFileRequest{FileId: fileId}
+
+	_, err := c.grpc.DeleteFile(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

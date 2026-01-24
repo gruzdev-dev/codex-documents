@@ -32,7 +32,7 @@ func NewDocumentService(
 	}
 }
 
-func (s *DocumentService) CreateDocument(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error) {
+func (s *DocumentService) CreateDocument(ctx context.Context, doc *models.DocumentReference) (*domain.CreateDocumentResult, error) {
 	if err := s.validator.Validate(doc); err != nil {
 		return nil, fmt.Errorf("%w: %v", domain.ErrInvalidInput, err)
 	}
@@ -52,31 +52,48 @@ func (s *DocumentService) CreateDocument(ctx context.Context, doc *models.Docume
 		Reference: &patientRef,
 	}
 
-	attachment := doc.Content[0].Attachment
-	contentType := "application/octet-stream"
-	if attachment.ContentType != nil {
-		contentType = *attachment.ContentType
+	uploadUrls := make(map[string]string)
+
+	if len(doc.Content) > 0 {
+		for i := range doc.Content {
+			attachment := doc.Content[i].Attachment
+			if attachment == nil {
+				continue
+			}
+
+			if attachment.ContentType == nil || attachment.Size == nil {
+				continue
+			}
+
+			if attachment.Url != nil || attachment.Data != nil {
+				continue
+			}
+
+			presignedUrls, err := s.fileProvider.GetPresignedUrls(ctx, domain.GetPresignedUrlsRequest{
+				UserId:      user.PatientID,
+				ContentType: *attachment.ContentType,
+				Size:        *attachment.Size,
+			})
+
+			if err != nil {
+				return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
+			}
+
+			doc.Content[i].Attachment.Id = &presignedUrls.FileId
+			doc.Content[i].Attachment.Url = &presignedUrls.DownloadUrl
+			uploadUrls[presignedUrls.FileId] = presignedUrls.UploadUrl
+		}
 	}
 
-	presignedUrls, err := s.fileProvider.GetPresignedUrls(ctx, domain.GetPresignedUrlsRequest{
-		UserId:      user.PatientID,
-		ContentType: contentType,
-		Size:        *attachment.Size,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
-	}
-
-	attachment.Url = &presignedUrls.DownloadUrl
 	created, err := s.repo.Create(ctx, doc)
-
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
 	}
 
-	// todo return presigned urls - uplad url and add into headers
-
-	return created, nil
+	return &domain.CreateDocumentResult{
+		Document:   created,
+		UploadUrls: uploadUrls,
+	}, nil
 }
 
 func (s *DocumentService) GetDocument(ctx context.Context, id string) (*models.DocumentReference, error) {
@@ -104,41 +121,6 @@ func (s *DocumentService) GetDocument(ctx context.Context, id string) (*models.D
 	return doc, nil
 }
 
-func (s *DocumentService) UpdateDocument(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error) {
-	user, ok := identity.FromCtx(ctx)
-	if !ok || !user.HasScope("patient/*.write") {
-		return nil, domain.ErrAccessDenied
-	}
-
-	if doc == nil || doc.Id == nil || *doc.Id == "" {
-		return nil, domain.ErrDocumentIDRequired
-	}
-
-	existing, err := s.repo.GetByID(ctx, *doc.Id)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
-	}
-	if existing == nil {
-		return nil, domain.ErrDocumentNotFound
-	}
-
-	if !s.isOwner(user, existing) {
-		return nil, domain.ErrAccessDenied
-	}
-
-	if err := s.validator.Validate(doc); err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrInvalidInput, err)
-	}
-
-	updated, err := s.repo.Update(ctx, doc)
-
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrInternal, err)
-	}
-
-	return updated, nil
-}
-
 func (s *DocumentService) DeleteDocument(ctx context.Context, id string) error {
 	user, ok := identity.FromCtx(ctx)
 	if !ok || !user.HasScope("patient/*.write") {
@@ -155,6 +137,15 @@ func (s *DocumentService) DeleteDocument(ctx context.Context, id string) error {
 
 	if !s.isOwner(user, existing) {
 		return domain.ErrAccessDenied
+	}
+
+	if existing.Content != nil {
+		for _, content := range existing.Content {
+			if content.Attachment == nil || content.Attachment.Id == nil {
+				continue
+			}
+			_ = s.fileProvider.DeleteFile(ctx, *content.Attachment.Id)
+		}
 	}
 
 	if err := s.repo.Delete(ctx, id); err != nil {

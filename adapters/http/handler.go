@@ -41,7 +41,6 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	d.HandleFunc("", h.CreateDocument).Methods("POST")
 	d.HandleFunc("", h.ListDocuments).Methods("GET")
 	d.HandleFunc("/{id}", h.GetDocument).Methods("GET")
-	d.HandleFunc("/{id}", h.UpdateDocument).Methods("PUT")
 	d.HandleFunc("/{id}", h.DeleteDocument).Methods("DELETE")
 }
 

@@ -16,9 +16,8 @@ type DocumentRepository interface {
 }
 
 type DocumentService interface {
-	CreateDocument(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
+	CreateDocument(ctx context.Context, doc *models.DocumentReference) (*domain.CreateDocumentResult, error)
 	GetDocument(ctx context.Context, id string) (*models.DocumentReference, error)
-	UpdateDocument(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
 	DeleteDocument(ctx context.Context, id string) error
 	ListDocuments(ctx context.Context, patientID string, limit, offset int) (*domain.ListResponse[models.DocumentReference], error)
 }
