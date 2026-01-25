@@ -12,7 +12,6 @@ import (
 
 	"github.com/gruzdev-dev/codex-documents/adapters/http"
 	"github.com/gruzdev-dev/codex-documents/configs"
-	middleware "github.com/gruzdev-dev/codex-documents/middleware/http"
 
 	"github.com/gorilla/mux"
 )
@@ -31,7 +30,6 @@ func NewServer(cfg *configs.Config, handler *http.Handler) *Server {
 
 func (s *Server) Start() error {
 	router := mux.NewRouter()
-	router.Use(middleware.Logging())
 
 	router.HandleFunc("/healthz", func(w nethttp.ResponseWriter, r *nethttp.Request) {
 		w.WriteHeader(nethttp.StatusOK)
