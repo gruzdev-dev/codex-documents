@@ -5,6 +5,7 @@ import (
 	httpServer "github.com/gruzdev-dev/codex-documents/servers/http"
 	"go.uber.org/dig"
 
+	"github.com/gruzdev-dev/codex-documents/adapters/clients/auth"
 	"github.com/gruzdev-dev/codex-documents/adapters/clients/files"
 	"github.com/gruzdev-dev/codex-documents/adapters/grpc"
 	"github.com/gruzdev-dev/codex-documents/adapters/http"
@@ -48,6 +49,10 @@ func BuildContainer() (*dig.Container, error) {
 	}
 
 	if err := c.Provide(files.NewClient, dig.As(new(ports.FileProvider))); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(auth.NewClient, dig.As(new(ports.TmpAccessClient))); err != nil {
 		return nil, err
 	}
 

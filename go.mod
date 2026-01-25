@@ -8,6 +8,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
+	github.com/gruzdev-dev/codex-auth/proto v0.0.0-20260124223410-0d165850040a
 	github.com/gruzdev-dev/codex-documents/proto v0.0.0
 	github.com/gruzdev-dev/codex-files/proto v0.0.0-20260118201857-a6d471023bf8
 	github.com/gruzdev-dev/fhir v0.0.5

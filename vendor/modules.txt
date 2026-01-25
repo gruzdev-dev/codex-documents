@@ -106,6 +106,9 @@ github.com/google/uuid
 # github.com/gorilla/mux v1.8.1
 ## explicit; go 1.20
 github.com/gorilla/mux
+# github.com/gruzdev-dev/codex-auth/proto v0.0.0-20260124223410-0d165850040a
+## explicit; go 1.25.5
+github.com/gruzdev-dev/codex-auth/proto
 # github.com/gruzdev-dev/codex-documents/proto v0.0.0 => ./proto
 ## explicit; go 1.25.5
 github.com/gruzdev-dev/codex-documents/proto
