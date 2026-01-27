@@ -387,6 +387,7 @@ func TestShareIntegration(t *testing.T) {
 		req.Header.Set("Authorization", "Bearer "+tmpToken)
 
 		resp, err := client.Do(req)
+
 		require.NoError(t, err)
 		defer resp.Body.Close()
 

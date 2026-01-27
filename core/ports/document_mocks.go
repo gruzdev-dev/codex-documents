@@ -86,6 +86,21 @@ func (mr *MockDocumentRepositoryMockRecorder) GetByID(ctx, id any) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockDocumentRepository)(nil).GetByID), ctx, id)
 }
 
+// GetByIDs mocks base method.
+func (m *MockDocumentRepository) GetByIDs(ctx context.Context, ids []string) ([]models.DocumentReference, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByIDs", ctx, ids)
+	ret0, _ := ret[0].([]models.DocumentReference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByIDs indicates an expected call of GetByIDs.
+func (mr *MockDocumentRepositoryMockRecorder) GetByIDs(ctx, ids any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIDs", reflect.TypeOf((*MockDocumentRepository)(nil).GetByIDs), ctx, ids)
+}
+
 // Search mocks base method.
 func (m *MockDocumentRepository) Search(ctx context.Context, patientID string, limit, offset int) ([]models.DocumentReference, int64, error) {
 	m.ctrl.T.Helper()
