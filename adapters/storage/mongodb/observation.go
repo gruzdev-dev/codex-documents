@@ -47,6 +47,31 @@ func (r *ObservationRepo) GetByID(ctx context.Context, id string) (*models.Obser
 	return &obs, nil
 }
 
+func (r *ObservationRepo) GetByIDs(ctx context.Context, ids []string) ([]models.Observation, error) {
+	if len(ids) == 0 {
+		return []models.Observation{}, nil
+	}
+
+	filter := bson.M{"id": bson.M{"$in": ids}}
+
+	cursor, err := r.collection.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find observations: %w", err)
+	}
+	defer func() { _ = cursor.Close(ctx) }()
+
+	var observations []models.Observation
+	if err = cursor.All(ctx, &observations); err != nil {
+		return nil, fmt.Errorf("failed to decode observations: %w", err)
+	}
+
+	if observations == nil {
+		observations = []models.Observation{}
+	}
+
+	return observations, nil
+}
+
 func (r *ObservationRepo) Update(ctx context.Context, obs *models.Observation) (*models.Observation, error) {
 	if obs.Id == nil {
 		return nil, domain.ErrObservationIDRequired

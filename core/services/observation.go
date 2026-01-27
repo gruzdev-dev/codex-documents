@@ -42,6 +42,10 @@ func (s *ObservationService) Create(ctx context.Context, obs *models.Observation
 		return nil, domain.ErrAccessDenied
 	}
 
+	if user.IsTmpToken() || !user.HasScope("patient/*.write") || user.PatientID == "" {
+		return nil, domain.ErrAccessDenied
+	}
+
 	if obs.Id != nil && *obs.Id != "" {
 		return nil, fmt.Errorf("%w: observation ID must not be provided during creation", domain.ErrInvalidInput)
 	}
@@ -68,7 +72,7 @@ func (s *ObservationService) Create(ctx context.Context, obs *models.Observation
 
 func (s *ObservationService) Get(ctx context.Context, id string) (*models.Observation, error) {
 	user, ok := identity.FromCtx(ctx)
-	if !ok || !user.HasScope("patient/*.read") {
+	if !ok {
 		return nil, domain.ErrAccessDenied
 	}
 
@@ -84,16 +88,27 @@ func (s *ObservationService) Get(ctx context.Context, id string) (*models.Observ
 		return nil, domain.ErrObservationNotFound
 	}
 
-	if !s.isOwner(user, obs) {
-		return nil, domain.ErrAccessDenied
+	if !user.IsTmpToken() && user.HasScope("patient/*.read") && s.isOwner(user, obs) {
+		return obs, nil
 	}
 
-	return obs, nil
+	if user.HasResourceScope("docs", "observation", id, "read") {
+		return obs, nil
+	}
+
+	return nil, domain.ErrAccessDenied
 }
 
 func (s *ObservationService) Update(ctx context.Context, obs *models.Observation) (*models.Observation, error) {
 	user, ok := identity.FromCtx(ctx)
-	if !ok || !user.HasScope("patient/*.write") {
+	if !ok {
+		return nil, domain.ErrAccessDenied
+	}
+
+	if user.IsTmpToken() {
+		return nil, domain.ErrTmpTokenForbidden
+	}
+	if !user.HasScope("patient/*.write") || user.PatientID == "" {
 		return nil, domain.ErrAccessDenied
 	}
 
@@ -133,7 +148,14 @@ func (s *ObservationService) Update(ctx context.Context, obs *models.Observation
 
 func (s *ObservationService) Delete(ctx context.Context, id string) error {
 	user, ok := identity.FromCtx(ctx)
-	if !ok || !user.HasScope("patient/*.write") {
+	if !ok {
+		return domain.ErrAccessDenied
+	}
+
+	if user.IsTmpToken() {
+		return domain.ErrTmpTokenForbidden
+	}
+	if !user.HasScope("patient/*.write") || user.PatientID == "" {
 		return domain.ErrAccessDenied
 	}
 
@@ -158,7 +180,14 @@ func (s *ObservationService) Delete(ctx context.Context, id string) error {
 
 func (s *ObservationService) List(ctx context.Context, patientID string, limit, offset int) (*domain.ListResponse[models.Observation], error) {
 	user, ok := identity.FromCtx(ctx)
-	if !ok || !user.HasScope("patient/*.read") {
+	if !ok {
+		return nil, domain.ErrAccessDenied
+	}
+
+	if user.IsTmpToken() {
+		return nil, domain.ErrTmpTokenForbidden
+	}
+	if !user.HasScope("patient/*.read") || user.PatientID == "" {
 		return nil, domain.ErrAccessDenied
 	}
 
@@ -178,6 +207,9 @@ func (s *ObservationService) List(ctx context.Context, patientID string, limit, 
 }
 
 func (s *ObservationService) isOwner(user domain.Identity, obs *models.Observation) bool {
+	if user.PatientID == "" {
+		return false
+	}
 	if obs.Subject == nil || obs.Subject.Reference == nil {
 		return false
 	}

@@ -34,12 +34,13 @@ import (
 )
 
 type TestEnv struct {
-	Container        *dig.Container
-	DB               *mongo.Database
-	GRPCClient       proto.AuthIntegrationClient
-	ServerURL        string
-	MockFileProvider *ports.MockFileProvider
-	Cleanup          func()
+	Container          *dig.Container
+	DB                 *mongo.Database
+	GRPCClient         proto.AuthIntegrationClient
+	ServerURL          string
+	MockFileProvider   *ports.MockFileProvider
+	MockTmpAccessClient *ports.MockTmpAccessClient
+	Cleanup            func()
 }
 
 func SetupTestEnv(t *testing.T) *TestEnv {
@@ -47,6 +48,7 @@ func SetupTestEnv(t *testing.T) *TestEnv {
 
 	ctrl := gomock.NewController(t)
 	mockFileProvider := ports.NewMockFileProvider(ctrl)
+	mockTmpAccessClient := ports.NewMockTmpAccessClient(ctrl)
 
 	mongoContainer, err := mongodb.Run(ctx, "mongo:7.0",
 		mongodb.WithUsername("testusername"),
@@ -55,7 +57,7 @@ func SetupTestEnv(t *testing.T) *TestEnv {
 
 	cfg := initConfig(t, ctx, mongoContainer)
 
-	c, err := buildTestContainer(cfg, mockFileProvider)
+	c, err := buildTestContainer(cfg, mockFileProvider, mockTmpAccessClient)
 	require.NoError(t, err)
 
 	var httpHandler *httpadapter.Handler
@@ -92,11 +94,12 @@ func SetupTestEnv(t *testing.T) *TestEnv {
 	ts := httptest.NewServer(router)
 
 	return &TestEnv{
-		Container:        c,
-		ServerURL:        ts.URL,
-		DB:               db,
-		GRPCClient:       grpcClient,
-		MockFileProvider: mockFileProvider,
+		Container:            c,
+		ServerURL:            ts.URL,
+		DB:                   db,
+		GRPCClient:           grpcClient,
+		MockFileProvider:     mockFileProvider,
+		MockTmpAccessClient:  mockTmpAccessClient,
 		Cleanup: func() {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
@@ -109,7 +112,7 @@ func SetupTestEnv(t *testing.T) *TestEnv {
 	}
 }
 
-func buildTestContainer(cfg *configs.Config, mockFileProvider *ports.MockFileProvider) (*dig.Container, error) {
+func buildTestContainer(cfg *configs.Config, mockFileProvider *ports.MockFileProvider, mockTmpAccessClient *ports.MockTmpAccessClient) (*dig.Container, error) {
 	c := dig.New()
 
 	if err := c.Provide(func() *configs.Config {
@@ -148,10 +151,6 @@ func buildTestContainer(cfg *configs.Config, mockFileProvider *ports.MockFilePro
 		return nil, err
 	}
 
-	if err := c.Provide(services.NewDocumentService, dig.As(new(ports.DocumentService))); err != nil {
-		return nil, err
-	}
-
 	if err := c.Provide(mongostorage.NewObservationRepo, dig.As(new(ports.ObservationRepository))); err != nil {
 		return nil, err
 	}
@@ -161,6 +160,20 @@ func buildTestContainer(cfg *configs.Config, mockFileProvider *ports.MockFilePro
 	}
 
 	if err := c.Provide(services.NewObservationService, dig.As(new(ports.ObservationService))); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(func() ports.TmpAccessClient {
+		return mockTmpAccessClient
+	}); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(services.NewShareService, dig.As(new(ports.ShareService))); err != nil {
+		return nil, err
+	}
+
+	if err := c.Provide(services.NewDocumentService, dig.As(new(ports.DocumentService))); err != nil {
 		return nil, err
 	}
 

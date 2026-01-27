@@ -47,6 +47,31 @@ func (r *DocumentRepo) GetByID(ctx context.Context, id string) (*models.Document
 	return &doc, nil
 }
 
+func (r *DocumentRepo) GetByIDs(ctx context.Context, ids []string) ([]models.DocumentReference, error) {
+	if len(ids) == 0 {
+		return []models.DocumentReference{}, nil
+	}
+
+	filter := bson.M{"id": bson.M{"$in": ids}}
+
+	cursor, err := r.collection.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find documents: %w", err)
+	}
+	defer func() { _ = cursor.Close(ctx) }()
+
+	var documents []models.DocumentReference
+	if err = cursor.All(ctx, &documents); err != nil {
+		return nil, fmt.Errorf("failed to decode documents: %w", err)
+	}
+
+	if documents == nil {
+		documents = []models.DocumentReference{}
+	}
+
+	return documents, nil
+}
+
 func (r *DocumentRepo) Update(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error) {
 	if doc.Id == nil {
 		return nil, domain.ErrDocumentIDRequired

@@ -12,6 +12,7 @@ import (
 type DocumentRepository interface {
 	Create(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
 	GetByID(ctx context.Context, id string) (*models.DocumentReference, error)
+	GetByIDs(ctx context.Context, ids []string) ([]models.DocumentReference, error)
 	Update(ctx context.Context, doc *models.DocumentReference) (*models.DocumentReference, error)
 	Delete(ctx context.Context, id string) error
 	Search(ctx context.Context, patientID string, limit, offset int) ([]models.DocumentReference, int64, error)

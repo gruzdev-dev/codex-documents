@@ -44,7 +44,17 @@ func (m *AuthMiddleware) Handler(next http.Handler) http.Handler {
 		id := domain.Identity{
 			UserID:    getClaim(claims, "sub"),
 			PatientID: getClaim(claims, "patient_id"),
-			Scopes:    parseScopes(claims["scope"]),
+		}
+
+		if id.UserID == "" && id.PatientID == "" {
+			scopesStr := getClaim(claims, "scopes")
+			if scopesStr != "" {
+				id.Scopes = strings.Split(scopesStr, ",")
+			} else {
+				id.Scopes = []string{}
+			}
+		} else {
+			id.Scopes = parseScopes(claims["scope"])
 		}
 
 		ctx := identity.WithCtx(r.Context(), id)
@@ -68,5 +78,5 @@ func parseScopes(raw interface{}) []string {
 		}
 		return res
 	}
-	return nil
+	return []string{}
 }

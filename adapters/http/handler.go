@@ -16,14 +16,16 @@ type Handler struct {
 	patientService     ports.PatientService
 	documentService    ports.DocumentService
 	observationService ports.ObservationService
+	shareService       ports.ShareService
 }
 
-func NewHandler(cfg *configs.Config, ps ports.PatientService, ds ports.DocumentService, os ports.ObservationService) *Handler {
+func NewHandler(cfg *configs.Config, ps ports.PatientService, ds ports.DocumentService, os ports.ObservationService, ss ports.ShareService) *Handler {
 	return &Handler{
 		cfg:                cfg,
 		patientService:     ps,
 		documentService:    ds,
 		observationService: os,
+		shareService:       ss,
 	}
 }
 
@@ -51,6 +53,9 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	o.HandleFunc("/{id}", h.GetObservation).Methods("GET")
 	o.HandleFunc("/{id}", h.UpdateObservation).Methods("PUT")
 	o.HandleFunc("/{id}", h.DeleteObservation).Methods("DELETE")
+
+	api.HandleFunc("/share", h.CreateShare).Methods("POST")
+	api.HandleFunc("/shared", h.GetSharedResources).Methods("GET")
 }
 
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +63,7 @@ func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprintln(w, "OK")
 }
 
-func (h *Handler) respondWithResource(w http.ResponseWriter, status int, resource interface{}) {
+func (h *Handler) respondWithResource(w http.ResponseWriter, status int, resource any) {
 	w.Header().Set("Content-Type", "application/fhir+json")
 	w.WriteHeader(status)
 	if resource != nil {

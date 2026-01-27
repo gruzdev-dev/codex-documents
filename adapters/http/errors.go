@@ -64,10 +64,19 @@ func (h *Handler) mapErrorToFhir(err error) (int, models.IssueSeverity, models.I
 	case errors.Is(err, domain.ErrAccessDenied):
 		return http.StatusForbidden, models.IssueSeverityError, models.IssueTypeForbidden
 
+	case errors.Is(err, domain.ErrTmpTokenForbidden):
+		return http.StatusForbidden, models.IssueSeverityError, models.IssueTypeForbidden
+
 	case errors.Is(err, domain.ErrInvalidInput):
 		return http.StatusUnprocessableEntity, models.IssueSeverityError, models.IssueTypeInvalid
 
 	case errors.Is(err, domain.ErrPatientIDRequired):
+		return http.StatusBadRequest, models.IssueSeverityError, models.IssueTypeRequired
+
+	case errors.Is(err, domain.ErrResourceNotOwned):
+		return http.StatusForbidden, models.IssueSeverityError, models.IssueTypeForbidden
+
+	case errors.Is(err, domain.ErrNoResourcesToShare):
 		return http.StatusBadRequest, models.IssueSeverityError, models.IssueTypeRequired
 
 	default:

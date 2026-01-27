@@ -56,6 +56,10 @@ func BuildContainer() (*dig.Container, error) {
 		return nil, err
 	}
 
+	if err := c.Provide(services.NewShareService, dig.As(new(ports.ShareService))); err != nil {
+		return nil, err
+	}
+
 	if err := c.Provide(services.NewDocumentService, dig.As(new(ports.DocumentService))); err != nil {
 		return nil, err
 	}

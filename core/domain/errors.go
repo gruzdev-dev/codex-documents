@@ -14,7 +14,10 @@ var (
 	ErrInvalidDerivedFromRef  = errors.New("derivedFrom must reference DocumentReference resources")
 	ErrDerivedFromDocNotFound = errors.New("referenced document not found")
 
-	ErrAccessDenied = errors.New("access denied: identity mismatch or insufficient scopes")
-	ErrInvalidInput = errors.New("invalid input data")
-	ErrInternal     = errors.New("internal server error")
+	ErrAccessDenied       = errors.New("access denied: identity mismatch or insufficient scopes")
+	ErrTmpTokenForbidden  = errors.New("temporary token cannot perform this operation")
+	ErrInvalidInput       = errors.New("invalid input data")
+	ErrInternal           = errors.New("internal server error")
+	ErrResourceNotOwned   = errors.New("one or more resources do not belong to the user")
+	ErrNoResourcesToShare = errors.New("no resources provided to share")
 )

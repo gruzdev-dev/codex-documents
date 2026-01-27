@@ -12,6 +12,7 @@ import (
 type ObservationRepository interface {
 	Create(ctx context.Context, obs *models.Observation) (*models.Observation, error)
 	GetByID(ctx context.Context, id string) (*models.Observation, error)
+	GetByIDs(ctx context.Context, ids []string) ([]models.Observation, error)
 	Update(ctx context.Context, obs *models.Observation) (*models.Observation, error)
 	Delete(ctx context.Context, id string) error
 	Search(ctx context.Context, patientID string, limit, offset int) ([]models.Observation, int64, error)
