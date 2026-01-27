@@ -13,6 +13,7 @@ func (h *Handler) respondWithError(w http.ResponseWriter, err error) {
 	status, severity, issueCode := h.mapErrorToFhir(err)
 
 	outcome := models.OperationOutcome{
+		ResourceType: "OperationOutcome",
 		Issue: []models.OperationOutcomeIssue{
 			{
 				Severity:    string(severity),
@@ -24,6 +25,7 @@ func (h *Handler) respondWithError(w http.ResponseWriter, err error) {
 
 	if valErr := outcome.Validate(); valErr != nil {
 		h.respondWithResource(w, http.StatusInternalServerError, models.OperationOutcome{
+			ResourceType: "OperationOutcome",
 			Issue: []models.OperationOutcomeIssue{
 				{
 					Severity:    string(models.IssueSeverityFatal),
