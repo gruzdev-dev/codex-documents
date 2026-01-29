@@ -10,17 +10,17 @@ import (
 	"github.com/gruzdev-dev/codex-documents/core/validator"
 	"github.com/gruzdev-dev/codex-documents/pkg/identity"
 
+	models "github.com/gruzdev-dev/fhir/r5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
-	models "github.com/gruzdev-dev/fhir/r5"
 )
 
 const (
-	testPatientID = "patient-123"
-	testDocID     = "doc-123"
-	testFileID    = "file-123"
-	testUserID    = "user-123"
+	testPatientID   = "patient-123"
+	testDocID       = "doc-123"
+	testFileID      = "file-123"
+	testUserID      = "user-123"
 	testContentType = "application/pdf"
 	testFileSize    = int64(1024)
 )
@@ -177,8 +177,8 @@ func TestDocumentService_CreateDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "validation error - nil document",
-			doc:  nil,
+			name:       "validation error - nil document",
+			doc:        nil,
 			setupMocks: func(*ports.MockDocumentRepository, *ports.MockFileProvider) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{"patient/*.write"})
@@ -482,7 +482,7 @@ func TestDocumentService_GetDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "error - empty ID",
+			name:       "error - empty ID",
 			setupMocks: func(*ports.MockDocumentRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{"patient/*.read"})
@@ -496,8 +496,8 @@ func TestDocumentService_GetDocument(t *testing.T) {
 			},
 		},
 		{
-			name:  "error - no identity",
-			docID: testDocID,
+			name:       "error - no identity",
+			docID:      testDocID,
 			setupMocks: func(*ports.MockDocumentRepository) {},
 			setupContext: func() context.Context {
 				return context.Background()
@@ -608,7 +608,7 @@ func TestDocumentService_DeleteDocument(t *testing.T) {
 		validateResult func(*testing.T, error)
 	}{
 		{
-			name: "success path - with files",
+			name:  "success path - with files",
 			docID: testDocID,
 			setupMocks: func(repo *ports.MockDocumentRepository, provider *ports.MockFileProvider) {
 				doc := createTestDocument(testDocID, testPatientID)
@@ -633,7 +633,7 @@ func TestDocumentService_DeleteDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "success path - without files",
+			name:  "success path - without files",
 			docID: testDocID,
 			setupMocks: func(repo *ports.MockDocumentRepository, provider *ports.MockFileProvider) {
 				doc := createTestDocumentWithoutFiles(testDocID, testPatientID)
@@ -654,8 +654,8 @@ func TestDocumentService_DeleteDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "error - no identity",
-			docID: testDocID,
+			name:       "error - no identity",
+			docID:      testDocID,
 			setupMocks: func(*ports.MockDocumentRepository, *ports.MockFileProvider) {},
 			setupContext: func() context.Context {
 				return context.Background()
@@ -667,8 +667,8 @@ func TestDocumentService_DeleteDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "error - temporary token",
-			docID: testDocID,
+			name:       "error - temporary token",
+			docID:      testDocID,
 			setupMocks: func(*ports.MockDocumentRepository, *ports.MockFileProvider) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity("", "", []string{})
@@ -681,8 +681,8 @@ func TestDocumentService_DeleteDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "error - no write scope",
-			docID: testDocID,
+			name:       "error - no write scope",
+			docID:      testDocID,
 			setupMocks: func(*ports.MockDocumentRepository, *ports.MockFileProvider) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{"patient/*.read"})
@@ -695,7 +695,7 @@ func TestDocumentService_DeleteDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "error - document not found",
+			name:  "error - document not found",
 			docID: testDocID,
 			setupMocks: func(repo *ports.MockDocumentRepository, provider *ports.MockFileProvider) {
 				repo.EXPECT().
@@ -713,7 +713,7 @@ func TestDocumentService_DeleteDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "error - not owner",
+			name:  "error - not owner",
 			docID: testDocID,
 			setupMocks: func(repo *ports.MockDocumentRepository, provider *ports.MockFileProvider) {
 				doc := createTestDocument(testDocID, "other-patient")
@@ -732,7 +732,7 @@ func TestDocumentService_DeleteDocument(t *testing.T) {
 			},
 		},
 		{
-			name: "error - repository delete error",
+			name:  "error - repository delete error",
 			docID: testDocID,
 			setupMocks: func(repo *ports.MockDocumentRepository, provider *ports.MockFileProvider) {
 				doc := createTestDocumentWithoutFiles(testDocID, testPatientID)
@@ -822,10 +822,10 @@ func TestDocumentService_ListDocuments(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - no identity",
-			patientID: testPatientID,
-			limit:     10,
-			offset:    0,
+			name:       "error - no identity",
+			patientID:  testPatientID,
+			limit:      10,
+			offset:     0,
 			setupMocks: func(*ports.MockDocumentRepository) {},
 			setupContext: func() context.Context {
 				return context.Background()
@@ -838,10 +838,10 @@ func TestDocumentService_ListDocuments(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - temporary token",
-			patientID: testPatientID,
-			limit:     10,
-			offset:    0,
+			name:       "error - temporary token",
+			patientID:  testPatientID,
+			limit:      10,
+			offset:     0,
 			setupMocks: func(*ports.MockDocumentRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity("", "", []string{})
@@ -855,10 +855,10 @@ func TestDocumentService_ListDocuments(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - no read scope",
-			patientID: testPatientID,
-			limit:     10,
-			offset:    0,
+			name:       "error - no read scope",
+			patientID:  testPatientID,
+			limit:      10,
+			offset:     0,
 			setupMocks: func(*ports.MockDocumentRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{})
@@ -872,10 +872,10 @@ func TestDocumentService_ListDocuments(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - PatientID mismatch",
-			patientID: "other-patient",
-			limit:     10,
-			offset:    0,
+			name:       "error - PatientID mismatch",
+			patientID:  "other-patient",
+			limit:      10,
+			offset:     0,
 			setupMocks: func(*ports.MockDocumentRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{"patient/*.read"})

@@ -3,7 +3,6 @@ package files
 import (
 	"context"
 	"github.com/gruzdev-dev/codex-documents/core/domain"
-	"github.com/gruzdev-dev/codex-documents/core/ports"
 	"github.com/gruzdev-dev/codex-files/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -14,7 +13,7 @@ type client struct {
 	secret string
 }
 
-func NewClient(conn grpc.ClientConnInterface, secret string) ports.FileProvider {
+func NewClient(conn grpc.ClientConnInterface, secret string) *client {
 	return &client{
 		grpc:   proto.NewFilesServiceClient(conn),
 		secret: secret,

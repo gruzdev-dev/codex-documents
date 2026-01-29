@@ -10,10 +10,10 @@ import (
 	"github.com/gruzdev-dev/codex-documents/core/validator"
 	"github.com/gruzdev-dev/codex-documents/pkg/identity"
 
+	models "github.com/gruzdev-dev/fhir/r5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
-	models "github.com/gruzdev-dev/fhir/r5"
 )
 
 func createTestPatient(id string) *models.Patient {
@@ -62,9 +62,9 @@ func TestPatientService_Create(t *testing.T) {
 			},
 		},
 		{
-			name:    "validation error - nil patient",
-			patient: nil,
-			setupMocks: func(*ports.MockPatientRepository) {},
+			name:          "validation error - nil patient",
+			patient:       nil,
+			setupMocks:    func(*ports.MockPatientRepository) {},
 			expectedError: domain.ErrInvalidInput,
 			validateResult: func(t *testing.T, patient *models.Patient, err error) {
 				assert.Error(t, err)
@@ -77,7 +77,7 @@ func TestPatientService_Create(t *testing.T) {
 			patient: &models.Patient{
 				ResourceType: "Patient",
 			},
-			setupMocks: func(*ports.MockPatientRepository) {},
+			setupMocks:    func(*ports.MockPatientRepository) {},
 			expectedError: domain.ErrInvalidInput,
 			validateResult: func(t *testing.T, patient *models.Patient, err error) {
 				assert.Error(t, err)
@@ -98,7 +98,7 @@ func TestPatientService_Create(t *testing.T) {
 					},
 				},
 			},
-			setupMocks: func(*ports.MockPatientRepository) {},
+			setupMocks:    func(*ports.MockPatientRepository) {},
 			expectedError: domain.ErrInvalidInput,
 			validateResult: func(t *testing.T, patient *models.Patient, err error) {
 				assert.Error(t, err)
@@ -200,8 +200,8 @@ func TestPatientService_Get(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - no identity",
-			patientID: testPatientID,
+			name:       "error - no identity",
+			patientID:  testPatientID,
 			setupMocks: func(*ports.MockPatientRepository) {},
 			setupContext: func() context.Context {
 				return context.Background()
@@ -214,8 +214,8 @@ func TestPatientService_Get(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - access denied",
-			patientID: testPatientID,
+			name:       "error - access denied",
+			patientID:  testPatientID,
 			setupMocks: func(*ports.MockPatientRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity("other-patient", testUserID, []string{})
@@ -373,8 +373,8 @@ func TestPatientService_Update(t *testing.T) {
 			},
 		},
 		{
-			name:    "error - no identity",
-			patient: createTestPatient(testPatientID),
+			name:       "error - no identity",
+			patient:    createTestPatient(testPatientID),
 			setupMocks: func(*ports.MockPatientRepository) {},
 			setupContext: func() context.Context {
 				return context.Background()
@@ -387,8 +387,8 @@ func TestPatientService_Update(t *testing.T) {
 			},
 		},
 		{
-			name:    "error - access denied",
-			patient: createTestPatient(testPatientID),
+			name:       "error - access denied",
+			patient:    createTestPatient(testPatientID),
 			setupMocks: func(*ports.MockPatientRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity("other-patient", testUserID, []string{})

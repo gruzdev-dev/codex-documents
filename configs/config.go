@@ -26,6 +26,9 @@ type Config struct {
 	FileService struct {
 		Addr string
 	}
+	AuthService struct {
+		Addr string
+	}
 }
 
 func NewConfig() (*Config, error) {
@@ -63,6 +66,9 @@ func NewConfig() (*Config, error) {
 	}
 	if envFileServiceAddr := os.Getenv("FILE_SERVICE_ADDR"); envFileServiceAddr != "" {
 		cfg.FileService.Addr = envFileServiceAddr
+	}
+	if envAuthServiceAddr := os.Getenv("AUTH_SERVICE_ADDR"); envAuthServiceAddr != "" {
+		cfg.AuthService.Addr = envAuthServiceAddr
 	}
 
 	return &cfg, nil

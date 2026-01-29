@@ -10,10 +10,10 @@ import (
 	"github.com/gruzdev-dev/codex-documents/core/validator"
 	"github.com/gruzdev-dev/codex-documents/pkg/identity"
 
+	models "github.com/gruzdev-dev/fhir/r5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
-	models "github.com/gruzdev-dev/fhir/r5"
 )
 
 const (
@@ -85,7 +85,7 @@ func TestObservationService_Create(t *testing.T) {
 		},
 		{
 			name: "success path - with valid derivedFrom",
-			obs: createTestObservationWithDerivedFrom("", testPatientID, []string{testDocID}),
+			obs:  createTestObservationWithDerivedFrom("", testPatientID, []string{testDocID}),
 			setupMocks: func(obsRepo *ports.MockObservationRepository, docRepo *ports.MockDocumentRepository) {
 				doc := createTestDocument(testDocID, testPatientID)
 				docRepo.EXPECT().
@@ -106,8 +106,8 @@ func TestObservationService_Create(t *testing.T) {
 			},
 		},
 		{
-			name: "validation error - nil observation",
-			obs:  nil,
+			name:       "validation error - nil observation",
+			obs:        nil,
 			setupMocks: func(*ports.MockObservationRepository, *ports.MockDocumentRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{"patient/*.write"})
@@ -220,7 +220,7 @@ func TestObservationService_Create(t *testing.T) {
 		},
 		{
 			name: "error - derivedFrom document not found",
-			obs: createTestObservationWithDerivedFrom("", testPatientID, []string{testDocID}),
+			obs:  createTestObservationWithDerivedFrom("", testPatientID, []string{testDocID}),
 			setupMocks: func(obsRepo *ports.MockObservationRepository, docRepo *ports.MockDocumentRepository) {
 				docRepo.EXPECT().
 					GetByID(gomock.Any(), testDocID).
@@ -239,7 +239,7 @@ func TestObservationService_Create(t *testing.T) {
 		},
 		{
 			name: "error - derivedFrom document belongs to different patient",
-			obs: createTestObservationWithDerivedFrom("", testPatientID, []string{testDocID}),
+			obs:  createTestObservationWithDerivedFrom("", testPatientID, []string{testDocID}),
 			setupMocks: func(obsRepo *ports.MockObservationRepository, docRepo *ports.MockDocumentRepository) {
 				doc := createTestDocument(testDocID, "other-patient")
 				docRepo.EXPECT().
@@ -320,7 +320,7 @@ func TestObservationService_Get(t *testing.T) {
 		validateResult func(*testing.T, *models.Observation, error)
 	}{
 		{
-			name: "success path - owner with read scope",
+			name:  "success path - owner with read scope",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				obs := createTestObservation(testObsID, testPatientID)
@@ -340,7 +340,7 @@ func TestObservationService_Get(t *testing.T) {
 			},
 		},
 		{
-			name: "success path - access via resource scope",
+			name:  "success path - access via resource scope",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				obs := createTestObservation(testObsID, "other-patient")
@@ -359,7 +359,7 @@ func TestObservationService_Get(t *testing.T) {
 			},
 		},
 		{
-			name: "error - empty ID",
+			name:       "error - empty ID",
 			setupMocks: func(*ports.MockObservationRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{"patient/*.read"})
@@ -373,8 +373,8 @@ func TestObservationService_Get(t *testing.T) {
 			},
 		},
 		{
-			name: "error - no identity",
-			obsID: testObsID,
+			name:       "error - no identity",
+			obsID:      testObsID,
 			setupMocks: func(*ports.MockObservationRepository) {},
 			setupContext: func() context.Context {
 				return context.Background()
@@ -387,7 +387,7 @@ func TestObservationService_Get(t *testing.T) {
 			},
 		},
 		{
-			name: "error - not found",
+			name:  "error - not found",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				repo.EXPECT().
@@ -406,7 +406,7 @@ func TestObservationService_Get(t *testing.T) {
 			},
 		},
 		{
-			name: "error - access denied",
+			name:  "error - access denied",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				obs := createTestObservation(testObsID, "other-patient")
@@ -426,7 +426,7 @@ func TestObservationService_Get(t *testing.T) {
 			},
 		},
 		{
-			name: "error - repository error",
+			name:  "error - repository error",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				repo.EXPECT().
@@ -512,7 +512,7 @@ func TestObservationService_Update(t *testing.T) {
 		},
 		{
 			name: "success path - with derivedFrom change",
-			obs: createTestObservationWithDerivedFrom(testObsID, testPatientID, []string{testDocID}),
+			obs:  createTestObservationWithDerivedFrom(testObsID, testPatientID, []string{testDocID}),
 			setupMocks: func(obsRepo *ports.MockObservationRepository, docRepo *ports.MockDocumentRepository) {
 				existing := createTestObservation(testObsID, testPatientID)
 				obsRepo.EXPECT().
@@ -782,7 +782,7 @@ func TestObservationService_Delete(t *testing.T) {
 		validateResult func(*testing.T, error)
 	}{
 		{
-			name: "success path",
+			name:  "success path",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				obs := createTestObservation(testObsID, testPatientID)
@@ -803,8 +803,8 @@ func TestObservationService_Delete(t *testing.T) {
 			},
 		},
 		{
-			name: "error - no identity",
-			obsID: testObsID,
+			name:       "error - no identity",
+			obsID:      testObsID,
 			setupMocks: func(*ports.MockObservationRepository) {},
 			setupContext: func() context.Context {
 				return context.Background()
@@ -816,8 +816,8 @@ func TestObservationService_Delete(t *testing.T) {
 			},
 		},
 		{
-			name: "error - temporary token",
-			obsID: testObsID,
+			name:       "error - temporary token",
+			obsID:      testObsID,
 			setupMocks: func(*ports.MockObservationRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity("", "", []string{})
@@ -830,8 +830,8 @@ func TestObservationService_Delete(t *testing.T) {
 			},
 		},
 		{
-			name: "error - no write scope",
-			obsID: testObsID,
+			name:       "error - no write scope",
+			obsID:      testObsID,
 			setupMocks: func(*ports.MockObservationRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{"patient/*.read"})
@@ -844,7 +844,7 @@ func TestObservationService_Delete(t *testing.T) {
 			},
 		},
 		{
-			name: "error - not found",
+			name:  "error - not found",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				repo.EXPECT().
@@ -862,7 +862,7 @@ func TestObservationService_Delete(t *testing.T) {
 			},
 		},
 		{
-			name: "error - not owner",
+			name:  "error - not owner",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				obs := createTestObservation(testObsID, "other-patient")
@@ -881,7 +881,7 @@ func TestObservationService_Delete(t *testing.T) {
 			},
 		},
 		{
-			name: "error - repository error",
+			name:  "error - repository error",
 			obsID: testObsID,
 			setupMocks: func(repo *ports.MockObservationRepository) {
 				obs := createTestObservation(testObsID, testPatientID)
@@ -971,10 +971,10 @@ func TestObservationService_List(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - no identity",
-			patientID: testPatientID,
-			limit:     10,
-			offset:    0,
+			name:       "error - no identity",
+			patientID:  testPatientID,
+			limit:      10,
+			offset:     0,
 			setupMocks: func(*ports.MockObservationRepository) {},
 			setupContext: func() context.Context {
 				return context.Background()
@@ -987,10 +987,10 @@ func TestObservationService_List(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - temporary token",
-			patientID: testPatientID,
-			limit:     10,
-			offset:    0,
+			name:       "error - temporary token",
+			patientID:  testPatientID,
+			limit:      10,
+			offset:     0,
 			setupMocks: func(*ports.MockObservationRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity("", "", []string{})
@@ -1004,10 +1004,10 @@ func TestObservationService_List(t *testing.T) {
 			},
 		},
 		{
-			name:      "error - PatientID mismatch",
-			patientID: "other-patient",
-			limit:     10,
-			offset:    0,
+			name:       "error - PatientID mismatch",
+			patientID:  "other-patient",
+			limit:      10,
+			offset:     0,
 			setupMocks: func(*ports.MockObservationRepository) {},
 			setupContext: func() context.Context {
 				id := createTestIdentity(testPatientID, testUserID, []string{"patient/*.read"})

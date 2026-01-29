@@ -7,7 +7,7 @@ import (
 
 	"github.com/gruzdev-dev/codex-documents/adapters/clients/auth"
 	"github.com/gruzdev-dev/codex-documents/adapters/clients/files"
-	"github.com/gruzdev-dev/codex-documents/adapters/grpc"
+	grpcAdapter "github.com/gruzdev-dev/codex-documents/adapters/grpc"
 	"github.com/gruzdev-dev/codex-documents/adapters/http"
 	"github.com/gruzdev-dev/codex-documents/adapters/storage/mongodb"
 	"github.com/gruzdev-dev/codex-documents/configs"
@@ -15,6 +15,9 @@ import (
 	"github.com/gruzdev-dev/codex-documents/core/services"
 	"github.com/gruzdev-dev/codex-documents/core/validator"
 	"github.com/gruzdev-dev/codex-documents/pkg/database"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func BuildContainer() (*dig.Container, error) {
@@ -48,11 +51,11 @@ func BuildContainer() (*dig.Container, error) {
 		return nil, err
 	}
 
-	if err := c.Provide(files.NewClient, dig.As(new(ports.FileProvider))); err != nil {
+	if err := c.Provide(newFilesClient); err != nil {
 		return nil, err
 	}
 
-	if err := c.Provide(auth.NewClient, dig.As(new(ports.TmpAccessClient))); err != nil {
+	if err := c.Provide(newAuthClient); err != nil {
 		return nil, err
 	}
 
@@ -80,7 +83,7 @@ func BuildContainer() (*dig.Container, error) {
 		return nil, err
 	}
 
-	if err := c.Provide(grpc.NewAuthHandler); err != nil {
+	if err := c.Provide(grpcAdapter.NewAuthHandler); err != nil {
 		return nil, err
 	}
 
@@ -93,4 +96,20 @@ func BuildContainer() (*dig.Container, error) {
 	}
 
 	return c, nil
+}
+
+func newFilesClient(cfg *configs.Config) (ports.FileProvider, error) {
+	conn, err := grpc.NewClient(cfg.FileService.Addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+	return files.NewClient(conn, cfg.Auth.InternalSecret), nil
+}
+
+func newAuthClient(cfg *configs.Config) (ports.TmpAccessClient, error) {
+	conn, err := grpc.NewClient(cfg.AuthService.Addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+	return auth.NewClient(conn, cfg.Auth.InternalSecret), nil
 }

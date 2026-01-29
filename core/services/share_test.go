@@ -9,10 +9,10 @@ import (
 	"github.com/gruzdev-dev/codex-documents/core/ports"
 	"github.com/gruzdev-dev/codex-documents/pkg/identity"
 
+	models "github.com/gruzdev-dev/fhir/r5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
-	models "github.com/gruzdev-dev/fhir/r5"
 )
 
 func TestShareService_Share(t *testing.T) {
