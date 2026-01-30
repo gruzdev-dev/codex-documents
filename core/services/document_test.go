@@ -109,7 +109,7 @@ func TestDocumentService_CreateDocument(t *testing.T) {
 			setupMocks: func(repo *ports.MockDocumentRepository, provider *ports.MockFileProvider) {
 				provider.EXPECT().
 					GetPresignedUrls(gomock.Any(), domain.GetPresignedUrlsRequest{
-						UserId:      testPatientID,
+						UserId:      testUserID,
 						ContentType: testContentType,
 						Size:        testFileSize,
 					}).

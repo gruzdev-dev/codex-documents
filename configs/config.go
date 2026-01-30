@@ -64,7 +64,7 @@ func NewConfig() (*Config, error) {
 	if envMongoAuthSource := os.Getenv("MONGO_AUTH_SOURCE"); envMongoAuthSource != "" {
 		cfg.MongoDB.AuthSource = envMongoAuthSource
 	}
-	if envFileServiceAddr := os.Getenv("FILE_SERVICE_ADDR"); envFileServiceAddr != "" {
+	if envFileServiceAddr := os.Getenv("FILES_SERVICE_ADDR"); envFileServiceAddr != "" {
 		cfg.FileService.Addr = envFileServiceAddr
 	}
 	if envAuthServiceAddr := os.Getenv("AUTH_SERVICE_ADDR"); envAuthServiceAddr != "" {

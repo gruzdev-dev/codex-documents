@@ -77,7 +77,7 @@ func (s *DocumentService) CreateDocument(ctx context.Context, doc *models.Docume
 			}
 
 			presignedUrls, err := s.fileProvider.GetPresignedUrls(ctx, domain.GetPresignedUrlsRequest{
-				UserId:      user.PatientID,
+				UserId:      user.UserID,
 				ContentType: *attachment.ContentType,
 				Size:        *attachment.Size,
 			})

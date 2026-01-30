@@ -53,7 +53,7 @@ func TestObservationIntegration(t *testing.T) {
 		claims := jwt.MapClaims{
 			"sub":        "test-user",
 			"patient_id": patientID,
-			"scope":      "patient/*.read patient/*.write",
+			"scopes":      "patient/*.read patient/*.write",
 		}
 		jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		token, err = jwtToken.SignedString([]byte("secret-key"))

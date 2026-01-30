@@ -53,6 +53,10 @@ func (s *PatientService) Get(ctx context.Context, id string) (*models.Patient, e
 		return nil, domain.ErrAccessDenied
 	}
 
+	if id == "me" {
+		id = user.PatientID
+	}
+
 	if !user.IsPatient(id) && !user.HasScope("patient/*.read") {
 		return nil, domain.ErrAccessDenied
 	}

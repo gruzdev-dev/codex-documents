@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/gruzdev-dev/codex-documents/core/domain"
@@ -112,7 +113,7 @@ func (s *ShareService) Share(ctx context.Context, req domain.ShareRequest) (*dom
 
 	scopes := s.buildScopes(allObs, allDocs, fileIDs)
 
-	scopesStr := strings.Join(scopes, ",")
+	scopesStr := strings.Join(scopes, " ")
 	resp, err := s.tmpAccessClient.GenerateTmpToken(ctx, domain.GenerateTmpTokenRequest{
 		Payload: map[string]string{
 			"scopes": scopesStr,
@@ -143,6 +144,8 @@ func (s *ShareService) GetSharedResources(ctx context.Context) (*domain.SharedRe
 	var documentReferences []string
 
 	for _, scope := range user.Scopes {
+		log.Println("scope", scope)
+
 		parts := strings.Split(scope, ":")
 		if len(parts) != 4 {
 			continue
@@ -169,10 +172,10 @@ func (s *ShareService) GetSharedResources(ctx context.Context) (*domain.SharedRe
 
 func (s *ShareService) classifyResourceIDs(resourceIDs []string) (obsIDs []string, docIDs []string) {
 	for _, id := range resourceIDs {
-		if strings.HasPrefix(id, "Observation/") {
-			obsIDs = append(obsIDs, strings.TrimPrefix(id, "Observation/"))
-		} else if strings.HasPrefix(id, "DocumentReference/") {
-			docIDs = append(docIDs, strings.TrimPrefix(id, "DocumentReference/"))
+		if after, ok := strings.CutPrefix(id, "Observation/"); ok {
+			obsIDs = append(obsIDs, after)
+		} else if after0, ok0 := strings.CutPrefix(id, "DocumentReference/"); ok0 {
+			docIDs = append(docIDs, after0)
 		} else {
 			obsIDs = append(obsIDs, id)
 			docIDs = append(docIDs, id)

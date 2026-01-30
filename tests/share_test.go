@@ -54,7 +54,7 @@ func TestShareIntegration(t *testing.T) {
 		claims := jwt.MapClaims{
 			"sub":        "test-user",
 			"patient_id": patientID,
-			"scope":      "patient/*.read patient/*.write",
+			"scopes":      "patient/*.read patient/*.write",
 		}
 		jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		token, err = jwtToken.SignedString([]byte("secret-key"))
@@ -299,7 +299,7 @@ func TestShareIntegration(t *testing.T) {
 	t.Run("Step 6: Generate tmp JWT token with scopes", func(t *testing.T) {
 		require.NotEmpty(t, tmpToken, "Tmp token should be set from previous step")
 
-		expectedScopes := fmt.Sprintf("docs:observation:%s:read,docs:document_reference:%s:read,files:file:test-file-id:read", obs1ID, doc1ID)
+		expectedScopes := fmt.Sprintf("docs:observation:%s:read docs:document_reference:%s:read files:file:test-file-id:read", obs1ID, doc1ID)
 
 		claims := jwt.MapClaims{
 			"scopes": expectedScopes,

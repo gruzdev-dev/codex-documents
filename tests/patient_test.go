@@ -81,7 +81,7 @@ func createTestJWTToken(secret string, patientID string) (string, error) {
 	claims := jwt.MapClaims{
 		"sub":        "test-user",
 		"patient_id": patientID,
-		"scope":      "patient/*.read patient/*.write",
+		"scopes":      "patient/*.read patient/*.write",
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
